@@ -1,0 +1,6 @@
+# intellij
+.idea/
+*.iml
+
+# cmake
+cmake-build-debug/

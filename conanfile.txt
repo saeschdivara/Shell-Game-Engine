@@ -1,0 +1,8 @@
+[requires]
+# You may have multiple lines like the one below, if you have many dependencies.
+glfw/3.3.4
+spdlog/1.9.2
+gainput/1.0.0
+
+[generators]
+cmake
