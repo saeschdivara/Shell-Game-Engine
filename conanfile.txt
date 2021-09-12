@@ -1,7 +1,8 @@
 [requires]
 # You may have multiple lines like the one below, if you have many dependencies.
-glfw/3.3.4
-spdlog/1.9.2
+glfw/3.3.4        # cross-platform window / opengl library
+glad/0.1.34       # opengl loader
+spdlog/1.9.2      # cross-platform logging library
 gainput/1.0.0
 
 [generators]
