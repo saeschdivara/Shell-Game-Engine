@@ -2,8 +2,13 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 
-class ScriptExecutionManager {
+namespace Shell {
 
-};
+    class ScriptExecutionManager {
+    public:
+        void simpleExecute();
+    };
+
+}
 
 

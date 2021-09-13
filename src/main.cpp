@@ -1,5 +1,6 @@
 #include "Engine/Core/Application.h"
 #include "Engine/Core/Logger.h"
+#include "Engine/Scripting/ScriptExecutionManager.h"
 
 #include <backward.hpp>
 
@@ -12,8 +13,13 @@ public:
     void Run() override {
         SHELL_INFO("Run application");
 
+        scriptExecutionManager.simpleExecute();
+
         m_window->Render();
     }
+
+private:
+    Shell::ScriptExecutionManager scriptExecutionManager;
 };
 
 int main() {
