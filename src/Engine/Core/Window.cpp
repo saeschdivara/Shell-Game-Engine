@@ -29,6 +29,11 @@ namespace Shell {
             glfwTerminate();
             return;
         }
+
+        /* Make the window's context current */
+        glfwMakeContextCurrent(m_window);
+
+        gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
     }
 
     // An array of 3 vectors which represents 3 vertices
@@ -132,12 +137,6 @@ namespace Shell {
     }
 
     void Window::Render() {
-
-        /* Make the window's context current */
-        glfwMakeContextCurrent(m_window);
-
-        gladLoadGL();
-
         SHELL_CORE_INFO(glGetString(GL_VERSION));
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

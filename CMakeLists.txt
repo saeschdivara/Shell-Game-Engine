@@ -11,16 +11,23 @@ include_directories("src")
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(MONO2 REQUIRED mono-2)
 
-add_executable(shell_game_engine
-        src/main.cpp
+add_library(shell_game_engine SHARED
         src/Engine/Core/Logger.cpp src/Engine/Core/Logger.h
         src/Engine/Core/Application.cpp src/Engine/Core/Application.h
         src/Engine/Core/Window.cpp src/Engine/Core/Window.h
         src/Engine/Core/Renderer.cpp src/Engine/Core/Renderer.h
         src/Engine/Core/Utils.h
-        src/Engine/Scripting/ScriptExecutionManager.cpp src/Engine/Scripting/ScriptExecutionManager.h)
+        src/Engine/Scripting/ScriptExecutionManager.cpp src/Engine/Scripting/ScriptExecutionManager.h
+        src/Engine/Core/Events/ApplicationEvent.h src/Engine/Core/Events/Event.h
+        src/Engine/Core/Events/KeyEvent.h src/Engine/Core/Events/MouseEvent.h src/Engine/Core/Events/GamepadEvent.h
+        src/Engine/Core/Events/Codes/MouseCodes.h src/Engine/Core/Events/Codes/KeyCodes.h src/Engine/Core/Events/Codes/GamePadCodes.h
+        src/Engine/Core/shellpch.h)
 
-# $source_files is a space-delimited list of filenames.
+target_precompile_headers(
+        shell_game_engine
+        PUBLIC src/Engine/Core/shellpch.h
+)
+
 target_link_libraries(shell_game_engine ${CONAN_LIBS})  # Specifies what libraries to link, using Conan.
 
 target_link_libraries(shell_game_engine ${MONO2_LINK_LIBRARIES})
@@ -37,3 +44,10 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # through an IMPORTED target.
     target_link_libraries(shell_game_engine Backward::Backward)
 endif()
+
+########### Example Application ###########
+
+add_executable(shell_sandbox_game
+        src/main.cpp)
+
+target_link_libraries(shell_sandbox_game shell_game_engine)
