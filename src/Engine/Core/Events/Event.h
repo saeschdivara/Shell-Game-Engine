@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/shellpch.h"
+#include "Engine/Core/Base.h"
 
 namespace Shell {
 
@@ -8,7 +8,7 @@ namespace Shell {
         None = 0,
         WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
         AppTick, AppUpdate, AppRender,
-        KeyPressed, KeyReleased,
+        KeyPressed, KeyReleased, KeyTyped,
         MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
     };
 

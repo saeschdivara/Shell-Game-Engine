@@ -15,7 +15,7 @@ public:
 
         scriptExecutionManager.simpleExecute();
 
-        m_window->Render();
+        m_Window->Render();
     }
 
 private:

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./Core.h"
+#include "Engine/Core/shellpch.h"
 
 namespace Shell
 {

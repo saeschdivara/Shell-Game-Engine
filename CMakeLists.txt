@@ -21,7 +21,7 @@ add_library(shell_game_engine SHARED
         src/Engine/Core/Events/ApplicationEvent.h src/Engine/Core/Events/Event.h
         src/Engine/Core/Events/KeyEvent.h src/Engine/Core/Events/MouseEvent.h src/Engine/Core/Events/GamepadEvent.h
         src/Engine/Core/Events/Codes/MouseCodes.h src/Engine/Core/Events/Codes/KeyCodes.h src/Engine/Core/Events/Codes/GamePadCodes.h
-        src/Engine/Core/shellpch.h)
+        src/Engine/Core/shellpch.h src/Engine/Core/Layers/Layer.cpp src/Engine/Core/Layers/Layer.h src/Engine/Core/Layers/LayerStack.cpp src/Engine/Core/Layers/LayerStack.h src/Engine/Core/Base.h)
 
 target_precompile_headers(
         shell_game_engine

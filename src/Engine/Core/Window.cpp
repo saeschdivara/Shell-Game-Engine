@@ -1,6 +1,9 @@
 #include "Engine/Core/Window.h"
 #include "Engine/Core/Logger.h"
 #include "Engine/Core/Renderer.h"
+#include "Engine/Core/Events/KeyEvent.h"
+#include "Engine/Core/Events/MouseEvent.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <fstream>
@@ -23,15 +26,15 @@ namespace Shell {
 #endif
 
         /* Create a windowed mode window and its OpenGL context */
-        m_window = glfwCreateWindow(1280, 720, "Hello World", NULL, NULL);
-        if (!m_window) {
+        m_Window = glfwCreateWindow(1280, 720, "Hello World", NULL, NULL);
+        if (!m_Window) {
             SHELL_CORE_ERROR("Window could not be initialised");
             glfwTerminate();
             return;
         }
 
         /* Make the window's context current */
-        glfwMakeContextCurrent(m_window);
+        glfwMakeContextCurrent(m_Window);
 
         gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
     }
@@ -175,7 +178,7 @@ namespace Shell {
         });
 
         /* Loop until the user closes the window */
-        while (!glfwWindowShouldClose(m_window)) {
+        while (!glfwWindowShouldClose(m_Window)) {
             /* Render here */
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the buffers
 
@@ -183,7 +186,7 @@ namespace Shell {
             OnUpdate();
 
             /* Swap front and back buffers */
-            glfwSwapBuffers(m_window);
+            glfwSwapBuffers(m_Window);
 
             /* Poll for and process events */
             glfwPollEvents();
@@ -194,5 +197,56 @@ namespace Shell {
 
     void Window::OnUpdate() {
         Renderer::Instance().get()->RenderBatch();
+    }
+
+    void Window::SetupCallbacks(const Window::EventCallbackFn &callback) {
+        m_Data.Callback = callback;
+
+        glfwSetWindowUserPointer(m_Window, &m_Data);
+
+        glfwSetKeyCallback(m_Window, [](GLFWwindow * window, int key, int scancode, int action, int mods) {
+            auto dataPointer = static_cast<Window::WindowData *>(glfwGetWindowUserPointer(window));
+
+            if (action == GLFW_PRESS) {
+                KeyPressedEvent event(key, 0);
+                dataPointer->Callback(event);
+            }
+            else if (action == GLFW_RELEASE) {
+                KeyReleasedEvent event(key);
+                dataPointer->Callback(event);
+            }
+            else if (action == GLFW_REPEAT) {
+                KeyPressedEvent event(key, 1);
+                dataPointer->Callback(event);
+            }
+        });
+
+        glfwSetMouseButtonCallback(m_Window, [](GLFWwindow * window,  int button, int action, int mods) {
+            auto dataPointer = static_cast<Window::WindowData *>(glfwGetWindowUserPointer(window));
+
+            if (action == GLFW_PRESS) {
+                MouseButtonPressedEvent event(button);
+                dataPointer->Callback(event);
+            }
+            else if (action == GLFW_RELEASE) {
+                MouseButtonReleasedEvent event(button);
+                dataPointer->Callback(event);
+            }
+
+        });
+
+        glfwSetScrollCallback(m_Window, [](GLFWwindow *window, double xOffset, double yOffset) {
+            auto dataPointer = static_cast<Window::WindowData *>(glfwGetWindowUserPointer(window));
+
+            MouseScrolledEvent event(xOffset, yOffset);
+            dataPointer->Callback(event);
+        });
+
+        glfwSetCursorPosCallback(m_Window, [](GLFWwindow *window, double xPos, double yPos) {
+            auto dataPointer = static_cast<Window::WindowData *>(glfwGetWindowUserPointer(window));
+
+            MouseMovedEvent event((float) xPos, (float)yPos);
+            dataPointer->Callback(event);
+        });
     }
 }

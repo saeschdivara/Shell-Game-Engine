@@ -30,11 +30,11 @@ namespace Shell {
     class MouseScrolledEvent : public Event
     {
     public:
-        MouseScrolledEvent(const float xOffset, const float yOffset)
+        MouseScrolledEvent(const double xOffset, const double yOffset)
                 : m_XOffset(xOffset), m_YOffset(yOffset) {}
 
-        float GetXOffset() const { return m_XOffset; }
-        float GetYOffset() const { return m_YOffset; }
+        double GetXOffset() const { return m_XOffset; }
+        double GetYOffset() const { return m_YOffset; }
 
         std::string ToString() const override
         {
@@ -46,7 +46,7 @@ namespace Shell {
         EVENT_CLASS_TYPE(MouseScrolled)
         EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
     private:
-        float m_XOffset, m_YOffset;
+        double m_XOffset, m_YOffset;
     };
 
     class MouseButtonEvent : public Event
