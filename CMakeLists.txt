@@ -48,6 +48,6 @@ endif()
 ########### Example Application ###########
 
 add_executable(shell_sandbox_game
-        src/main.cpp)
+        src/Sandbox/main.cpp)
 
 target_link_libraries(shell_sandbox_game shell_game_engine)
