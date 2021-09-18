@@ -9,7 +9,6 @@ namespace Shell {
 
     struct RenderBatchUnit {
         GLuint vertexbuffer;
-        GLuint vertexbuffer2;
         GLuint programID;
     };
 

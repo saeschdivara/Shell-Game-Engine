@@ -16,6 +16,9 @@ namespace Shell {
         virtual void Init();
         virtual void Run() = 0;
 
+        void PushLayer(Layer* layer);
+        void PushOverlay(Layer* overlay);
+
         virtual void OnEvent(Event & event);
 
     protected:

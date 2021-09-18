@@ -25,48 +25,27 @@ namespace Shell {
 
     void Renderer::RenderBatch() {
 
-        auto batch = m_Batches[0];
+        for (const auto &batch: m_Batches) {
+            GLint inputColorLocation = glGetUniformLocation(batch.programID, "inputColor");
+            if (inputColorLocation != -1) {
+                glUniform4f(inputColorLocation, 0.4, 0.4, 0.8, 0.8);
+            }
 
-        GLint inputColorLocation = glGetUniformLocation(batch.programID, "inputColor");
-        if (inputColorLocation != -1) {
-            glUniform4f(inputColorLocation, 0.4, 0.4, 0.8, 0.8);
+            glUseProgram(batch.programID);
+
+            // 1st attribute buffer : vertices
+            glEnableVertexAttribArray(0);
+            glBindBuffer(GL_ARRAY_BUFFER, batch.vertexbuffer);
+            glVertexAttribPointer(
+                    0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+                    3,                  // size
+                    GL_FLOAT,           // type
+                    GL_FALSE,           // normalized?
+                    sizeof(float)*3,    // stride
+                    (void *) 0          // array buffer offset
+            );
+            // Draw the triangle !
+            glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
         }
-
-        glUseProgram(batch.programID);
-
-        // 1st attribute buffer : vertices
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, batch.vertexbuffer);
-        glVertexAttribPointer(
-                0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-                3,                  // size
-                GL_FLOAT,           // type
-                GL_FALSE,           // normalized?
-                0,                  // stride
-                (void *) 0          // array buffer offset
-        );
-        // Draw the triangle !
-        glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-        glDisableVertexAttribArray(0);
-
-
-        if (inputColorLocation != -1) {
-            glUniform4f(inputColorLocation, 1.0, 0.4, 0.1, 0.1);
-        }
-
-        // 1st attribute buffer : vertices
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, batch.vertexbuffer2);
-        glVertexAttribPointer(
-                0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-                3,                  // size
-                GL_FLOAT,           // type
-                GL_FALSE,           // normalized?
-                0,                  // stride
-                (void *) 0            // array buffer offset
-        );
-        // Draw the triangle !
-        glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-        glDisableVertexAttribArray(0);
     }
 }

@@ -42,7 +42,7 @@ namespace Shell {
     // An array of 3 vectors which represents 3 vertices
     static const GLfloat g_vertex_buffer_data[] = {
             -1.0f, -1.0f, 0.0f,
-            1.0f, -1.0f, 0.0f,
+             0.5f, -0.5f, 0.0f,
             0.0f, 1.0f, 0.0f,
     };
     // An array of 3 vectors which represents 3 vertices
@@ -65,7 +65,7 @@ namespace Shell {
             sstr << VertexShaderStream.rdbuf();
             VertexShaderCode = sstr.str();
             VertexShaderStream.close();
-        }else{
+        } else {
             printf("Impossible to open %s. Are you in the right directory ? Don't forget to read the FAQ !\n", vertex_file_path);
             getchar();
             return 0;
@@ -148,6 +148,11 @@ namespace Shell {
         glGenVertexArrays(1, &VertexArrayID);
         glBindVertexArray(VertexArrayID);
 
+        GLuint programID = LoadShaders(
+                "../../Shaders/SimpleVertexShader.vert",
+                "../../Shaders/SimpleFragmentShader.frag"
+        );
+
         // This will identify our vertex buffer
         GLuint vertexbuffer;
         // Generate 1 buffer, put the resulting identifier in vertexbuffer
@@ -156,6 +161,11 @@ namespace Shell {
         glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
         // Give our vertices to OpenGL.
         glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+        Renderer::Instance().get()->AddBatch({
+             .vertexbuffer = vertexbuffer,
+             .programID =  programID,
+         });
 
         // This will identify our vertex buffer
         GLuint vertexbuffer2;
@@ -166,15 +176,9 @@ namespace Shell {
         // Give our vertices to OpenGL.
         glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data2), g_vertex_buffer_data2, GL_STATIC_DRAW);
 
-        GLuint programID = LoadShaders(
-            "../../Shaders/SimpleVertexShader.vert",
-            "../../Shaders/SimpleFragmentShader.frag"
-        );
-
         Renderer::Instance().get()->AddBatch({
+            .vertexbuffer = vertexbuffer2,
             .programID =  programID,
-            .vertexbuffer = vertexbuffer,
-            .vertexbuffer2 = vertexbuffer2
         });
 
         /* Loop until the user closes the window */
