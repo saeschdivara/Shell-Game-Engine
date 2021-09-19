@@ -1,0 +1,10 @@
+image: macOS
+
+# scripts that run after cloning repository
+install:
+  - mkdir build
+  - cd build
+  - pip install conan
+  - conan install ..
+  - cmake ..
+  - make
