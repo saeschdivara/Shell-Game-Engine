@@ -10,13 +10,13 @@ namespace backward {
 
 class SandboxApplication : public Shell::Application {
 public:
-    void Run() override {
-        SHELL_INFO("Run application");
-
-        scriptExecutionManager.simpleExecute();
-
-        m_Window->Render();
-    }
+//    void Run() override {
+//        SHELL_INFO("Run application");
+//
+//        scriptExecutionManager.simpleExecute();
+//
+//        m_Window->Render();
+//    }
 
 private:
     Shell::ScriptExecutionManager scriptExecutionManager;

@@ -24,7 +24,8 @@ add_library(shell_game_engine SHARED
         src/Engine/Core/shellpch.h
         src/Engine/Core/Layers/Layer.cpp src/Engine/Core/Layers/Layer.h
         src/Engine/Core/Layers/LayerStack.cpp src/Engine/Core/Layers/LayerStack.h
-        src/Engine/Core/Base.h)
+        src/Engine/Core/Base.h
+        src/Engine/Core/Layers/UiLayer.cpp src/Engine/Core/Layers/UiLayer.h src/Engine/UI/imgui_impl_glfw.cpp src/Engine/UI/imgui_impl_opengl3.cpp src/Engine/UI/imgui_impl_opengl3.h src/Engine/UI/imgui_impl_glfw.h)
 
 target_precompile_headers(
         shell_game_engine
