@@ -4,7 +4,8 @@ image: macOS
 install:
   - mkdir build
   - cd build
-  - pip install conan
+  - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  - brew install conan
   - conan install ..
   - cmake ..
   - make
