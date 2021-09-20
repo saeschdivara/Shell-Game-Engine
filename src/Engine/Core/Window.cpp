@@ -23,8 +23,11 @@ namespace Shell {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
 
+        m_Data.Height = 720;
+        m_Data.Width = 1280;
+
         /* Create a windowed mode window and its OpenGL context */
-        m_Window = glfwCreateWindow(1280, 720, "Hello World", NULL, NULL);
+        m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, "Hello World", NULL, NULL);
         if (!m_Window) {
             SHELL_CORE_ERROR("Window could not be initialised");
             glfwTerminate();

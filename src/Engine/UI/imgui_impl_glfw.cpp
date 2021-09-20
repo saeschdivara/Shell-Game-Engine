@@ -90,16 +90,6 @@ void ImGui_ImplGlfw_MouseButtonCallback(GLFWwindow* window, int button, int acti
         g_MouseJustPressed[button] = true;
 }
 
-void ImGui_ImplGlfw_ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-{
-    if (g_PrevUserCallbackScroll != NULL)
-        g_PrevUserCallbackScroll(window, xoffset, yoffset);
-
-    ImGuiIO& io = ImGui::GetIO();
-    io.MouseWheelH += (float)xoffset;
-    io.MouseWheel += (float)yoffset;
-}
-
 void ImGui_ImplGlfw_KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (g_PrevUserCallbackKey != NULL)
@@ -187,7 +177,6 @@ static bool ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks, Glfw
     {
         g_InstalledCallbacks = true;
         g_PrevUserCallbackMousebutton = glfwSetMouseButtonCallback(window, ImGui_ImplGlfw_MouseButtonCallback);
-        g_PrevUserCallbackScroll = glfwSetScrollCallback(window, ImGui_ImplGlfw_ScrollCallback);
         g_PrevUserCallbackKey = glfwSetKeyCallback(window, ImGui_ImplGlfw_KeyCallback);
         g_PrevUserCallbackChar = glfwSetCharCallback(window, ImGui_ImplGlfw_CharCallback);
     }
@@ -199,11 +188,6 @@ static bool ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks, Glfw
 bool ImGui_ImplGlfw_InitForOpenGL(GLFWwindow* window, bool install_callbacks)
 {
     return ImGui_ImplGlfw_Init(window, install_callbacks, GlfwClientApi_OpenGL);
-}
-
-bool ImGui_ImplGlfw_InitForVulkan(GLFWwindow* window, bool install_callbacks)
-{
-    return ImGui_ImplGlfw_Init(window, install_callbacks, GlfwClientApi_Vulkan);
 }
 
 void ImGui_ImplGlfw_Shutdown()
@@ -223,61 +207,6 @@ void ImGui_ImplGlfw_Shutdown()
         g_MouseCursors[cursor_n] = NULL;
     }
     g_ClientApi = GlfwClientApi_Unknown;
-}
-
-static void ImGui_ImplGlfw_UpdateMousePosAndButtons()
-{
-    // Update buttons
-    ImGuiIO& io = ImGui::GetIO();
-    for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++)
-    {
-        // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
-        io.MouseDown[i] = g_MouseJustPressed[i] || glfwGetMouseButton(g_Window, i) != 0;
-        g_MouseJustPressed[i] = false;
-    }
-
-    // Update mouse position
-    const ImVec2 mouse_pos_backup = io.MousePos;
-    io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
-#ifdef __EMSCRIPTEN__
-    const bool focused = true; // Emscripten
-#else
-    const bool focused = glfwGetWindowAttrib(g_Window, GLFW_FOCUSED) != 0;
-#endif
-    if (focused)
-    {
-        if (io.WantSetMousePos)
-        {
-            glfwSetCursorPos(g_Window, (double)mouse_pos_backup.x, (double)mouse_pos_backup.y);
-        }
-        else
-        {
-            double mouse_x, mouse_y;
-            glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
-            io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);
-        }
-    }
-}
-
-static void ImGui_ImplGlfw_UpdateMouseCursor()
-{
-    ImGuiIO& io = ImGui::GetIO();
-    if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) || glfwGetInputMode(g_Window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
-        return;
-
-    ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
-    if (imgui_cursor == ImGuiMouseCursor_None || io.MouseDrawCursor)
-    {
-        // Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
-        glfwSetInputMode(g_Window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-    }
-    else
-    {
-        // Show OS mouse cursor
-        // FIXME-PLATFORM: Unfocused windows seems to fail changing the mouse cursor with GLFW 3.2, but 3.3 works here.
-        glfwSetCursor(g_Window, g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
-        glfwSetInputMode(g_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    }
 }
 
 static void ImGui_ImplGlfw_UpdateGamepads()
@@ -327,7 +256,6 @@ void ImGui_ImplGlfw_NewFrame()
     int display_w, display_h;
     glfwGetWindowSize(g_Window, &w, &h);
     glfwGetFramebufferSize(g_Window, &display_w, &display_h);
-    io.DisplaySize = ImVec2((float)w, (float)h);
     if (w > 0 && h > 0)
         io.DisplayFramebufferScale = ImVec2((float)display_w / w, (float)display_h / h);
 
@@ -335,9 +263,6 @@ void ImGui_ImplGlfw_NewFrame()
     double current_time = glfwGetTime();
     io.DeltaTime = g_Time > 0.0 ? (float)(current_time - g_Time) : (float)(1.0f/60.0f);
     g_Time = current_time;
-
-    ImGui_ImplGlfw_UpdateMousePosAndButtons();
-    ImGui_ImplGlfw_UpdateMouseCursor();
 
     // Update game controllers (if enabled and available)
     ImGui_ImplGlfw_UpdateGamepads();

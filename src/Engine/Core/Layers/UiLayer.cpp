@@ -58,6 +58,67 @@ namespace Shell {
     }
 
     void UiLayer::OnEvent(Event &event) {
-        Layer::OnEvent(event);
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<MouseButtonPressedEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnMouseButtonPressedEvent));
+        dispatcher.Dispatch<MouseButtonReleasedEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnMouseButtonReleasedEvent));
+        dispatcher.Dispatch<MouseMovedEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnMouseMovedEvent));
+        dispatcher.Dispatch<MouseScrolledEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnMouseScrolledEvent));
+        dispatcher.Dispatch<KeyPressedEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnKeyPressedEvent));
+        dispatcher.Dispatch<KeyReleasedEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnKeyReleasedEvent));
+        dispatcher.Dispatch<WindowResizeEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnWindowResizeEvent));
+    }
+
+    bool UiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent &event) {
+        ImGuiIO &io = ImGui::GetIO();
+        io.MouseDown[event.GetMouseButton()] = true;
+
+        return false;
+    }
+
+    bool UiLayer::OnMouseButtonReleasedEvent(MouseButtonReleasedEvent &event) {
+        ImGuiIO &io = ImGui::GetIO();
+        io.MouseDown[event.GetMouseButton()] = false;
+
+        return false;
+    }
+
+    bool UiLayer::OnMouseMovedEvent(MouseMovedEvent &event) {
+        ImGuiIO &io = ImGui::GetIO();
+        io.MousePos = ImVec2(event.GetX(), event.GetY());
+
+        return false;
+    }
+
+    bool UiLayer::OnMouseScrolledEvent(MouseScrolledEvent &event) {
+        ImGuiIO &io = ImGui::GetIO();
+        io.MouseWheelH += event.GetXOffset();
+        io.MouseWheel += event.GetYOffset();
+
+        return false;
+    }
+
+    bool UiLayer::OnKeyPressedEvent(KeyPressedEvent &event) {
+        ImGuiIO &io = ImGui::GetIO();
+        io.KeysDown[event.GetKeyCode()] = true;
+
+        return false;
+    }
+
+    bool UiLayer::OnKeyReleasedEvent(KeyReleasedEvent &event) {
+        ImGuiIO &io = ImGui::GetIO();
+        io.KeysDown[event.GetKeyCode()] = false;
+
+        return false;
+    }
+
+    bool UiLayer::OnWindowResizeEvent(WindowResizeEvent &event) {
+        ImGuiIO &io = ImGui::GetIO();
+
+        auto w = (float) event.GetWidth();
+        auto h = (float) event.GetHeight();
+
+        io.DisplaySize = ImVec2(w, h);
+
+        return false;
     }
 }
