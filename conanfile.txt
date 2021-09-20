@@ -4,7 +4,6 @@ glfw/3.3.4        # cross-platform window / opengl library
 glad/0.1.34       # opengl loader
 glm/0.9.9.8       # cross-platform math library
 spdlog/1.9.2      # cross-platform logging library
-imgui/1.84.2
 miniaudio/0.10.40
 
 [generators]

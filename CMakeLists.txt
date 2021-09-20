@@ -6,7 +6,12 @@ set(CMAKE_CXX_STANDARD 20)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)  # Includes the contents of the conanbuildinfo.cmake file.
 conan_basic_setup()  # Prepares the CMakeList.txt for Conan.
 
-include_directories("src")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/ImGui/)
+
+include_directories(
+        "src"
+        "Vendors/ImGui"
+)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(MONO2 REQUIRED mono-2)
@@ -37,6 +42,7 @@ target_precompile_headers(
 )
 
 target_link_libraries(shell_game_engine ${CONAN_LIBS})  # Specifies what libraries to link, using Conan.
+target_link_libraries(shell_game_engine imgui)  # Specifies what libraries to link, using Conan.
 
 target_link_libraries(shell_game_engine ${MONO2_LINK_LIBRARIES})
 target_include_directories(shell_game_engine PUBLIC ${MONO2_INCLUDE_DIRS})
