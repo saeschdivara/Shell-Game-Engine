@@ -27,7 +27,9 @@ add_library(shell_game_engine SHARED
         src/Engine/Core/Base.h
         src/Engine/Core/Layers/UiLayer.cpp src/Engine/Core/Layers/UiLayer.h
         src/Engine/UI/imgui_impl_glfw.cpp src/Engine/UI/imgui_impl_glfw.h
-        src/Engine/UI/imgui_impl_opengl3.cpp src/Engine/UI/imgui_impl_opengl3.h)
+        src/Engine/UI/imgui_impl_opengl3.cpp src/Engine/UI/imgui_impl_opengl3.h
+        src/Engine/Core/InputService.h
+        src/Platform/MacOS/MacOSInputService.cpp src/Platform/MacOS/MacOSInputService.h)
 
 target_precompile_headers(
         shell_game_engine

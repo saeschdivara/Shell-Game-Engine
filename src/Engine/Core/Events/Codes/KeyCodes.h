@@ -8,7 +8,7 @@ namespace Shell
 
     namespace Key
     {
-        enum : KeyCode
+        enum KeyCodeEnum : KeyCode
         {
             // From glfw3.h
             Space               = 32,

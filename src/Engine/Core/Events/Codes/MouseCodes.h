@@ -8,7 +8,7 @@ namespace Shell
 
     namespace Mouse
     {
-        enum : MouseCode
+        enum MouseButtonEnum : MouseCode
         {
             // From glfw3.h
             Button0                = 0,
