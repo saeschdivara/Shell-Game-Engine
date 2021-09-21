@@ -12,21 +12,11 @@ namespace Shell {
 
         void OnAttach() override;
         void OnDetach() override;
-        void OnUpdate() override;
 
-        void OnEvent(Event &event) override;
+        void OnUiRender() override;
 
-    private:
-        bool OnMouseButtonPressedEvent(MouseButtonPressedEvent &event);
-        bool OnMouseButtonReleasedEvent(MouseButtonReleasedEvent &event);
-        bool OnMouseMovedEvent(MouseMovedEvent &event);
-        bool OnMouseScrolledEvent(MouseScrolledEvent &event);
-        bool OnKeyPressedEvent(KeyPressedEvent &event);
-        bool OnKeyReleasedEvent(KeyReleasedEvent &event);
-        bool OnWindowResizeEvent(WindowResizeEvent &event);
-
-    private:
-        float m_Time = 0.0f;
+        virtual void Begin();
+        virtual void End();
     };
 }
 

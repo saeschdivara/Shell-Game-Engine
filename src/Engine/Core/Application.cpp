@@ -10,6 +10,9 @@ namespace Shell {
         m_Instance = this;
     }
 
+    Application::~Application() {
+    }
+
     Application *Application::Instance() {
         return m_Instance;
     }
@@ -17,12 +20,13 @@ namespace Shell {
     void Application::Init() {
         Logger::Init();
 
-        m_Window = new Window;
+        m_Window = CreateScope<Window>();
         m_Window->Init();
 
         m_Window->SetupCallbacks(SHELL_BIND_EVENT_FN(Application::OnEvent));
 
-        PushOverlay(new UiLayer);
+        m_UiLayer = new UiLayer;
+        PushOverlay(m_UiLayer);
     }
 
     void Application::Run() {
@@ -31,6 +35,12 @@ namespace Shell {
             for (Layer* layer : m_LayerStack) {
                 layer->OnUpdate();
             }
+
+            m_UiLayer->Begin();
+            for (Layer* layer : m_LayerStack) {
+                layer->OnUiRender();
+            }
+            m_UiLayer->End();
 
             m_Window->OnUpdate();
         }

@@ -19,6 +19,8 @@ namespace Shell {
         io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
         io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
         io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 
         Application * app = Application::Instance();
         io.DisplaySize = ImVec2((float)app->GetWindow()->GetWidth(), (float)app->GetWindow()->GetHeight());
@@ -36,95 +38,32 @@ namespace Shell {
         ImGui::DestroyContext();
     }
 
-    void UiLayer::OnUpdate() {
+    void UiLayer::OnUiRender() {
+        static bool show = true;
+        ImGui::ShowDemoWindow(&show);
+    }
+
+    void UiLayer::Begin() {
         // feed inputs to dear imgui, start new frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+    }
 
+    void UiLayer::End() {
         ImGuiIO &io = ImGui::GetIO();
-        auto time = (float) glfwGetTime();
-        io.DeltaTime = m_Time > 0.0 ? (time - m_Time) : (1.0f / 60.0f);
-        m_Time = time;
-
-        // render your GUI
-        ImGui::Begin("Demo window");
-        ImGui::Button("Hello!");
-        ImGui::End();
+        auto app = Application::Instance();
+        io.DisplaySize = ImVec2((float) app->GetWindow()->GetWidth(), (float) app->GetWindow()->GetHeight());
 
         // Render dear imgui into screen
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    }
 
-    void UiLayer::OnEvent(Event &event) {
-        EventDispatcher dispatcher(event);
-        dispatcher.Dispatch<MouseButtonPressedEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnMouseButtonPressedEvent));
-        dispatcher.Dispatch<MouseButtonReleasedEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnMouseButtonReleasedEvent));
-        dispatcher.Dispatch<MouseMovedEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnMouseMovedEvent));
-        dispatcher.Dispatch<MouseScrolledEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnMouseScrolledEvent));
-        dispatcher.Dispatch<KeyPressedEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnKeyPressedEvent));
-        dispatcher.Dispatch<KeyReleasedEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnKeyReleasedEvent));
-        dispatcher.Dispatch<WindowResizeEvent>(SHELL_BIND_EVENT_FN(UiLayer::OnWindowResizeEvent));
-    }
-
-    bool UiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent &event) {
-        ImGuiIO &io = ImGui::GetIO();
-        io.MouseDown[event.GetMouseButton()] = true;
-
-        return false;
-    }
-
-    bool UiLayer::OnMouseButtonReleasedEvent(MouseButtonReleasedEvent &event) {
-        ImGuiIO &io = ImGui::GetIO();
-        io.MouseDown[event.GetMouseButton()] = false;
-
-        return false;
-    }
-
-    bool UiLayer::OnMouseMovedEvent(MouseMovedEvent &event) {
-        ImGuiIO &io = ImGui::GetIO();
-        io.MousePos = ImVec2(event.GetX(), event.GetY());
-
-        return false;
-    }
-
-    bool UiLayer::OnMouseScrolledEvent(MouseScrolledEvent &event) {
-        ImGuiIO &io = ImGui::GetIO();
-        io.MouseWheelH += event.GetXOffset();
-        io.MouseWheel += event.GetYOffset();
-
-        return false;
-    }
-
-    bool UiLayer::OnKeyPressedEvent(KeyPressedEvent &event) {
-        ImGuiIO &io = ImGui::GetIO();
-        io.KeysDown[event.GetKeyCode()] = true;
-
-        // Modifiers are not reliable across systems
-        io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
-        io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
-        io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
-        io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
-
-        return false;
-    }
-
-    bool UiLayer::OnKeyReleasedEvent(KeyReleasedEvent &event) {
-        ImGuiIO &io = ImGui::GetIO();
-        io.KeysDown[event.GetKeyCode()] = false;
-
-        return false;
-    }
-
-    bool UiLayer::OnWindowResizeEvent(WindowResizeEvent &event) {
-        ImGuiIO &io = ImGui::GetIO();
-
-        auto w = (float) event.GetWidth();
-        auto h = (float) event.GetHeight();
-
-        io.DisplaySize = ImVec2(w, h);
-
-        return false;
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+            GLFWwindow* backupCurrentContext = glfwGetCurrentContext();
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backupCurrentContext);
+        }
     }
 }

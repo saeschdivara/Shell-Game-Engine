@@ -10,9 +10,10 @@ namespace Shell {
         Layer(const std::string & name);
         virtual ~Layer();
 
-        virtual void OnUpdate() {};
         virtual void OnAttach() {};
         virtual void OnDetach() {};
+        virtual void OnUpdate() {};
+        virtual void OnUiRender() {};
         virtual void OnEvent(Event & event) {};
 
     protected:
