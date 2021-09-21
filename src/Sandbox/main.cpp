@@ -2,6 +2,8 @@
 #include "Engine/Core/Logger.h"
 #include "Engine/Scripting/ScriptExecutionManager.h"
 
+#include "Layers/SampleLayer.h"
+
 #include <backward.hpp>
 
 namespace backward {
@@ -10,6 +12,11 @@ namespace backward {
 
 class SandboxApplication : public Shell::Application {
 public:
+    void Init() override {
+        Application::Init();
+
+        PushLayer(new Sandbox::SampleLayer);
+    }
 //    void Run() override {
 //        SHELL_INFO("Run application");
 //

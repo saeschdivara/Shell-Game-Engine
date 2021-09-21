@@ -39,8 +39,6 @@ namespace Shell {
     }
 
     void UiLayer::OnUiRender() {
-        static bool show = true;
-        ImGui::ShowDemoWindow(&show);
     }
 
     void UiLayer::Begin() {
