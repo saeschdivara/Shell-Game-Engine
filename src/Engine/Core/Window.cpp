@@ -4,7 +4,8 @@
 #include "Engine/Core/Events/KeyEvent.h"
 #include "Engine/Core/Events/MouseEvent.h"
 
-#include <glad/glad.h>
+#include "Platform/Rendering/OpenGL/OpenGLContext.h"
+
 #include <GLFW/glfw3.h>
 
 namespace Shell {
@@ -34,25 +35,16 @@ namespace Shell {
             return;
         }
 
-        /* Make the window's context current */
-        glfwMakeContextCurrent(m_Window);
-
-        gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-
-        SHELL_CORE_INFO(glGetString(GL_VERSION));
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the buffers
+        m_Context = new OpenGLContext(m_Window);
+        m_Context->Init();
     }
 
     void Window::OnUpdate() {
-        /* Swap front and back buffers */
-        glfwSwapBuffers(m_Window);
 
         /* Poll for and process events */
         glfwPollEvents();
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the buffers
+        m_Context->SwapBuffers();
     }
 
     void Window::SetupCallbacks(const Window::EventCallbackFn &callback) {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/Core/Events/Event.h"
+#include "Engine/Core/Rendering/GraphicsContext.h"
 
 class GLFWwindow;
 
@@ -21,6 +22,7 @@ namespace Shell {
 
     protected:
         GLFWwindow* m_Window;
+        GraphicsContext * m_Context;
 
         struct WindowData {
             unsigned int Width, Height;
