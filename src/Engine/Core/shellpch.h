@@ -13,4 +13,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Engine/Core/Base.h"
 #include "Engine/Core/Logger.h"
+#include "Engine/Core/Assert.h"

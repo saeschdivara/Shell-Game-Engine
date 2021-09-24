@@ -17,6 +17,7 @@ namespace Shell {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the buffers
+        glClearColor(0.2f, 0.2f, 0.2f, 1);
     }
 
     void OpenGLContext::SwapBuffers() {

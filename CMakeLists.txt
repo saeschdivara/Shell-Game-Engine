@@ -3,6 +3,19 @@ project(shell_game_engine)
 
 set(CMAKE_CXX_STANDARD 20)
 
+add_compile_options("$<$<CONFIG:DEBUG>:-DSHELL_APP_DEBUG>") # define debug symbol when using debug build
+
+# add defines for each platform
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    add_compile_options("-DSHELL_PLATFORM_WINDOWS")
+endif()
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    add_compile_options("-DSHELL_PLATFORM_LINUX")
+endif()
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    add_compile_options("-DSHELL_PLATFORM_MACOS")
+endif()
+
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)  # Includes the contents of the conanbuildinfo.cmake file.
 conan_basic_setup()  # Prepares the CMakeList.txt for Conan.
 
@@ -36,7 +49,7 @@ add_library(shell_game_engine SHARED
         src/Engine/Core/InputService.h
         src/Platform/MacOS/MacOSInputService.cpp src/Platform/MacOS/MacOSInputService.h
         src/Engine/Core/Rendering/GraphicsContext.h
-        src/Platform/Rendering/OpenGL/OpenGLContext.cpp src/Platform/Rendering/OpenGL/OpenGLContext.h)
+        src/Platform/Rendering/OpenGL/OpenGLContext.cpp src/Platform/Rendering/OpenGL/OpenGLContext.h src/Engine/Core/Rendering/Shader.h src/Engine/Core/Rendering/Shader.cpp src/Engine/Core/Assert.h)
 
 target_precompile_headers(
         shell_game_engine
