@@ -6,18 +6,24 @@
 namespace Shell {
 
     Ref<VertexBuffer> VertexBuffer::Create(float *vertices, uint32_t size) {
-        auto api = Renderer::Instance()->getCurrentApi();
         switch (Renderer::Instance()->getCurrentApi()) {
             case RenderAPI::OpenGL:
                 return CreateRef<OpenGLVertexBuffer>(vertices, size);
 
             default:
-                SHELL_CORE_WARN("Render API implementation not found for {0}", api);
-                return Ref<VertexBuffer>();
+                SHELL_CORE_ASSERT(false, "Render API implementation not found");
+                return {};
         }
     }
 
-    Ref<IndexBuffer> IndexBuffer::Create(float *vertices, uint32_t size) {
-        return Ref<IndexBuffer>();
+    Ref<IndexBuffer> IndexBuffer::Create(uint32_t *vertices, uint32_t count) {
+        switch (Renderer::Instance()->getCurrentApi()) {
+            case RenderAPI::OpenGL:
+                return CreateRef<OpenGLIndexBuffer>(vertices, count);
+
+            default:
+                SHELL_CORE_ASSERT(false, "Render API implementation not found");
+                return {};
+        }
     }
 }

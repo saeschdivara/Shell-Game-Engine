@@ -36,9 +36,10 @@ namespace Shell {
 
         bool m_IsRunning = true;
 
-        unsigned int m_VertexArray, m_IndexBuffer;
+        unsigned int m_VertexArray;
         Scope<Shader> m_Shader;
         Ref<VertexBuffer> m_VertexBuffer;
+        Ref<IndexBuffer> m_IndexBuffer;
 
     private:
         static Application* m_Instance;

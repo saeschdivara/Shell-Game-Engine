@@ -16,5 +16,20 @@ namespace Shell {
         uint32_t m_RendererID;
     };
 
+    class OpenGLIndexBuffer : public IndexBuffer {
+    public:
+        OpenGLIndexBuffer(uint32_t * vertices, uint32_t size);
+        virtual ~OpenGLIndexBuffer();
+
+        void Bind() override;
+        void Unbind() override;
+
+        uint32_t GetCount() const override { return m_VerticesCount; };
+
+    private:
+        uint32_t m_RendererID;
+        uint32_t m_VerticesCount;
+    };
+
 }
 

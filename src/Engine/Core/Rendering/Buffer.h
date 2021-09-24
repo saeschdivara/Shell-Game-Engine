@@ -19,7 +19,10 @@ namespace Shell {
 
     class IndexBuffer : public Buffer {
     public:
-        static Ref<IndexBuffer> Create(float * vertices, uint32_t size);
+
+        virtual uint32_t GetCount() const = 0;
+
+        static Ref<IndexBuffer> Create(uint32_t * vertices, uint32_t count);
     };
 
 }
