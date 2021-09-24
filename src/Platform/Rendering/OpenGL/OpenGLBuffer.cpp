@@ -8,7 +8,7 @@ namespace Shell {
     // VertexBuffer
     ///////////////////////////
 
-    OpenGLVertexBuffer::OpenGLVertexBuffer(float *vertices, uint32_t size) {
+    OpenGLVertexBuffer::OpenGLVertexBuffer(float *vertices, uint32_t size) : m_Layout() {
         glGenBuffers(1, &m_RendererID);
         glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 

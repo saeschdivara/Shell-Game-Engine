@@ -1,6 +1,7 @@
 #include "Engine/Core/shellpch.h"
 #include "Engine/Core/Application.h"
 #include "Engine/Core/Layers/UiLayer.h"
+#include "Engine/Core/Rendering/Buffer.h"
 
 #include <glad/glad.h>
 
@@ -16,6 +17,29 @@ namespace Shell {
 
     Application *Application::Instance() {
         return m_Instance;
+    }
+
+    static GLenum GetOpenGLTypeFromShaderDataType(ShaderDataType dataType) {
+        switch (dataType) {
+            case ShaderDataType::Float: return GL_FLOAT;
+            case ShaderDataType::Float2: return GL_FLOAT;
+            case ShaderDataType::Float3: return GL_FLOAT;
+            case ShaderDataType::Float4: return GL_FLOAT;
+
+            case ShaderDataType::Mat3: return GL_FLOAT;
+            case ShaderDataType::Mat4: return GL_FLOAT;
+
+            case ShaderDataType::Int: return GL_INT;
+            case ShaderDataType::Int2: return GL_INT;
+            case ShaderDataType::Int3: return GL_INT;
+            case ShaderDataType::Int4: return GL_INT;
+
+            case ShaderDataType::Bool: return GL_BOOL;
+
+            default:
+            SHELL_CORE_ASSERT(false, "Unknown shader type was used")
+                return 0;
+        }
     }
 
     void Application::Init() {
@@ -40,8 +64,26 @@ namespace Shell {
 
         m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
 
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+        BufferLayout layout = {
+            { ShaderDataType::Float3, "a_Position" }
+        };
+
+        m_VertexBuffer->SetLayout(layout);
+
+        uint32_t index = 0;
+        for (auto &item: layout) {
+            glEnableVertexAttribArray(index);
+            glVertexAttribPointer(
+                    index,
+                    item.GetElementCount(),
+                    GetOpenGLTypeFromShaderDataType(item.DataType),
+                    item.Normalized ? GL_TRUE : GL_FALSE,
+                    layout.GetStride(),
+                    (void *)item.Offset
+            );
+
+            index += 1;
+        }
 
         uint32_t indices[3] = { 0, 1, 2 };
         m_IndexBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
