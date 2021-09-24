@@ -33,7 +33,7 @@ add_library(shell_game_engine SHARED
         src/Engine/Core/Logger.cpp src/Engine/Core/Logger.h
         src/Engine/Core/Application.cpp src/Engine/Core/Application.h
         src/Engine/Core/Window.cpp src/Engine/Core/Window.h
-        src/Engine/Core/Renderer.cpp src/Engine/Core/Renderer.h
+        src/Engine/Core/Rendering/Renderer.cpp src/Engine/Core/Rendering/Renderer.h
         src/Engine/Core/Utils.h
         src/Engine/Scripting/ScriptExecutionManager.cpp src/Engine/Scripting/ScriptExecutionManager.h
         src/Engine/Core/Events/ApplicationEvent.h src/Engine/Core/Events/Event.h
@@ -49,7 +49,13 @@ add_library(shell_game_engine SHARED
         src/Engine/Core/InputService.h
         src/Platform/MacOS/MacOSInputService.cpp src/Platform/MacOS/MacOSInputService.h
         src/Engine/Core/Rendering/GraphicsContext.h
-        src/Platform/Rendering/OpenGL/OpenGLContext.cpp src/Platform/Rendering/OpenGL/OpenGLContext.h src/Engine/Core/Rendering/Shader.h src/Engine/Core/Rendering/Shader.cpp src/Engine/Core/Assert.h)
+        src/Platform/Rendering/OpenGL/OpenGLContext.cpp src/Platform/Rendering/OpenGL/OpenGLContext.h
+        src/Engine/Core/Rendering/Shader.h src/Engine/Core/Rendering/Shader.cpp
+        src/Engine/Core/Assert.h
+        src/Engine/Core/Rendering/Texture.h
+        src/Engine/Core/Rendering/Buffer.h src/Engine/Core/Rendering/Buffer.cpp
+        src/Platform/Rendering/OpenGL/OpenGLBuffer.cpp src/Platform/Rendering/OpenGL/OpenGLBuffer.h
+        src/Engine/Core/Rendering/API.h)
 
 target_precompile_headers(
         shell_game_engine

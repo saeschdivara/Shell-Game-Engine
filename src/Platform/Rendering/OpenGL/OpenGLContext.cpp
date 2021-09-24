@@ -23,7 +23,5 @@ namespace Shell {
     void OpenGLContext::SwapBuffers() {
         /* Swap front and back buffers */
         glfwSwapBuffers(m_WindowHandle);
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the buffers
     }
 }

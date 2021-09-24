@@ -7,6 +7,9 @@
 #include "Engine/Core/Layers/LayerStack.h"
 #include "Engine/Core/Layers/UiLayer.h"
 
+#include "Engine/Core/Rendering/Shader.h"
+#include "Engine/Core/Rendering/Buffer.h"
+
 namespace Shell {
 
     class Application {
@@ -32,6 +35,10 @@ namespace Shell {
         UiLayer * m_UiLayer;
 
         bool m_IsRunning = true;
+
+        unsigned int m_VertexArray, m_IndexBuffer;
+        Scope<Shader> m_Shader;
+        Ref<VertexBuffer> m_VertexBuffer;
 
     private:
         static Application* m_Instance;

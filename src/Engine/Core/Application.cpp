@@ -1,7 +1,8 @@
+#include "Engine/Core/shellpch.h"
 #include "Engine/Core/Application.h"
-#include "Engine/Core/Logger.h"
-#include "Engine/Core/Base.h"
 #include "Engine/Core/Layers/UiLayer.h"
+
+#include <glad/glad.h>
 
 namespace Shell {
     Application* Application::m_Instance = nullptr;
@@ -27,11 +28,61 @@ namespace Shell {
 
         m_UiLayer = new UiLayer;
         PushOverlay(m_UiLayer);
+
+        glGenVertexArrays(1, &m_VertexArray);
+        glBindVertexArray(m_VertexArray);
+
+        float vertices [3 * 3] = {
+                -0.5f, -0.5f, 0.0f,
+                0.5f, -0.5f, 0.0f,
+                0.0f,  0.5f, 0.0f
+        };
+
+        m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+
+        glGenBuffers(1, &m_IndexBuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
+
+        unsigned int indices[3] = { 0, 1, 2 };
+        glad_glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+        std::string vertexSrc = R"(
+            #version 330 core
+
+            layout(location = 0) in vec3 a_Position;
+
+            void main()
+            {
+                gl_Position = vec4(a_Position, 1.0);
+            }
+        )";
+
+        std::string fragmentSrc = R"(
+            #version 330 core
+            layout(location = 0) out vec4 color;
+
+            void main()
+            {
+                color = vec4(0.4, 0.3, 0.2, 1.0);
+            }
+        )";
+
+        m_Shader = CreateScope<Shader>(vertexSrc, fragmentSrc);
     }
 
     void Application::Run() {
 
         while (m_IsRunning) {
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the buffers
+
+            m_Shader->Bind();
+            glBindVertexArray(m_VertexArray);
+            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+
             for (Layer* layer : m_LayerStack) {
                 layer->OnUpdate();
             }
