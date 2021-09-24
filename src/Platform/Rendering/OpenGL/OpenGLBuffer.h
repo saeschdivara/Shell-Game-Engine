@@ -7,7 +7,7 @@ namespace Shell {
     class OpenGLVertexBuffer : public VertexBuffer {
     public:
         OpenGLVertexBuffer(float * vertices, uint32_t size);
-        virtual ~OpenGLVertexBuffer();
+        ~OpenGLVertexBuffer() override;
 
         void Bind() override;
         void Unbind() override;
@@ -19,7 +19,7 @@ namespace Shell {
     class OpenGLIndexBuffer : public IndexBuffer {
     public:
         OpenGLIndexBuffer(uint32_t * vertices, uint32_t size);
-        virtual ~OpenGLIndexBuffer();
+        ~OpenGLIndexBuffer() override;
 
         void Bind() override;
         void Unbind() override;
