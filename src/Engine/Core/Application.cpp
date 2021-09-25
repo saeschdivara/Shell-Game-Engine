@@ -56,22 +56,23 @@ namespace Shell {
         glGenVertexArrays(1, &m_VertexArray);
         glBindVertexArray(m_VertexArray);
 
-        float vertices [3 * 3] = {
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                0.0f,  0.5f, 0.0f
+        float vertices [] = {
+                -0.5f, -0.5f, 0.0f, 0.3f, 0.3f, 1.0f, 1.0f,
+                 0.5f, -0.5f, 0.0f, 0.3f, 0.7f, 0.2f, 1.0f,
+                 0.0f,  0.5f, 0.0f, 1.0f, 0.3f, 1.0f, 1.0f
         };
 
         m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
 
         BufferLayout layout = {
-            { ShaderDataType::Float3, "a_Position" }
+            { ShaderDataType::Float3, "a_Position" },
+            { ShaderDataType::Float4, "a_Color" },
         };
 
         m_VertexBuffer->SetLayout(layout);
 
         uint32_t index = 0;
-        for (auto &item: layout) {
+        for (const auto &item: layout) {
             glEnableVertexAttribArray(index);
             glVertexAttribPointer(
                     index,
@@ -92,9 +93,13 @@ namespace Shell {
             #version 330 core
 
             layout(location = 0) in vec3 a_Position;
+            layout(location = 1) in vec4 a_Color;
+
+            out vec4 v_Color;
 
             void main()
             {
+                v_Color = a_Color;
                 gl_Position = vec4(a_Position, 1.0);
             }
         )";
@@ -103,9 +108,11 @@ namespace Shell {
             #version 330 core
             layout(location = 0) out vec4 color;
 
+            in vec4 v_Color;
+
             void main()
             {
-                color = vec4(0.4, 0.3, 0.2, 1.0);
+                color = v_Color;
             }
         )";
 
