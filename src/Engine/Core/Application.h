@@ -38,8 +38,6 @@ namespace Shell {
         bool m_IsRunning = true;
 
         Ref<BufferContainer> m_BufferContainer;
-        Ref<VertexBuffer> m_VertexBuffer;
-        Ref<IndexBuffer> m_IndexBuffer;
         Scope<Shader> m_Shader;
 
     private:

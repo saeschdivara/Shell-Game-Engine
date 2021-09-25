@@ -36,7 +36,7 @@ namespace Shell {
                  0.0f,  0.5f, 0.0f, 1.0f, 0.3f, 1.0f, 1.0f
         };
 
-        m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
+        auto m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
 
         BufferLayout layout = {
             { ShaderDataType::Float3, "a_Position" },
@@ -47,7 +47,7 @@ namespace Shell {
         m_BufferContainer->AddBuffer(m_VertexBuffer);
 
         uint32_t indices[3] = { 0, 1, 2 };
-        m_IndexBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
+        auto m_IndexBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
         m_BufferContainer->AddBuffer(m_IndexBuffer);
 
         std::string vertexSrc = R"(
