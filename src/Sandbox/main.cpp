@@ -3,6 +3,7 @@
 #include "Engine/Scripting/ScriptExecutionManager.h"
 
 #include "Layers/SampleLayer.h"
+#include "Layers/RenderLayer.h"
 
 #include <backward.hpp>
 
@@ -16,6 +17,7 @@ public:
         Application::Init();
 
         PushLayer(new Sandbox::SampleLayer);
+        PushLayer(new Sandbox::RenderLayer);
     }
 //    void Run() override {
 //        SHELL_INFO("Run application");

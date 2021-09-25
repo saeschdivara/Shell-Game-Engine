@@ -37,9 +37,6 @@ namespace Shell {
 
         bool m_IsRunning = true;
 
-        Ref<BufferContainer> m_BufferContainer;
-        Scope<Shader> m_Shader;
-
     private:
         static Application* m_Instance;
 

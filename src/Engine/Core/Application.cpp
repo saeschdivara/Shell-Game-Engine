@@ -27,74 +27,11 @@ namespace Shell {
 
         m_UiLayer = new UiLayer;
         PushOverlay(m_UiLayer);
-
-        m_BufferContainer = BufferContainer::Create();
-
-        float vertices [] = {
-                -0.5f, -0.5f, 0.0f, 0.3f, 0.3f, 1.0f, 1.0f,
-                 0.5f, -0.5f, 0.0f, 0.3f, 0.7f, 0.2f, 1.0f,
-                 0.0f,  0.5f, 0.0f, 1.0f, 0.3f, 1.0f, 1.0f
-        };
-
-        auto m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
-
-        BufferLayout layout = {
-            { ShaderDataType::Float3, "a_Position" },
-            { ShaderDataType::Float4, "a_Color" },
-        };
-
-        m_VertexBuffer->SetLayout(layout);
-        m_BufferContainer->AddBuffer(m_VertexBuffer);
-
-        uint32_t indices[3] = { 0, 1, 2 };
-        auto m_IndexBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
-        m_BufferContainer->AddBuffer(m_IndexBuffer);
-
-        std::string vertexSrc = R"(
-            #version 330 core
-
-            layout(location = 0) in vec3 a_Position;
-            layout(location = 1) in vec4 a_Color;
-
-            out vec4 v_Color;
-
-            void main()
-            {
-                v_Color = a_Color;
-                gl_Position = vec4(a_Position, 1.0);
-            }
-        )";
-
-        std::string fragmentSrc = R"(
-            #version 330 core
-            layout(location = 0) out vec4 color;
-
-            in vec4 v_Color;
-
-            void main()
-            {
-                color = v_Color;
-            }
-        )";
-
-        m_Shader = CreateScope<Shader>(vertexSrc, fragmentSrc);
     }
 
     void Application::Run() {
 
-        auto clearColor = glm::vec4(0.2f, 0.2f, 0.2f, 1);
-
         while (m_IsRunning) {
-
-            RenderCommand::Create()->SetClearColor(clearColor);
-            RenderCommand::Create()->Clear();
-
-            Renderer::Instance()->BeginScene();
-
-            m_Shader->Bind();
-            Renderer::Instance()->Submit(m_BufferContainer);
-
-            Renderer::Instance()->EndScene();
 
             for (Layer* layer : m_LayerStack) {
                 layer->OnUpdate();

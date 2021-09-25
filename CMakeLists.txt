@@ -86,6 +86,6 @@ endif()
 ########### Example Application ###########
 
 add_executable(shell_sandbox_game
-        src/Sandbox/main.cpp src/Sandbox/Layers/SampleLayer.h)
+        src/Sandbox/main.cpp src/Sandbox/Layers/SampleLayer.h src/Sandbox/Layers/RenderLayer.h)
 
 target_link_libraries(shell_sandbox_game shell_game_engine)
