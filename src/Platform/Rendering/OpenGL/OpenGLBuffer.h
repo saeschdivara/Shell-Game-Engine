@@ -18,7 +18,7 @@ namespace Shell {
         };
 
         [[nodiscard]] BufferLayout GetLayout() const override { return m_Layout; };
-        [[nodiscard]] bool HasValidLayout() const override { return m_IsLayoutSet; };
+        [[nodiscard]] bool HasValidLayout() const override { return m_IsLayoutSet && !m_Layout.GetElements().empty(); };
 
 
     private:
