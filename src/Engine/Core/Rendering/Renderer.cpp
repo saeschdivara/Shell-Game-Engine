@@ -1,6 +1,5 @@
 #include "Renderer.h"
-
-#include <glad/glad.h>
+#include "Engine/Core/Rendering/RenderCommand.h"
 
 namespace Shell {
 
@@ -13,6 +12,17 @@ namespace Shell {
         }
 
         return m_Instance;
+    }
+
+    void Renderer::BeginScene() {
+    }
+
+    void Renderer::EndScene() {
+    }
+
+    void Renderer::Submit(const Ref<BufferContainer> &bufferContainer) {
+        bufferContainer->Bind();
+        RenderCommand::Create()->DrawIndexed(bufferContainer);
     }
 
     Scope<Renderer> Renderer::Create() {

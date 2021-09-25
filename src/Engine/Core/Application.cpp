@@ -1,7 +1,7 @@
 #include "Engine/Core/shellpch.h"
 #include "Engine/Core/Application.h"
-
-#include <glad/glad.h>
+#include "Engine/Core/Rendering/Renderer.h"
+#include "Engine/Core/Rendering/RenderCommand.h"
 
 namespace Shell {
     Application* Application::m_Instance = nullptr;
@@ -82,13 +82,19 @@ namespace Shell {
 
     void Application::Run() {
 
+        auto clearColor = glm::vec4(0.2f, 0.2f, 0.2f, 1);
+
         while (m_IsRunning) {
 
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the buffers
+            RenderCommand::Create()->SetClearColor(clearColor);
+            RenderCommand::Create()->Clear();
+
+            Renderer::Instance()->BeginScene();
 
             m_Shader->Bind();
-            m_BufferContainer->Bind();
-            glDrawElements(GL_TRIANGLES, m_BufferContainer->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+            Renderer::Instance()->Submit(m_BufferContainer);
+
+            Renderer::Instance()->EndScene();
 
             for (Layer* layer : m_LayerStack) {
                 layer->OnUpdate();

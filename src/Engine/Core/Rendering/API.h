@@ -2,7 +2,7 @@
 
 namespace Shell {
     enum RenderAPI {
-        None = 0,
+        NoAPI = 0,
         OpenGL,
         Vulkan,
         DirectX,
