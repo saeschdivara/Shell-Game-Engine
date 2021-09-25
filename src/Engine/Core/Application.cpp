@@ -1,7 +1,5 @@
 #include "Engine/Core/shellpch.h"
 #include "Engine/Core/Application.h"
-#include "Engine/Core/Layers/UiLayer.h"
-#include "Engine/Core/Rendering/Buffer.h"
 
 #include <glad/glad.h>
 
@@ -19,29 +17,6 @@ namespace Shell {
         return m_Instance;
     }
 
-    static GLenum GetOpenGLTypeFromShaderDataType(ShaderDataType dataType) {
-        switch (dataType) {
-            case ShaderDataType::Float: return GL_FLOAT;
-            case ShaderDataType::Float2: return GL_FLOAT;
-            case ShaderDataType::Float3: return GL_FLOAT;
-            case ShaderDataType::Float4: return GL_FLOAT;
-
-            case ShaderDataType::Mat3: return GL_FLOAT;
-            case ShaderDataType::Mat4: return GL_FLOAT;
-
-            case ShaderDataType::Int: return GL_INT;
-            case ShaderDataType::Int2: return GL_INT;
-            case ShaderDataType::Int3: return GL_INT;
-            case ShaderDataType::Int4: return GL_INT;
-
-            case ShaderDataType::Bool: return GL_BOOL;
-
-            default:
-            SHELL_CORE_ASSERT(false, "Unknown shader type was used")
-                return 0;
-        }
-    }
-
     void Application::Init() {
         Logger::Init();
 
@@ -53,8 +28,7 @@ namespace Shell {
         m_UiLayer = new UiLayer;
         PushOverlay(m_UiLayer);
 
-        glGenVertexArrays(1, &m_VertexArray);
-        glBindVertexArray(m_VertexArray);
+        m_BufferContainer = BufferContainer::Create();
 
         float vertices [] = {
                 -0.5f, -0.5f, 0.0f, 0.3f, 0.3f, 1.0f, 1.0f,
@@ -70,24 +44,11 @@ namespace Shell {
         };
 
         m_VertexBuffer->SetLayout(layout);
-
-        uint32_t index = 0;
-        for (const auto &item: layout) {
-            glEnableVertexAttribArray(index);
-            glVertexAttribPointer(
-                    index,
-                    item.GetElementCount(),
-                    GetOpenGLTypeFromShaderDataType(item.DataType),
-                    item.Normalized ? GL_TRUE : GL_FALSE,
-                    layout.GetStride(),
-                    (void *)item.Offset
-            );
-
-            index += 1;
-        }
+        m_BufferContainer->AddBuffer(m_VertexBuffer);
 
         uint32_t indices[3] = { 0, 1, 2 };
         m_IndexBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
+        m_BufferContainer->AddBuffer(m_IndexBuffer);
 
         std::string vertexSrc = R"(
             #version 330 core
@@ -126,7 +87,7 @@ namespace Shell {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the buffers
 
             m_Shader->Bind();
-            glBindVertexArray(m_VertexArray);
+            m_BufferContainer->Bind();
             glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
             for (Layer* layer : m_LayerStack) {

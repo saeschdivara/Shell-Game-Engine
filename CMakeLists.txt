@@ -55,7 +55,9 @@ add_library(shell_game_engine SHARED
         src/Engine/Core/Rendering/Texture.h
         src/Engine/Core/Rendering/Buffer.h src/Engine/Core/Rendering/Buffer.cpp
         src/Platform/Rendering/OpenGL/OpenGLBuffer.cpp src/Platform/Rendering/OpenGL/OpenGLBuffer.h
-        src/Engine/Core/Rendering/API.h)
+        src/Engine/Core/Rendering/API.h
+        src/Engine/Core/Rendering/BufferContainer.cpp src/Engine/Core/Rendering/BufferContainer.h
+        src/Platform/Rendering/OpenGL/OpenGLBufferContainer.cpp src/Platform/Rendering/OpenGL/OpenGLBufferContainer.h)
 
 target_precompile_headers(
         shell_game_engine

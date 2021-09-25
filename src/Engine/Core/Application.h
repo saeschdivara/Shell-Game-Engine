@@ -9,6 +9,7 @@
 
 #include "Engine/Core/Rendering/Shader.h"
 #include "Engine/Core/Rendering/Buffer.h"
+#include "Engine/Core/Rendering/BufferContainer.h"
 
 namespace Shell {
 
@@ -36,10 +37,10 @@ namespace Shell {
 
         bool m_IsRunning = true;
 
-        unsigned int m_VertexArray;
-        Scope<Shader> m_Shader;
+        Ref<BufferContainer> m_BufferContainer;
         Ref<VertexBuffer> m_VertexBuffer;
         Ref<IndexBuffer> m_IndexBuffer;
+        Scope<Shader> m_Shader;
 
     private:
         static Application* m_Instance;
