@@ -7,6 +7,7 @@ namespace Shell {
     class OpenGLBufferContainer : public BufferContainer {
     public:
         OpenGLBufferContainer();
+        ~OpenGLBufferContainer() override;
 
         void Bind() override;
         void Unbind() override;

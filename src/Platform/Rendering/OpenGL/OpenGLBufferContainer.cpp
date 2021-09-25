@@ -31,6 +31,10 @@ namespace Shell {
         glGenVertexArrays(1, &m_RendererID);
     }
 
+    OpenGLBufferContainer::~OpenGLBufferContainer() {
+        glDeleteVertexArrays(1, &m_RendererID);
+    }
+
     void OpenGLBufferContainer::Bind() {
         glBindVertexArray(m_RendererID);
     }
