@@ -45,6 +45,7 @@ namespace Shell {
 
         auto vertexPointer = dynamic_pointer_cast<VertexBuffer>(buffer);
         if (vertexPointer) {
+            SHELL_CORE_ASSERT(vertexPointer->HasValidLayout(), "You vertex buffer needs to have a layout set");
             const auto& layout = vertexPointer->GetLayout();
 
             uint32_t index = 0;

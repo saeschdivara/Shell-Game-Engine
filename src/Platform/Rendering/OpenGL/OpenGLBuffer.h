@@ -12,12 +12,19 @@ namespace Shell {
         void Bind() override;
         void Unbind() override;
 
-        void SetLayout(const BufferLayout& layout) override { m_Layout = layout; };
+        void SetLayout(const BufferLayout& layout) override {
+            m_Layout = layout;
+            m_IsLayoutSet = true;
+        };
+
         [[nodiscard]] BufferLayout GetLayout() const override { return m_Layout; };
+        [[nodiscard]] bool HasValidLayout() const override { return m_IsLayoutSet; };
+
 
     private:
         uint32_t m_RendererID;
         BufferLayout m_Layout;
+        bool m_IsLayoutSet = false;
     };
 
     class OpenGLIndexBuffer : public IndexBuffer {

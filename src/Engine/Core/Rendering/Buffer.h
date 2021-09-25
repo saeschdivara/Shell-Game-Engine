@@ -116,6 +116,7 @@ namespace Shell {
     public:
         virtual void SetLayout(const BufferLayout& layout) = 0;
         [[nodiscard]] virtual BufferLayout GetLayout() const = 0;
+        [[nodiscard]] virtual bool HasValidLayout() const = 0;
 
         static Ref<VertexBuffer> Create(float * vertices, uint32_t size);
     };
