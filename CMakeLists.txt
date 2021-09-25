@@ -58,7 +58,9 @@ add_library(shell_game_engine SHARED
         src/Engine/Core/Rendering/API.h
         src/Engine/Core/Rendering/BufferContainer.cpp src/Engine/Core/Rendering/BufferContainer.h
         src/Platform/Rendering/OpenGL/OpenGLBufferContainer.cpp src/Platform/Rendering/OpenGL/OpenGLBufferContainer.h
-        src/Platform/Rendering/OpenGL/OpenGLRenderCommand.cpp src/Platform/Rendering/OpenGL/OpenGLRenderCommand.h src/Engine/Core/Rendering/RenderCommand.cpp src/Engine/Core/Rendering/RenderCommand.h)
+        src/Platform/Rendering/OpenGL/OpenGLRenderCommand.cpp src/Platform/Rendering/OpenGL/OpenGLRenderCommand.h
+        src/Engine/Core/Rendering/RenderCommand.cpp src/Engine/Core/Rendering/RenderCommand.h
+        src/Engine/Core/Rendering/Camera.h src/Engine/Core/Rendering/Camera.cpp)
 
 target_precompile_headers(
         shell_game_engine
@@ -86,6 +88,8 @@ endif()
 ########### Example Application ###########
 
 add_executable(shell_sandbox_game
-        src/Sandbox/main.cpp src/Sandbox/Layers/SampleLayer.h src/Sandbox/Layers/RenderLayer.h)
+        src/Sandbox/main.cpp
+        src/Sandbox/Layers/SampleLayer.h
+        src/Sandbox/Layers/RenderLayer.h src/Sandbox/Layers/RenderLayer.cpp)
 
 target_link_libraries(shell_sandbox_game shell_game_engine)

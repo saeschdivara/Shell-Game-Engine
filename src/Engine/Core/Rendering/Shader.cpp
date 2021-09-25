@@ -2,6 +2,7 @@
 #include "Engine/Core/shellpch.h"
 
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Shell {
     Shader::Shader(const std::string &vertexSrc, const std::string &fragmentSrc) {
@@ -119,5 +120,10 @@ namespace Shell {
 
     void Shader::Unbind() {
         glUseProgram(0);
+    }
+
+    void Shader::SetUniform(const std::string &uniformName, const glm::mat4 &matrix) const {
+        auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
     }
 }
