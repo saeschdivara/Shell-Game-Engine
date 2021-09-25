@@ -46,7 +46,7 @@ namespace Shell {
         BufferElement(ShaderDataType dataType, const std::string& name)
             : Name(name), DataType(dataType), Normalized(false), Size(GetShaderDataTypeSize(dataType)), Offset(0) {}
 
-        uint32_t GetElementCount() {
+        [[nodiscard]] uint32_t GetElementCount() const {
             switch (DataType) {
                 case ShaderDataType::Float: return 1;
                 case ShaderDataType::Float2: return 2;
@@ -79,8 +79,8 @@ namespace Shell {
             CalculateOffsetAndStride();
         }
 
-        inline const uint32_t GetStride() const { return m_Stride; }
-        inline const std::vector<BufferElement>& GetElements() const { return m_Elements; }
+        [[nodiscard]] inline uint32_t GetStride() const { return m_Stride; }
+        [[nodiscard]] inline const std::vector<BufferElement>& GetElements() const { return m_Elements; }
 
         std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
         std::vector<BufferElement>::iterator end() { return m_Elements.end(); }
@@ -113,7 +113,7 @@ namespace Shell {
     class VertexBuffer : public Buffer {
     public:
         virtual void SetLayout(const BufferLayout& layout) = 0;
-        virtual BufferLayout GetLayout() const = 0;
+        [[nodiscard]] virtual BufferLayout GetLayout() const = 0;
 
         static Ref<VertexBuffer> Create(float * vertices, uint32_t size);
     };
@@ -121,7 +121,7 @@ namespace Shell {
     class IndexBuffer : public Buffer {
     public:
 
-        virtual uint32_t GetCount() const = 0;
+        [[nodiscard]] virtual uint32_t GetCount() const = 0;
 
         static Ref<IndexBuffer> Create(uint32_t * vertices, uint32_t count);
     };

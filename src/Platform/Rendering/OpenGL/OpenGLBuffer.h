@@ -13,7 +13,7 @@ namespace Shell {
         void Unbind() override;
 
         void SetLayout(const BufferLayout& layout) override { m_Layout = layout; };
-        BufferLayout GetLayout() const override { return m_Layout; };
+        [[nodiscard]] BufferLayout GetLayout() const override { return m_Layout; };
 
     private:
         uint32_t m_RendererID;
@@ -28,7 +28,7 @@ namespace Shell {
         void Bind() override;
         void Unbind() override;
 
-        uint32_t GetCount() const override { return m_VerticesCount; };
+        [[nodiscard]] uint32_t GetCount() const override { return m_VerticesCount; };
 
     private:
         uint32_t m_RendererID;
