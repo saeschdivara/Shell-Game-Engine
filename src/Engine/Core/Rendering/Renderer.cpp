@@ -14,13 +14,17 @@ namespace Shell {
         return m_Instance;
     }
 
-    void Renderer::BeginScene() {
+    void Renderer::BeginScene(Ref<OrthographicCamera> camera) {
+        m_Camera = camera;
     }
 
     void Renderer::EndScene() {
     }
 
-    void Renderer::Submit(const Ref<BufferContainer> &bufferContainer) {
+    void Renderer::Submit(const Ref<BufferContainer> &bufferContainer, const Ref<Shader>& shader) {
+        shader->Bind();
+        shader->SetUniform("u_ViewProjection", m_Camera->GetViewProjectionMatrix());
+
         bufferContainer->Bind();
         RenderCommand::Create()->DrawIndexed(bufferContainer);
     }

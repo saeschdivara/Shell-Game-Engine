@@ -2,9 +2,9 @@
 
 #include "Engine/Core/Utils.h"
 #include "Engine/Core/Rendering/API.h"
+#include "Engine/Core/Rendering/Camera.h"
 #include "Engine/Core/Rendering/BufferContainer.h"
-
-#include <glm/glm.hpp>
+#include "Engine/Core/Rendering/Shader.h"
 
 namespace Shell {
 
@@ -12,10 +12,10 @@ namespace Shell {
     public:
         static Scope<Renderer>& Instance();
 
-        void BeginScene();
+        void BeginScene(Ref<OrthographicCamera> camera);
         void EndScene();
 
-        void Submit(const Ref<BufferContainer>& bufferContainer);
+        void Submit(const Ref<BufferContainer>& bufferContainer, const Ref<Shader>& shader);
 
         RenderAPI getCurrentApi() const { return m_API; }
 
@@ -24,6 +24,7 @@ namespace Shell {
 
     private:
         RenderAPI m_API;
+        Ref<OrthographicCamera> m_Camera;
 
         static Scope<Renderer> m_Instance;
     };

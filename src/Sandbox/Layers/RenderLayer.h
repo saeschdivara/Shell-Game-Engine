@@ -13,7 +13,7 @@ namespace Sandbox {
         RenderLayer() :
             Layer("Render Layer"),
             m_ClearColor(glm::vec4(0.2f, 0.2f, 0.2f, 1)),
-            m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
+            m_Camera(new Shell::OrthographicCamera(-1.6f, 1.6f, -0.9f, 0.9f))
             {}
 
         void OnAttach() override;
@@ -22,9 +22,9 @@ namespace Sandbox {
     private:
         glm::vec4 m_ClearColor;
         Shell::Ref<Shell::BufferContainer> m_BufferContainer;
-        Shell::Scope<Shell::Shader> m_Shader;
+        Shell::Ref<Shell::Shader> m_Shader;
 
-        Shell::OrthographicCamera m_Camera;
+        Shell::Ref<Shell::OrthographicCamera> m_Camera;
     };
 
 }

@@ -53,19 +53,15 @@ namespace Sandbox {
             }
         )";
 
-        m_Shader = Shell::CreateScope<Shell::Shader>(vertexSrc, fragmentSrc);
+        m_Shader = Shell::CreateRef<Shell::Shader>(vertexSrc, fragmentSrc);
     }
 
     void RenderLayer::OnUpdate() {
         Shell::RenderCommand::Create()->SetClearColor(m_ClearColor);
         Shell::RenderCommand::Create()->Clear();
 
-        Shell::Renderer::Instance()->BeginScene();
-
-        m_Shader->Bind();
-        m_Shader->SetUniform("u_ViewProjection", m_Camera.GetViewProjectionMatrix());
-        Shell::Renderer::Instance()->Submit(m_BufferContainer);
-
+        Shell::Renderer::Instance()->BeginScene(m_Camera);
+        Shell::Renderer::Instance()->Submit(m_BufferContainer, m_Shader);
         Shell::Renderer::Instance()->EndScene();
     }
 }
