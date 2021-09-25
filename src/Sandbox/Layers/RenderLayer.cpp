@@ -1,5 +1,7 @@
 #include "RenderLayer.h"
 
+#include <Engine/Core/InputService.h>
+
 namespace Sandbox {
     void RenderLayer::OnAttach() {
         m_BufferContainer = Shell::BufferContainer::Create();
@@ -57,11 +59,32 @@ namespace Sandbox {
     }
 
     void RenderLayer::OnUpdate() {
+        UpdateCameraWithMovement();
+
         Shell::RenderCommand::Create()->SetClearColor(m_ClearColor);
         Shell::RenderCommand::Create()->Clear();
 
         Shell::Renderer::Instance()->BeginScene(m_Camera);
         Shell::Renderer::Instance()->Submit(m_BufferContainer, m_Shader);
         Shell::Renderer::Instance()->EndScene();
+    }
+
+    void RenderLayer::UpdateCameraWithMovement() {
+        if (Shell::InputService::IsKeyPressed(Shell::Key::Left)) {
+            m_CameraPosition += glm::vec3(0.01f, 0.0f, 0.0f);
+            m_Camera->SetPosition(m_CameraPosition);
+        }
+        else if (Shell::InputService::IsKeyPressed(Shell::Key::Right)) {
+            m_CameraPosition += glm::vec3(-0.01f, 0.0f, 0.0f);
+            m_Camera->SetPosition(m_CameraPosition);
+        }
+        else if (Shell::InputService::IsKeyPressed(Shell::Key::Up)) {
+            m_CameraPosition += glm::vec3(0.0f, -0.01f, 0.0f);
+            m_Camera->SetPosition(m_CameraPosition);
+        }
+        else if (Shell::InputService::IsKeyPressed(Shell::Key::Down)) {
+            m_CameraPosition += glm::vec3(0.0f, 0.01f, 0.0f);
+            m_Camera->SetPosition(m_CameraPosition);
+        }
     }
 }

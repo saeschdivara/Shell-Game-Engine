@@ -20,11 +20,15 @@ namespace Sandbox {
         void OnUpdate() override;
 
     private:
+        void UpdateCameraWithMovement();
+
+    private:
         glm::vec4 m_ClearColor;
         Shell::Ref<Shell::BufferContainer> m_BufferContainer;
         Shell::Ref<Shell::Shader> m_Shader;
 
         Shell::Ref<Shell::OrthographicCamera> m_Camera;
+        glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 0.0f };
     };
 
 }
