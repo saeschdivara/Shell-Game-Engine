@@ -11,6 +11,7 @@ namespace Shell {
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
         virtual void AddBuffer(Ref<Buffer> buffer) = 0;
+        [[nodiscard]] virtual Ref<IndexBuffer> GetIndexBuffer() const = 0;
 
         static Ref<BufferContainer> Create();
     };

@@ -12,6 +12,7 @@ namespace Shell {
         void Unbind() override;
 
         void AddBuffer(Ref<Buffer> buffer) override;
+        [[nodiscard]] Ref<IndexBuffer> GetIndexBuffer() const override { return m_IndexBuffer; }
 
     private:
         uint32_t m_RendererID;

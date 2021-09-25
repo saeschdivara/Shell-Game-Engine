@@ -88,7 +88,7 @@ namespace Shell {
 
             m_Shader->Bind();
             m_BufferContainer->Bind();
-            glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+            glDrawElements(GL_TRIANGLES, m_BufferContainer->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
             for (Layer* layer : m_LayerStack) {
                 layer->OnUpdate();
