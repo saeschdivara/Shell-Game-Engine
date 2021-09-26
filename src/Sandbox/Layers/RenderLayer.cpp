@@ -87,11 +87,11 @@ namespace Sandbox {
 
     void RenderLayer::UpdateCameraWithMovement(std::chrono::milliseconds deltaTime) {
         if (Shell::InputService::IsKeyPressed(Shell::Key::Left)) {
-            m_CameraPosition.x += m_CameraSpeed * deltaTime.count();
+            m_CameraPosition.x -= m_CameraSpeed * deltaTime.count();
             m_Camera->SetPosition(m_CameraPosition);
         }
         else if (Shell::InputService::IsKeyPressed(Shell::Key::Right)) {
-            m_CameraPosition.x -= m_CameraSpeed * deltaTime.count();
+            m_CameraPosition.x += m_CameraSpeed * deltaTime.count();
             m_Camera->SetPosition(m_CameraPosition);
         }
         else if (Shell::InputService::IsKeyPressed(Shell::Key::Up)) {
