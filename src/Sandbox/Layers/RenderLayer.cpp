@@ -8,9 +8,11 @@ namespace Sandbox {
         m_BufferContainer = Shell::BufferContainer::Create();
 
         float vertices [] = {
+                //x      y      z
                 -0.5f, -0.5f, 0.0f, 0.3f, 0.3f, 1.0f, 1.0f,
-                0.5f, -0.5f, 0.0f, 0.3f, 0.7f, 0.2f, 1.0f,
-                0.0f,  0.5f, 0.0f, 1.0f, 0.3f, 1.0f, 1.0f
+                 0.5f, -0.5f, 0.0f, 0.3f, 0.3f, 1.0f, 1.0f,
+                 0.5f,  0.5f, 0.0f, 0.0f, 0.3f, 1.0f, 1.0f,
+                -0.5f,  0.5f, 0.0f, 0.0f, 0.3f, 1.0f, 1.0f,
         };
 
         auto m_VertexBuffer = Shell::VertexBuffer::Create(vertices, sizeof(vertices));
@@ -23,7 +25,7 @@ namespace Sandbox {
         m_VertexBuffer->SetLayout(layout);
         m_BufferContainer->AddBuffer(m_VertexBuffer);
 
-        uint32_t indices[3] = { 0, 1, 2 };
+        uint32_t indices[] = { 0, 1, 2, 2, 3, 0 };
         auto m_IndexBuffer = Shell::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
         m_BufferContainer->AddBuffer(m_IndexBuffer);
 
@@ -68,29 +70,36 @@ namespace Sandbox {
 
         Shell::Renderer::Instance()->BeginScene(m_Camera);
 
-        auto transform =
-                glm::translate(glm::mat4(1.0f), glm::vec3(0.25f, 0.20f, 0.0f)) *
-                glm::rotate(glm::mat4(1.0f), glm::radians(15.0f), glm::vec3(0.0f, 0.0f, 1));
+        glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
-        Shell::Renderer::Instance()->Submit(m_BufferContainer, m_Shader, transform);
+        for (int y = 0; y < 20; y++)
+        {
+            for (int x = 0; x < 20; x++)
+            {
+                glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
+                glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
+                Shell::Renderer::Instance()->Submit(m_BufferContainer, m_Shader, transform);
+            }
+        }
+
         Shell::Renderer::Instance()->EndScene();
     }
 
     void RenderLayer::UpdateCameraWithMovement(std::chrono::milliseconds deltaTime) {
         if (Shell::InputService::IsKeyPressed(Shell::Key::Left)) {
-            m_CameraPosition += glm::vec3(m_CameraSpeed * deltaTime.count(), 0.0f, 0.0f);
+            m_CameraPosition.x += m_CameraSpeed * deltaTime.count();
             m_Camera->SetPosition(m_CameraPosition);
         }
         else if (Shell::InputService::IsKeyPressed(Shell::Key::Right)) {
-            m_CameraPosition += glm::vec3(-1 * m_CameraSpeed * deltaTime.count(), 0.0f, 0.0f);
+            m_CameraPosition.x -= m_CameraSpeed * deltaTime.count();
             m_Camera->SetPosition(m_CameraPosition);
         }
         else if (Shell::InputService::IsKeyPressed(Shell::Key::Up)) {
-            m_CameraPosition += glm::vec3(0.0f, -1 * m_CameraSpeed * deltaTime.count(), 0.0f);
+            m_CameraPosition.y += m_CameraSpeed * deltaTime.count();
             m_Camera->SetPosition(m_CameraPosition);
         }
         else if (Shell::InputService::IsKeyPressed(Shell::Key::Down)) {
-            m_CameraPosition += glm::vec3(0.0f, m_CameraSpeed * deltaTime.count(), 0.0f);
+            m_CameraPosition.y -= m_CameraSpeed * deltaTime.count();
             m_Camera->SetPosition(m_CameraPosition);
         }
     }
