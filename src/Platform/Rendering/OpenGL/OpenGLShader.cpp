@@ -122,9 +122,39 @@ namespace Shell {
         glUseProgram(0);
     }
 
+    void OpenGLShader::SetUniform(const std::string &uniformName, const glm::mat3 &matrix) const {
+        auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
+        glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+    }
+
     void OpenGLShader::SetUniform(const std::string &uniformName, const glm::mat4 &matrix) const {
         auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
         glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+    }
+
+    void OpenGLShader::SetUniform(const std::string &uniformName, int intValue) const {
+        auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
+        glUniform1i(location, intValue);
+    }
+
+    void OpenGLShader::SetUniform(const std::string &uniformName, float floatValue) const {
+        auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
+        glUniform1f(location, floatValue);
+    }
+
+    void OpenGLShader::SetUniform(const std::string &uniformName, const glm::vec2 &vec2) const {
+        auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
+        glUniform2fv(location, 1, glm::value_ptr(vec2));
+    }
+
+    void OpenGLShader::SetUniform(const std::string &uniformName, const glm::vec3 &vec3) const {
+        auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
+        glUniform3fv(location, 1, glm::value_ptr(vec3));
+    }
+
+    void OpenGLShader::SetUniform(const std::string &uniformName, const glm::vec4 &vec4) const {
+        auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
+        glUniform4fv(location, 1, glm::value_ptr(vec4));
     }
 
 }

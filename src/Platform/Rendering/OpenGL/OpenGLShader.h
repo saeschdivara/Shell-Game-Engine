@@ -11,7 +11,15 @@ namespace Shell {
         void Bind() override;
         void Unbind() override;
 
+        void SetUniform(const std::string &uniformName, const glm::mat3 &matrix) const override;
         void SetUniform(const std::string &uniformName, const glm::mat4 &matrix) const override;
+
+        void SetUniform(const std::string &uniformName, int intValue) const override;
+
+        void SetUniform(const std::string &uniformName, float floatValue) const override;
+        void SetUniform(const std::string &uniformName, const glm::vec2 &vec2) const override;
+        void SetUniform(const std::string &uniformName, const glm::vec3 &vec3) const override;
+        void SetUniform(const std::string &uniformName, const glm::vec4 &vec4) const override;
 
     private:
         uint32_t m_RendererID;
