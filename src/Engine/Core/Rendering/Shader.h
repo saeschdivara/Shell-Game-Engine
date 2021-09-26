@@ -7,15 +7,13 @@
 namespace Shell {
     class Shader {
     public:
-        Shader(const std::string& vertexSrc, const std::string& fragmentSrc);
-        ~Shader();
+        virtual ~Shader() {}
 
-        void Bind();
-        void Unbind();
+        virtual void Bind() = 0;
+        virtual void Unbind() = 0;
 
-        void SetUniform(const std::string& uniformName, const glm::mat4& matrix) const;
+        virtual void SetUniform(const std::string& uniformName, const glm::mat4& matrix) const = 0;
 
-    private:
-        uint32_t m_RendererID;
+        static Ref<Shader> Create(const std::string &vertexSrc, const std::string &fragmentSrc);
     };
 }

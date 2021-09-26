@@ -59,7 +59,7 @@ namespace Sandbox {
             }
         )";
 
-        m_Shader = Shell::CreateRef<Shell::Shader>(vertexSrc, fragmentSrc);
+        m_Shader = Shell::Shader::Create(vertexSrc, fragmentSrc);
     }
 
     void RenderLayer::OnUpdate(std::chrono::milliseconds deltaTime) {

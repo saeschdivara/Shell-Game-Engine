@@ -60,7 +60,8 @@ add_library(shell_game_engine SHARED
         src/Platform/Rendering/OpenGL/OpenGLBufferContainer.cpp src/Platform/Rendering/OpenGL/OpenGLBufferContainer.h
         src/Platform/Rendering/OpenGL/OpenGLRenderCommand.cpp src/Platform/Rendering/OpenGL/OpenGLRenderCommand.h
         src/Engine/Core/Rendering/RenderCommand.cpp src/Engine/Core/Rendering/RenderCommand.h
-        src/Engine/Core/Rendering/Camera.h src/Engine/Core/Rendering/Camera.cpp)
+        src/Engine/Core/Rendering/Camera.h src/Engine/Core/Rendering/Camera.cpp
+        src/Platform/Rendering/OpenGL/OpenGLShader.cpp src/Platform/Rendering/OpenGL/OpenGLShader.h)
 
 target_precompile_headers(
         shell_game_engine
