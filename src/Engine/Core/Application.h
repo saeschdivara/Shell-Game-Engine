@@ -11,6 +11,8 @@
 #include "Engine/Core/Rendering/Buffer.h"
 #include "Engine/Core/Rendering/BufferContainer.h"
 
+#include <chrono>
+
 namespace Shell {
 
     class Application {
@@ -36,6 +38,8 @@ namespace Shell {
         UiLayer * m_UiLayer;
 
         bool m_IsRunning = true;
+
+        std::chrono::high_resolution_clock::time_point m_LastFrameTime;
 
     private:
         static Application* m_Instance;

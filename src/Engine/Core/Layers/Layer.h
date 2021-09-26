@@ -12,7 +12,7 @@ namespace Shell {
 
         virtual void OnAttach() {};
         virtual void OnDetach() {};
-        virtual void OnUpdate() {};
+        virtual void OnUpdate(std::chrono::milliseconds deltaTime) {};
         virtual void OnUiRender() {};
         virtual void OnEvent(Event & event) {};
 

@@ -1,6 +1,5 @@
 #include "Engine/Core/shellpch.h"
 #include "Engine/Core/Application.h"
-#include "Engine/Core/Rendering/Renderer.h"
 #include "Engine/Core/Rendering/RenderCommand.h"
 
 namespace Shell {
@@ -32,9 +31,12 @@ namespace Shell {
     void Application::Run() {
 
         while (m_IsRunning) {
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            auto timeStep = currentTime - m_LastFrameTime;
+            m_LastFrameTime = currentTime;
 
             for (Layer* layer : m_LayerStack) {
-                layer->OnUpdate();
+                layer->OnUpdate(std::chrono::duration_cast<std::chrono::milliseconds>(timeStep));
             }
 
             m_UiLayer->Begin();

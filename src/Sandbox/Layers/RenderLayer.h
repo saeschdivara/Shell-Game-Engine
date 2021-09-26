@@ -17,10 +17,10 @@ namespace Sandbox {
             {}
 
         void OnAttach() override;
-        void OnUpdate() override;
+        void OnUpdate(std::chrono::milliseconds deltaTime) override;
 
     private:
-        void UpdateCameraWithMovement();
+        void UpdateCameraWithMovement(std::chrono::milliseconds deltaTime);
 
     private:
         glm::vec4 m_ClearColor;
@@ -29,6 +29,7 @@ namespace Sandbox {
 
         Shell::Ref<Shell::OrthographicCamera> m_Camera;
         glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 0.0f };
+        float m_CameraSpeed = 0.008f;
     };
 
 }

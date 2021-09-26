@@ -58,8 +58,8 @@ namespace Sandbox {
         m_Shader = Shell::CreateRef<Shell::Shader>(vertexSrc, fragmentSrc);
     }
 
-    void RenderLayer::OnUpdate() {
-        UpdateCameraWithMovement();
+    void RenderLayer::OnUpdate(std::chrono::milliseconds deltaTime) {
+        UpdateCameraWithMovement(deltaTime);
 
         Shell::RenderCommand::Create()->SetClearColor(m_ClearColor);
         Shell::RenderCommand::Create()->Clear();
@@ -69,21 +69,21 @@ namespace Sandbox {
         Shell::Renderer::Instance()->EndScene();
     }
 
-    void RenderLayer::UpdateCameraWithMovement() {
+    void RenderLayer::UpdateCameraWithMovement(std::chrono::milliseconds deltaTime) {
         if (Shell::InputService::IsKeyPressed(Shell::Key::Left)) {
-            m_CameraPosition += glm::vec3(0.01f, 0.0f, 0.0f);
+            m_CameraPosition += glm::vec3(m_CameraSpeed * deltaTime.count(), 0.0f, 0.0f);
             m_Camera->SetPosition(m_CameraPosition);
         }
         else if (Shell::InputService::IsKeyPressed(Shell::Key::Right)) {
-            m_CameraPosition += glm::vec3(-0.01f, 0.0f, 0.0f);
+            m_CameraPosition += glm::vec3(-1 * m_CameraSpeed * deltaTime.count(), 0.0f, 0.0f);
             m_Camera->SetPosition(m_CameraPosition);
         }
         else if (Shell::InputService::IsKeyPressed(Shell::Key::Up)) {
-            m_CameraPosition += glm::vec3(0.0f, -0.01f, 0.0f);
+            m_CameraPosition += glm::vec3(0.0f, -1 * m_CameraSpeed * deltaTime.count(), 0.0f);
             m_Camera->SetPosition(m_CameraPosition);
         }
         else if (Shell::InputService::IsKeyPressed(Shell::Key::Down)) {
-            m_CameraPosition += glm::vec3(0.0f, 0.01f, 0.0f);
+            m_CameraPosition += glm::vec3(0.0f, m_CameraSpeed * deltaTime.count(), 0.0f);
             m_Camera->SetPosition(m_CameraPosition);
         }
     }
