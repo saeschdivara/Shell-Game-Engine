@@ -1,6 +1,7 @@
 #include "RenderLayer.h"
 
 #include <Engine/Core/InputService.h>
+#include <glm/ext.hpp>
 
 namespace Sandbox {
     void RenderLayer::OnAttach() {
@@ -33,13 +34,14 @@ namespace Sandbox {
             layout(location = 1) in vec4 a_Color;
 
             uniform mat4 u_ViewProjection;
+            uniform mat4 u_ModelTransform;
 
             out vec4 v_Color;
 
             void main()
             {
                 v_Color = a_Color;
-                gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+                gl_Position = u_ViewProjection * u_ModelTransform * vec4(a_Position, 1.0);
             }
         )";
 
@@ -65,7 +67,12 @@ namespace Sandbox {
         Shell::RenderCommand::Create()->Clear();
 
         Shell::Renderer::Instance()->BeginScene(m_Camera);
-        Shell::Renderer::Instance()->Submit(m_BufferContainer, m_Shader);
+
+        auto transform =
+                glm::translate(glm::mat4(1.0f), glm::vec3(0.25f, 0.20f, 0.0f)) *
+                glm::rotate(glm::mat4(1.0f), glm::radians(15.0f), glm::vec3(0.0f, 0.0f, 1));
+
+        Shell::Renderer::Instance()->Submit(m_BufferContainer, m_Shader, transform);
         Shell::Renderer::Instance()->EndScene();
     }
 

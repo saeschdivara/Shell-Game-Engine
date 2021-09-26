@@ -21,9 +21,10 @@ namespace Shell {
     void Renderer::EndScene() {
     }
 
-    void Renderer::Submit(const Ref<BufferContainer> &bufferContainer, const Ref<Shader>& shader) {
+    void Renderer::Submit(const Ref<BufferContainer> &bufferContainer, const Ref<Shader>& shader, const glm::mat4 & transform) {
         shader->Bind();
         shader->SetUniform("u_ViewProjection", m_Camera->GetViewProjectionMatrix());
+        shader->SetUniform("u_ModelTransform", transform);
 
         bufferContainer->Bind();
         RenderCommand::Create()->DrawIndexed(bufferContainer);
