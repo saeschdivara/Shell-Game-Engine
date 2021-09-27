@@ -28,7 +28,7 @@ namespace Shell {
         m_Data.Width = 1280;
 
         /* Create a windowed mode window and its OpenGL context */
-        m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, "Hello World", NULL, NULL);
+        m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, "Shell Engine", NULL, NULL);
         if (!m_Window) {
             SHELL_CORE_ERROR("Window could not be initialised");
             glfwTerminate();
