@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 project(shell_game_engine)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CONAN_DISABLE_CHECK_COMPILER 1)
 
 add_compile_options("$<$<CONFIG:DEBUG>:-DSHELL_APP_DEBUG>") # define debug symbol when using debug build
 
@@ -20,10 +21,12 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)  # Includes the contents of th
 conan_basic_setup()  # Prepares the CMakeList.txt for Conan.
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/ImGui/)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Glad/)
 
 include_directories(
         "src"
         "Vendors/ImGui"
+        "Vendors/Glad/include"
 )
 
 find_package(PkgConfig REQUIRED)
@@ -52,7 +55,7 @@ add_library(shell_game_engine SHARED
         src/Platform/Rendering/OpenGL/OpenGLContext.cpp src/Platform/Rendering/OpenGL/OpenGLContext.h
         src/Engine/Core/Rendering/Shader.h src/Engine/Core/Rendering/Shader.cpp
         src/Engine/Core/Assert.h
-        src/Engine/Core/Rendering/Texture.h
+        src/Engine/Core/Rendering/Texture.h src/Engine/Core/Rendering/Texture.cpp
         src/Engine/Core/Rendering/Buffer.h src/Engine/Core/Rendering/Buffer.cpp
         src/Platform/Rendering/OpenGL/OpenGLBuffer.cpp src/Platform/Rendering/OpenGL/OpenGLBuffer.h
         src/Engine/Core/Rendering/API.h
@@ -61,7 +64,8 @@ add_library(shell_game_engine SHARED
         src/Platform/Rendering/OpenGL/OpenGLRenderCommand.cpp src/Platform/Rendering/OpenGL/OpenGLRenderCommand.h
         src/Engine/Core/Rendering/RenderCommand.cpp src/Engine/Core/Rendering/RenderCommand.h
         src/Engine/Core/Rendering/Camera.h src/Engine/Core/Rendering/Camera.cpp
-        src/Platform/Rendering/OpenGL/OpenGLShader.cpp src/Platform/Rendering/OpenGL/OpenGLShader.h)
+        src/Platform/Rendering/OpenGL/OpenGLShader.cpp src/Platform/Rendering/OpenGL/OpenGLShader.h
+        src/Platform/Rendering/OpenGL/OpenGLTexture.cpp src/Platform/Rendering/OpenGL/OpenGLTexture.h)
 
 target_precompile_headers(
         shell_game_engine
@@ -69,7 +73,8 @@ target_precompile_headers(
 )
 
 target_link_libraries(shell_game_engine ${CONAN_LIBS})  # Specifies what libraries to link, using Conan.
-target_link_libraries(shell_game_engine imgui)  # Specifies what libraries to link, using Conan.
+target_link_libraries(shell_game_engine imgui)
+target_link_libraries(shell_game_engine glad)
 
 target_link_libraries(shell_game_engine ${MONO2_LINK_LIBRARIES})
 target_include_directories(shell_game_engine PUBLIC ${MONO2_INCLUDE_DIRS})
