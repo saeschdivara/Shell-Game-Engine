@@ -6,6 +6,7 @@
 #include <Engine/Core/Rendering/Renderer.h>
 #include <Engine/Core/Rendering/RenderCommand.h>
 #include <Engine/Core/Rendering/Shader.h>
+#include <Engine/Core/Rendering/Texture.h>
 
 namespace Sandbox {
     class RenderLayer : public Shell::Layer {
@@ -24,8 +25,14 @@ namespace Sandbox {
 
     private:
         glm::vec4 m_ClearColor;
+
         Shell::Ref<Shell::BufferContainer> m_BufferContainer;
         Shell::Ref<Shell::Shader> m_Shader;
+
+        Shell::Ref<Shell::BufferContainer> m_BufferContainerWithTextures;
+        Shell::Ref<Shell::Shader> m_TexturedShader;
+
+        Shell::Ref<Shell::Texture2D> m_Texture;
 
         Shell::Ref<Shell::OrthographicCamera> m_Camera;
         glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 0.0f };
