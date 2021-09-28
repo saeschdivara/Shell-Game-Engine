@@ -3,7 +3,7 @@
 #include "Engine/Core/Events/Event.h"
 #include "Engine/Core/Rendering/GraphicsContext.h"
 
-class GLFWwindow;
+struct GLFWwindow;
 
 namespace Shell {
 

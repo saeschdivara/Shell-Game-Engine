@@ -3,4 +3,8 @@ project(glad)
 
 include_directories(include)
 
-add_library(glad SHARED src/glad.c)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    add_library(glad STATIC src/glad.c)
+else()
+    add_library(glad SHARED src/glad.c)
+endif()

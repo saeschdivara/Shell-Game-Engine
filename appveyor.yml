@@ -2,6 +2,8 @@ image: macOS
 
 # scripts that run after cloning repository
 install:
+  - git submodule init
+  - git submodule update
   - mkdir build
   - cd build
   - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
