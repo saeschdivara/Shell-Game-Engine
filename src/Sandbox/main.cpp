@@ -5,11 +5,12 @@
 #include "Layers/SampleLayer.h"
 #include "Layers/RenderLayer.h"
 
-#include <backward.hpp>
+/*#include <backward.hpp>
 
 namespace backward {
     backward::SignalHandling sh;
 } // namespace backward
+ */
 
 class SandboxApplication : public Shell::Application {
 public:
@@ -28,7 +29,7 @@ public:
 //    }
 
 private:
-    Shell::ScriptExecutionManager scriptExecutionManager;
+    //Shell::ScriptExecutionManager scriptExecutionManager;
 };
 
 int main() {

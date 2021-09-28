@@ -26,42 +26,47 @@ include_directories(
         "Vendors/ImGui"
 )
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(MONO2 REQUIRED mono-2)
+set(ENGINE_FILES
+    src/Engine/Core/Logger.cpp src/Engine/Core/Logger.h
+    src/Engine/Core/Application.cpp src/Engine/Core/Application.h
+    src/Engine/Core/Window.cpp src/Engine/Core/Window.h
+    src/Engine/Core/Rendering/Renderer.cpp src/Engine/Core/Rendering/Renderer.h
+    src/Engine/Core/Utils.h
+    src/Engine/Scripting/ScriptExecutionManager.cpp src/Engine/Scripting/ScriptExecutionManager.h
+    src/Engine/Core/Events/ApplicationEvent.h src/Engine/Core/Events/Event.h
+    src/Engine/Core/Events/KeyEvent.h src/Engine/Core/Events/MouseEvent.h src/Engine/Core/Events/GamepadEvent.h
+    src/Engine/Core/Events/Codes/MouseCodes.h src/Engine/Core/Events/Codes/KeyCodes.h src/Engine/Core/Events/Codes/GamePadCodes.h
+    src/Engine/Core/shellpch.h
+    src/Engine/Core/Layers/Layer.cpp src/Engine/Core/Layers/Layer.h
+    src/Engine/Core/Layers/LayerStack.cpp src/Engine/Core/Layers/LayerStack.h
+    src/Engine/Core/Base.h
+    src/Engine/Core/Layers/UiLayer.cpp src/Engine/Core/Layers/UiLayer.h
+    src/Engine/UI/imgui_impl_glfw.cpp src/Engine/UI/imgui_impl_glfw.h
+    src/Engine/UI/imgui_impl_opengl3.cpp src/Engine/UI/imgui_impl_opengl3.h
+    src/Engine/Core/InputService.h
+    src/Platform/MacOS/MacOSInputService.cpp src/Platform/MacOS/MacOSInputService.h
+    src/Engine/Core/Rendering/GraphicsContext.h
+    src/Platform/Rendering/OpenGL/OpenGLContext.cpp src/Platform/Rendering/OpenGL/OpenGLContext.h
+    src/Engine/Core/Rendering/Shader.h src/Engine/Core/Rendering/Shader.cpp
+    src/Engine/Core/Assert.h
+    src/Engine/Core/Rendering/Texture.h
+    src/Engine/Core/Rendering/Buffer.h src/Engine/Core/Rendering/Buffer.cpp
+    src/Platform/Rendering/OpenGL/OpenGLBuffer.cpp src/Platform/Rendering/OpenGL/OpenGLBuffer.h
+    src/Engine/Core/Rendering/API.h
+    src/Engine/Core/Rendering/BufferContainer.cpp src/Engine/Core/Rendering/BufferContainer.h
+    src/Platform/Rendering/OpenGL/OpenGLBufferContainer.cpp src/Platform/Rendering/OpenGL/OpenGLBufferContainer.h
+    src/Platform/Rendering/OpenGL/OpenGLRenderCommand.cpp src/Platform/Rendering/OpenGL/OpenGLRenderCommand.h
+    src/Engine/Core/Rendering/RenderCommand.cpp src/Engine/Core/Rendering/RenderCommand.h
+    src/Engine/Core/Rendering/Camera.h src/Engine/Core/Rendering/Camera.cpp
+    src/Platform/Rendering/OpenGL/OpenGLShader.cpp src/Platform/Rendering/OpenGL/OpenGLShader.h
+    src/Engine/lib.h
+)
 
-add_library(shell_game_engine SHARED
-        src/Engine/Core/Logger.cpp src/Engine/Core/Logger.h
-        src/Engine/Core/Application.cpp src/Engine/Core/Application.h
-        src/Engine/Core/Window.cpp src/Engine/Core/Window.h
-        src/Engine/Core/Rendering/Renderer.cpp src/Engine/Core/Rendering/Renderer.h
-        src/Engine/Core/Utils.h
-        src/Engine/Scripting/ScriptExecutionManager.cpp src/Engine/Scripting/ScriptExecutionManager.h
-        src/Engine/Core/Events/ApplicationEvent.h src/Engine/Core/Events/Event.h
-        src/Engine/Core/Events/KeyEvent.h src/Engine/Core/Events/MouseEvent.h src/Engine/Core/Events/GamepadEvent.h
-        src/Engine/Core/Events/Codes/MouseCodes.h src/Engine/Core/Events/Codes/KeyCodes.h src/Engine/Core/Events/Codes/GamePadCodes.h
-        src/Engine/Core/shellpch.h
-        src/Engine/Core/Layers/Layer.cpp src/Engine/Core/Layers/Layer.h
-        src/Engine/Core/Layers/LayerStack.cpp src/Engine/Core/Layers/LayerStack.h
-        src/Engine/Core/Base.h
-        src/Engine/Core/Layers/UiLayer.cpp src/Engine/Core/Layers/UiLayer.h
-        src/Engine/UI/imgui_impl_glfw.cpp src/Engine/UI/imgui_impl_glfw.h
-        src/Engine/UI/imgui_impl_opengl3.cpp src/Engine/UI/imgui_impl_opengl3.h
-        src/Engine/Core/InputService.h
-        src/Platform/MacOS/MacOSInputService.cpp src/Platform/MacOS/MacOSInputService.h
-        src/Engine/Core/Rendering/GraphicsContext.h
-        src/Platform/Rendering/OpenGL/OpenGLContext.cpp src/Platform/Rendering/OpenGL/OpenGLContext.h
-        src/Engine/Core/Rendering/Shader.h src/Engine/Core/Rendering/Shader.cpp
-        src/Engine/Core/Assert.h
-        src/Engine/Core/Rendering/Texture.h
-        src/Engine/Core/Rendering/Buffer.h src/Engine/Core/Rendering/Buffer.cpp
-        src/Platform/Rendering/OpenGL/OpenGLBuffer.cpp src/Platform/Rendering/OpenGL/OpenGLBuffer.h
-        src/Engine/Core/Rendering/API.h
-        src/Engine/Core/Rendering/BufferContainer.cpp src/Engine/Core/Rendering/BufferContainer.h
-        src/Platform/Rendering/OpenGL/OpenGLBufferContainer.cpp src/Platform/Rendering/OpenGL/OpenGLBufferContainer.h
-        src/Platform/Rendering/OpenGL/OpenGLRenderCommand.cpp src/Platform/Rendering/OpenGL/OpenGLRenderCommand.h
-        src/Engine/Core/Rendering/RenderCommand.cpp src/Engine/Core/Rendering/RenderCommand.h
-        src/Engine/Core/Rendering/Camera.h src/Engine/Core/Rendering/Camera.cpp
-        src/Platform/Rendering/OpenGL/OpenGLShader.cpp src/Platform/Rendering/OpenGL/OpenGLShader.h)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    add_library(shell_game_engine STATIC ${ENGINE_FILES})
+else()
+    add_library(shell_game_engine SHARED ${ENGINE_FILES})
+endif()
 
 target_precompile_headers(
         shell_game_engine
@@ -69,13 +74,17 @@ target_precompile_headers(
 )
 
 target_link_libraries(shell_game_engine ${CONAN_LIBS})  # Specifies what libraries to link, using Conan.
-target_link_libraries(shell_game_engine imgui)  # Specifies what libraries to link, using Conan.
-
-target_link_libraries(shell_game_engine ${MONO2_LINK_LIBRARIES})
-target_include_directories(shell_game_engine PUBLIC ${MONO2_INCLUDE_DIRS})
-target_compile_options(shell_game_engine PUBLIC ${MONO2_CFLAGS_OTHER})
+target_link_libraries(shell_game_engine imgui)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(MONO2 REQUIRED mono-2)
+
+    target_link_libraries(shell_game_engine ${MONO2_LINK_LIBRARIES})
+    target_include_directories(shell_game_engine PUBLIC ${MONO2_INCLUDE_DIRS})
+    target_compile_options(shell_game_engine PUBLIC ${MONO2_CFLAGS_OTHER})
+
     find_package(Backward)
 
     include_directories("/usr/local/include")
