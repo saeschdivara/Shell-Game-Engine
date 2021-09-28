@@ -111,3 +111,7 @@ add_executable(shell_sandbox_game
         src/Sandbox/Layers/RenderLayer.h src/Sandbox/Layers/RenderLayer.cpp)
 
 target_link_libraries(shell_sandbox_game shell_game_engine)
+
+########### Editor Application ###########
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Editor/)
