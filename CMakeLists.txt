@@ -21,13 +21,17 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)  # Includes the contents of th
 conan_basic_setup()  # Prepares the CMakeList.txt for Conan.
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/ImGui/)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Spdlog/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Glad/)
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Spdlog/)
+
+    include_directories("Vendors/Spdlog/include")
+endif()
 
 include_directories(
         "src"
         "Vendors/ImGui"
-        "Vendors/Spdlog/include"
         "Vendors/Glad/include"
 )
 
@@ -81,8 +85,11 @@ target_precompile_headers(
 
 target_link_libraries(shell_game_engine ${CONAN_LIBS})  # Specifies what libraries to link, using Conan.
 target_link_libraries(shell_game_engine imgui)
-target_link_libraries(shell_game_engine spdlog)
 target_link_libraries(shell_game_engine glad)
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    target_link_libraries(shell_game_engine spdlog)
+endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
