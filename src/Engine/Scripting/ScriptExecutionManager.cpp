@@ -1,4 +1,6 @@
 #include "ScriptExecutionManager.h"
+
+#ifndef SHELL_PLATFORM_WINDOWS
 #include "Engine/Core/Logger.h"
 
 #include <mono/jit/jit.h>
@@ -51,3 +53,4 @@ namespace Shell {
         mono_jit_cleanup(domain);
     }
 }
+#endif

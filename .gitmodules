@@ -2,3 +2,6 @@
 	path = Vendors/ImGui
 	url = git@github.com:saeschdivara/imgui.git
 	branch = docking
+[submodule "Vendors/Spdlog"]
+	path = Vendors/Spdlog
+	url = git@github.com:gabime/spdlog.git
