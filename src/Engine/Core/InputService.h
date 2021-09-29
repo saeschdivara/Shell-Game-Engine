@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Engine/Core/Events/Codes/GamePadCodes.h"
 #include "Engine/Core/Events/Codes/KeyCodes.h"
 #include "Engine/Core/Events/Codes/MouseCodes.h"
 
@@ -15,7 +16,9 @@ namespace Shell {
         inline static float GetMouseX() { return m_Instance->GetMouseXImpl(); }
         inline static float GetMouseY() { return m_Instance->GetMouseYImpl(); }
 
-        // TODO: add gamepad
+        // gamepad
+        inline static bool IsGamepadButtonPressed(Gamepad::ButtonCodeEnum code) { return m_Instance->IsGamepadButtonPressedImpl(code); }
+        inline static float GetGamepadAxis(Gamepad::AxisCodeEnum code) { return m_Instance->GetGamepadAxisImpl(code); }
 
     protected:
         // keyboard
@@ -26,6 +29,10 @@ namespace Shell {
         virtual std::pair<float, float> GetMousePositionImpl() = 0;
         virtual float GetMouseXImpl() = 0;
         virtual float GetMouseYImpl() = 0;
+
+        // gamepad
+        virtual bool IsGamepadButtonPressedImpl(Gamepad::ButtonCodeEnum code) = 0;
+        virtual float GetGamepadAxisImpl(Gamepad::AxisCodeEnum code) = 0;
 
     private:
         static InputService* m_Instance;
