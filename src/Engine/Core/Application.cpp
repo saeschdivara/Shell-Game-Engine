@@ -51,8 +51,6 @@ namespace Shell {
 
     void Application::OnEvent(Event &event) {
 
-        SHELL_CORE_DEBUG(event.ToString());
-
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<WindowCloseEvent>(SHELL_BIND_EVENT_FN(Application::OnWindowClose));
         dispatcher.Dispatch<WindowResizeEvent>(SHELL_BIND_EVENT_FN(Application::OnWindowResize));

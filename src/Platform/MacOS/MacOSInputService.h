@@ -14,6 +14,10 @@ namespace Shell {
         std::pair<float, float> GetMousePositionImpl() override;
         float GetMouseXImpl() override;
         float GetMouseYImpl() override;
+
+        // gamepad
+        bool IsGamepadButtonPressedImpl(Gamepad::ButtonCodeEnum code) override;
+        float GetGamepadAxisImpl(Gamepad::AxisCodeEnum code) override;
     };
 }
 
