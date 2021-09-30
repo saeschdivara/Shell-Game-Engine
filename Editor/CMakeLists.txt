@@ -3,6 +3,6 @@ project(shell_game_engine_editor)
 
 add_executable(shell_editor
     src/main.cpp
-)
+        src/Layers/UILayer.cpp src/Layers/UILayer.h)
 
 target_link_libraries(shell_editor shell_game_engine)
