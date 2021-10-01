@@ -70,7 +70,8 @@ set(ENGINE_FILES
     src/Platform/Rendering/OpenGL/OpenGLShader.cpp src/Platform/Rendering/OpenGL/OpenGLShader.h
     src/Platform/Rendering/OpenGL/OpenGLTexture.cpp src/Platform/Rendering/OpenGL/OpenGLTexture.h
     src/Engine/lib.h
-)
+    src/Engine/Core/Rendering/FrameBuffer.cpp src/Engine/Core/Rendering/FrameBuffer.h
+    src/Platform/Rendering/OpenGL/OpenGLFrameBuffer.cpp src/Platform/Rendering/OpenGL/OpenGLFrameBuffer.h)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_library(shell_game_engine STATIC ${ENGINE_FILES})
