@@ -98,18 +98,22 @@ endif()
 # through an IMPORTED target.
 target_link_libraries(shell_game_engine backward)
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(MONO2 REQUIRED monosgen-2)
 
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(MONO2 REQUIRED mono-2)
+target_link_directories(shell_game_engine PUBLIC ${MONO2_LIBRARY_DIRS})
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    target_link_libraries(shell_game_engine mono-2.0-sgen)
+else()
     target_link_libraries(shell_game_engine ${MONO2_LINK_LIBRARIES})
-    target_include_directories(shell_game_engine PUBLIC ${MONO2_INCLUDE_DIRS})
-    target_compile_options(shell_game_engine PUBLIC ${MONO2_CFLAGS_OTHER})
-
-    include_directories("/usr/local/include")
-    include_directories("/usr/local/include/mono-2.0")
 endif()
+
+target_include_directories(shell_game_engine PUBLIC ${MONO2_INCLUDE_DIRS})
+target_compile_options(shell_game_engine PUBLIC ${MONO2_CFLAGS_OTHER})
+
+include_directories("/usr/local/include")
+include_directories("/usr/local/include/mono-2.0")
 
 ########### Example Application ###########
 
