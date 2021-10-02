@@ -20,6 +20,8 @@ namespace Shell::Editor {
         // ------ Rendering ------
         Ref<FrameBuffer> m_Framebuffer;
 
+        glm::vec4 m_ClearColor;
+
         // ------ UI ------
 
         bool m_ViewportFocused = false;

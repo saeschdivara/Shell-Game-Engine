@@ -1,11 +1,16 @@
 #include "UILayer.h"
 
+#include <Engine/Core/Rendering/RenderCommand.h>
+
 #include <imgui.h>
 #include <imgui_internal.h>
 
 namespace Shell::Editor {
 
-    EditorUILayer::EditorUILayer() : Layer("UI Layer") {}
+    EditorUILayer::EditorUILayer()
+    : Layer("UI Layer"),
+      m_ClearColor(glm::vec4(0.2f, 0.2f, 0.2f, 1))
+    {}
 
     void EditorUILayer::OnAttach() {
         FrameBufferSpecification frameBufferSpec;
@@ -17,6 +22,10 @@ namespace Shell::Editor {
 
     void EditorUILayer::OnUpdate(std::chrono::milliseconds deltaTime) {
         m_Framebuffer->Bind();
+
+        Shell::RenderCommand::Create()->SetClearColor(m_ClearColor);
+        Shell::RenderCommand::Create()->Clear();
+
         m_Framebuffer->Unbind();
     }
 
