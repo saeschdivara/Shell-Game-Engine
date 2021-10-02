@@ -5,3 +5,6 @@
 [submodule "Vendors/Spdlog"]
 	path = Vendors/Spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "Vendors/Backward"]
+	path = Vendors/Backward
+	url = https://github.com/bombela/backward-cpp.git

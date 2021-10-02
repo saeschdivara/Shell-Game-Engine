@@ -22,6 +22,7 @@ conan_basic_setup()  # Prepares the CMakeList.txt for Conan.
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/ImGui/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Glad/)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Backward/)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Spdlog/)
@@ -33,6 +34,7 @@ include_directories(
         "src"
         "Vendors/ImGui"
         "Vendors/Glad/include"
+        "Vendors/Backward"
 )
 
 set(ENGINE_FILES
@@ -92,6 +94,10 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_link_libraries(shell_game_engine spdlog)
 endif()
 
+# This will add libraries, definitions and include directories needed by backward
+# through an IMPORTED target.
+target_link_libraries(shell_game_engine backward)
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
     find_package(PkgConfig REQUIRED)
@@ -101,14 +107,8 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_include_directories(shell_game_engine PUBLIC ${MONO2_INCLUDE_DIRS})
     target_compile_options(shell_game_engine PUBLIC ${MONO2_CFLAGS_OTHER})
 
-    find_package(Backward)
-
     include_directories("/usr/local/include")
     include_directories("/usr/local/include/mono-2.0")
-
-    # This will add libraries, definitions and include directories needed by backward
-    # through an IMPORTED target.
-    target_link_libraries(shell_game_engine Backward::Backward)
 endif()
 
 ########### Example Application ###########
