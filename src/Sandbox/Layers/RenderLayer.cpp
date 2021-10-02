@@ -120,7 +120,7 @@ namespace Sandbox {
 
         m_TexturedShader = Shell::Shader::Create(textureVertexSrc, textureFragmentSrc);
 
-        m_Texture = Shell::Texture2D::Create("C:\\Users\\Saskyrar\\Downloads\\Checkerboard.png"); // TODO: fill path in
+        m_Texture = Shell::Texture2D::Create("./assets/textures/Checkerboard.png"); // TODO: fill path in
         m_TexturedShader->Bind();
         m_TexturedShader->SetUniform("u_Texture", 0);
     }
