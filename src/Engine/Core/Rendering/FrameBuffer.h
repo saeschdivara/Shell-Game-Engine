@@ -14,7 +14,11 @@ namespace Shell {
     class FrameBuffer {
     public:
         virtual ~FrameBuffer() {}
-        virtual FrameBufferSpecification& GetSpecification() const = 0;
+        virtual FrameBufferSpecification& GetSpecification() = 0;
+        [[nodiscard]] virtual uint32_t GetColorAttachment() const = 0;
+
+        virtual void Bind() = 0;
+        virtual void Unbind() = 0;
 
         static Ref<FrameBuffer> Create(const FrameBufferSpecification& specification);
     };

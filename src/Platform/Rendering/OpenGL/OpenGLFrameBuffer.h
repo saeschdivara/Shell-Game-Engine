@@ -10,16 +10,24 @@ namespace Shell {
 
         virtual ~OpenGLFrameBuffer();
 
-        [[nodiscard]] FrameBufferSpecification &GetSpecification() const override {
+        [[nodiscard]] FrameBufferSpecification &GetSpecification() override {
             return m_Specification;
         }
 
+        void Bind() override;
+        void Unbind() override;
+
         void Recreate();
+
+        [[nodiscard]] uint32_t GetColorAttachment() const override {
+            return m_ColorAttachment;
+        }
 
     private:
         uint32_t m_RendererID;
         uint32_t m_ColorAttachment;
-        const FrameBufferSpecification& m_Specification;
+        uint32_t m_DepthAttachment;
+        FrameBufferSpecification m_Specification;
     };
 
 }
