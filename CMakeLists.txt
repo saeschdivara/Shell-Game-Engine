@@ -73,7 +73,11 @@ set(ENGINE_FILES
     src/Platform/Rendering/OpenGL/OpenGLTexture.cpp src/Platform/Rendering/OpenGL/OpenGLTexture.h
     src/Engine/lib.h
     src/Engine/Core/Rendering/FrameBuffer.cpp src/Engine/Core/Rendering/FrameBuffer.h
-    src/Platform/Rendering/OpenGL/OpenGLFrameBuffer.cpp src/Platform/Rendering/OpenGL/OpenGLFrameBuffer.h)
+    src/Platform/Rendering/OpenGL/OpenGLFrameBuffer.cpp src/Platform/Rendering/OpenGL/OpenGLFrameBuffer.h
+    src/Engine/Project/Project.cpp src/Engine/Project/Project.h
+    src/Engine/Project/ProjectSettings.cpp src/Engine/Project/ProjectSettings.h
+    src/Engine/Project/Scene.cpp src/Engine/Project/Scene.h
+    src/Engine/Project/ProjectBlueprint.cpp src/Engine/Project/ProjectBlueprint.h)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_library(shell_game_engine STATIC ${ENGINE_FILES})
