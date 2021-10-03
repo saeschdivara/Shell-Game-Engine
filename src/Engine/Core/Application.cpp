@@ -1,6 +1,4 @@
-#include "Engine/Core/shellpch.h"
 #include "Engine/Core/Application.h"
-#include "Engine/Core/Rendering/RenderCommand.h"
 
 namespace Shell {
     Application* Application::m_Instance = nullptr;

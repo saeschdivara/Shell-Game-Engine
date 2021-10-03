@@ -1,5 +1,6 @@
 #include "UILayer.h"
 
+#include <Engine/Core/shellpch.h>
 #include <Engine/Core/Rendering/RenderCommand.h>
 
 #include <imgui.h>
@@ -18,6 +19,8 @@ namespace Shell::Editor {
         frameBufferSpec.Height = 720;
 
         m_Framebuffer = FrameBuffer::Create(frameBufferSpec);
+
+        m_CurrentSceneBluePrint = CreateRef<SceneBlueprint>();
     }
 
     void EditorUILayer::OnUpdate(std::chrono::milliseconds deltaTime) {

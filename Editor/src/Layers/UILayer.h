@@ -2,6 +2,7 @@
 
 #include <Engine/Core/Layers/Layer.h>
 #include <Engine/Core/Rendering/FrameBuffer.h>
+#include <Engine/Project/SceneBlueprint.h>
 
 #include <glm/glm.hpp>
 
@@ -16,6 +17,7 @@ namespace Shell::Editor {
         void OnUiRender() override;
 
     private:
+        Ref<SceneBlueprint> m_CurrentSceneBluePrint;
 
         // ------ Rendering ------
         Ref<FrameBuffer> m_Framebuffer;
