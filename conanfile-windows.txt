@@ -4,6 +4,8 @@ glfw/3.3.4        # cross-platform window / opengl library
 glm/0.9.9.8       # cross-platform math library
 miniaudio/0.10.40
 
+entt/3.8.1        # entity component system
+
 stb/cci.20210713
 
 [generators]
