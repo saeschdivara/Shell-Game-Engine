@@ -2,7 +2,7 @@
 
 namespace Shell {
 
-    class ProjectBlueprint {
+    class SceneBlueprint {
 
     };
 }

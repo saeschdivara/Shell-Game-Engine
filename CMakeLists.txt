@@ -77,7 +77,7 @@ set(ENGINE_FILES
     src/Engine/Project/Project.cpp src/Engine/Project/Project.h
     src/Engine/Project/ProjectSettings.cpp src/Engine/Project/ProjectSettings.h
     src/Engine/Project/Scene.cpp src/Engine/Project/Scene.h
-    src/Engine/Project/ProjectBlueprint.cpp src/Engine/Project/ProjectBlueprint.h)
+        src/Engine/Project/SceneBlueprint.cpp src/Engine/Project/SceneBlueprint.h)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_library(shell_game_engine STATIC ${ENGINE_FILES})
