@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Engine/Core/shellpch.h"
+#include "Engine/Core/Rendering/Texture.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -36,5 +38,17 @@ namespace Shell {
                    * rotation
                    * glm::scale(glm::mat4(1.0f), Scale);
         }
+    };
+
+    struct SpriteComponent
+    {
+        glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+        Ref<Texture2D> Texture;
+        float TilingFactor = 1.0f;
+
+        SpriteComponent() = default;
+        SpriteComponent(const SpriteComponent&) = default;
+        SpriteComponent(const glm::vec4& color) : Color(color) {}
+        SpriteComponent(Ref<Texture2D> texture) : Texture(texture) {}
     };
 }

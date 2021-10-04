@@ -1,16 +1,51 @@
 #include "UILayer.h"
 
-#include <Engine/Core/shellpch.h>
 #include <Engine/Core/Rendering/RenderCommand.h>
+#include <Engine/Core/Rendering/Renderer.h>
+#include <Engine/Project/Entities/Components.h>
 
 #include <imgui.h>
 #include <imgui_internal.h>
 
 namespace Shell::Editor {
 
+
+    static std::string textureVertexSrc = R"(
+        #version 330 core
+
+        layout(location = 0) in vec3 a_Position;
+        layout(location = 1) in vec2 a_TexCoord;
+
+        uniform mat4 u_ViewProjection;
+        uniform mat4 u_ModelTransform;
+
+        out vec2 v_TexCoord;
+
+        void main()
+        {
+            v_TexCoord = a_TexCoord;
+            gl_Position = u_ViewProjection * u_ModelTransform * vec4(a_Position, 1.0);
+        }
+    )";
+
+    static std::string textureFragmentSrc = R"(
+        #version 330 core
+        layout(location = 0) out vec4 color;
+
+        in vec2 v_TexCoord;
+
+        uniform sampler2D u_Texture;
+
+        void main()
+        {
+            color = texture(u_Texture, v_TexCoord);
+        }
+    )";
+
     EditorUILayer::EditorUILayer()
     : Layer("UI Layer"),
-      m_ClearColor(glm::vec4(0.2f, 0.2f, 0.2f, 1))
+      m_ClearColor(glm::vec4(0.2f, 0.2f, 0.2f, 1)),
+      m_Camera(new Shell::OrthographicCamera(-1.6f, 1.6f, -0.9f, 0.9f))
     {}
 
     void EditorUILayer::OnAttach() {
@@ -19,8 +54,40 @@ namespace Shell::Editor {
         frameBufferSpec.Height = 720;
 
         m_Framebuffer = FrameBuffer::Create(frameBufferSpec);
+        m_BufferContainerWithTextures = BufferContainer::Create();
+
+        float texturedSquareVertices [] = {
+                //x      y      z
+                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+                0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+                0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+                -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
+        };
+
+        auto m_TextureVertexBuffer = VertexBuffer::Create(texturedSquareVertices, sizeof(texturedSquareVertices));
+
+        BufferLayout layoutWithTexture = {
+                { ShaderDataType::Float3, "a_Position" },
+                { ShaderDataType::Float2, "a_TexCoord" },
+        };
+
+        m_TextureVertexBuffer->SetLayout(layoutWithTexture);
+        m_BufferContainerWithTextures->AddBuffer(m_TextureVertexBuffer);
+
+        uint32_t indices[] = { 0, 1, 2, 2, 3, 0 };
+        auto indexBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
+        m_BufferContainerWithTextures->AddBuffer(indexBuffer);
+
+        m_TexturedShader = Shader::Create(textureVertexSrc, textureFragmentSrc);
+
+        m_TexturedShader->Bind();
+        m_TexturedShader->SetUniform("u_Texture", 0);
 
         m_CurrentSceneBluePrint = CreateRef<SceneBlueprint>();
+        m_EntityManager = CreateRef<EntityManager>();
+
+        auto entity = m_EntityManager->CreateEntity(m_CurrentSceneBluePrint);
+        m_EntityManager->AddComponent<SpriteComponent>(entity, Texture2D::Create("./assets/textures/Checkerboard.png"));
     }
 
     void EditorUILayer::OnUpdate(std::chrono::milliseconds deltaTime) {
@@ -28,6 +95,18 @@ namespace Shell::Editor {
 
         Shell::RenderCommand::Create()->SetClearColor(m_ClearColor);
         Shell::RenderCommand::Create()->Clear();
+
+        Shell::Renderer::Instance()->BeginScene(m_Camera);
+
+        auto view = m_EntityManager->GetComponentView<TransformComponent, SpriteComponent>();
+        for(auto &&[entity, transform, sprite] : view.each()) {
+            if (sprite.Texture) {
+                sprite.Texture->Bind();
+                Shell::Renderer::Instance()->Submit(m_BufferContainerWithTextures, m_TexturedShader, transform.GetTransform());
+            }
+        }
+
+        Shell::Renderer::Instance()->EndScene();
 
         m_Framebuffer->Unbind();
     }

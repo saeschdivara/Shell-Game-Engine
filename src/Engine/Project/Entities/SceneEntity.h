@@ -16,6 +16,8 @@ namespace Shell {
         void AddChild(SceneEntity * child) { m_ChildEntities.push_back(child); }
         std::vector<SceneEntity *>& GetChildren() { return m_ChildEntities; }
 
+        [[nodiscard]] entt::entity GetEnity() const { return m_Entity; }
+
     private:
         Ref<Scene> m_Scene;
         entt::entity m_Entity;

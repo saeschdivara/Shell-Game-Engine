@@ -1,5 +1,11 @@
-#include <Engine/Core/Application.h>
 #include "Layers/UILayer.h"
+
+#include <Engine/Core/Application.h>
+#include <backward.hpp>
+
+namespace backward {
+    backward::SignalHandling sh;
+} // namespace backward
 
 class EditorApplication : public Shell::Application {
 public:
