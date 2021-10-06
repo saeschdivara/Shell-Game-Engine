@@ -5,6 +5,7 @@
 #include <Engine/Core/Rendering/BufferContainer.h>
 #include <Engine/Core/Rendering/Camera.h>
 #include <Engine/Core/Rendering/FrameBuffer.h>
+#include <Engine/Core/Rendering/RenderQueue.h>
 #include <Engine/Core/Rendering/Shader.h>
 #include <Engine/Core/Rendering/Texture.h>
 #include <Engine/Project/SceneBlueprint.h>
@@ -28,11 +29,9 @@ namespace Shell::Editor {
 
         // ------ Rendering ------
         Ref<FrameBuffer> m_Framebuffer;
+        Ref<RenderQueue> m_RenderQueue;
 
-        Shell::Ref<Shell::BufferContainer> m_BufferContainerWithTextures;
-        Shell::Ref<Shell::Shader> m_TexturedShader;
-
-        Shell::Ref<Shell::OrthographicCamera> m_Camera;
+        Ref<OrthographicCamera> m_Camera;
 
         glm::vec4 m_ClearColor;
 

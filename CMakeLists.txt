@@ -80,7 +80,9 @@ set(ENGINE_FILES
     src/Engine/Project/SceneBlueprint.cpp src/Engine/Project/SceneBlueprint.h
     src/Engine/Project/Entities/EntityManager.cpp src/Engine/Project/Entities/EntityManager.h
     src/Engine/Project/Entities/Components.h
-    src/Engine/Project/Entities/SceneEntity.cpp src/Engine/Project/Entities/SceneEntity.h)
+    src/Engine/Project/Entities/SceneEntity.cpp src/Engine/Project/Entities/SceneEntity.h
+    src/Engine/Core/Rendering/RenderQueue.cpp src/Engine/Core/Rendering/RenderQueue.h
+)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_library(shell_game_engine STATIC ${ENGINE_FILES})
@@ -117,7 +119,10 @@ else()
 endif()
 
 target_include_directories(shell_game_engine PUBLIC ${MONO2_INCLUDE_DIRS})
-target_compile_options(shell_game_engine PUBLIC ${MONO2_CFLAGS_OTHER})
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    target_compile_options(shell_game_engine PUBLIC ${MONO2_CFLAGS_OTHER})
+endif()
 
 include_directories("/usr/local/include")
 include_directories("/usr/local/include/mono-2.0")

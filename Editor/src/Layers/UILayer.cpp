@@ -21,37 +21,8 @@ namespace Shell::Editor {
         frameBufferSpec.Height = 720;
 
         m_Framebuffer = FrameBuffer::Create(frameBufferSpec);
-        m_BufferContainerWithTextures = BufferContainer::Create();
-
-        float texturedSquareVertices [] = {
-                //x      y      z
-                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-                0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-                0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
-                -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-        };
-
-        auto m_TextureVertexBuffer = VertexBuffer::Create(texturedSquareVertices, sizeof(texturedSquareVertices));
-
-        BufferLayout layoutWithTexture = {
-                { ShaderDataType::Float3, "a_Position" },
-                { ShaderDataType::Float2, "a_TexCoord" },
-        };
-
-        m_TextureVertexBuffer->SetLayout(layoutWithTexture);
-        m_BufferContainerWithTextures->AddBuffer(m_TextureVertexBuffer);
-
-        uint32_t indices[] = { 0, 1, 2, 2, 3, 0 };
-        auto indexBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
-        m_BufferContainerWithTextures->AddBuffer(indexBuffer);
-
-        m_TexturedShader = Shader::CreateFromFiles(
-            "assets/shaders/textured/vertex.glsl",
-            "assets/shaders/textured/fragment.glsl"
-        );
-
-        m_TexturedShader->Bind();
-        m_TexturedShader->SetUniform("u_Texture", 0);
+        m_RenderQueue = CreateRef<RenderQueue>();
+        m_RenderQueue->Init();
 
         m_CurrentSceneBluePrint = CreateRef<SceneBlueprint>();
         m_EntityManager = CreateRef<EntityManager>();
@@ -68,13 +39,16 @@ namespace Shell::Editor {
 
         Shell::Renderer::Instance()->BeginScene(m_Camera);
 
+        m_RenderQueue->StartBatch();
+
         auto view = m_EntityManager->GetComponentView<TransformComponent, SpriteComponent>();
         for(auto &&[entity, transform, sprite] : view.each()) {
             if (sprite.Texture) {
-                sprite.Texture->Bind();
-                Shell::Renderer::Instance()->Submit(m_BufferContainerWithTextures, m_TexturedShader, transform.GetTransform());
+                m_RenderQueue->EnqueueTexturedQuad(sprite.Texture, transform.GetTransform());
             }
         }
+
+        m_RenderQueue->Flush();
 
         Shell::Renderer::Instance()->EndScene();
 
