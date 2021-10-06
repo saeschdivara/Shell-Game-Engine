@@ -23,5 +23,6 @@ namespace Shell {
         virtual void SetUniform(const std::string &uniformName, const glm::vec4 &vec4)   const = 0;
 
         static Ref<Shader> Create(const std::string &vertexSrc, const std::string &fragmentSrc);
+        static Ref<Shader> CreateFromFiles(const std::string &vertexFilePath, const std::string &fragmentFilePath);
     };
 }

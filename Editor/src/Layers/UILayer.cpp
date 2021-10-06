@@ -9,13 +9,6 @@
 
 namespace Shell::Editor {
 
-
-    static std::string textureVertexSrc = R"(
-    )";
-
-    static std::string textureFragmentSrc = R"(
-    )";
-
     EditorUILayer::EditorUILayer()
     : Layer("UI Layer"),
       m_ClearColor(glm::vec4(0.2f, 0.2f, 0.2f, 1)),
@@ -52,7 +45,10 @@ namespace Shell::Editor {
         auto indexBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
         m_BufferContainerWithTextures->AddBuffer(indexBuffer);
 
-        m_TexturedShader = Shader::Create(textureVertexSrc, textureFragmentSrc);
+        m_TexturedShader = Shader::CreateFromFiles(
+            "assets/shaders/textured/vertex.glsl",
+            "assets/shaders/textured/fragment.glsl"
+        );
 
         m_TexturedShader->Bind();
         m_TexturedShader->SetUniform("u_Texture", 0);
