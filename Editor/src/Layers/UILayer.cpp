@@ -9,6 +9,39 @@
 
 namespace Shell::Editor {
 
+    // Helper to display a little (?) mark which shows a tooltip when hovered.
+// In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.md)
+    static ImRect RenderTree(SceneEntity * entity)
+    {
+        const bool recurse = ImGui::TreeNode(entity->GetName().c_str());
+        const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
+
+        if (recurse)
+        {
+            const ImColor TreeLineColor = ImGui::GetColorU32(ImGuiCol_Text);
+            const float SmallOffsetX = 11.0f; //for now, a hardcoded value; should take into account tree indent size
+            ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+            ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
+            verticalLineStart.x += SmallOffsetX; //to nicely line up with the arrow symbol
+            ImVec2 verticalLineEnd = verticalLineStart;
+
+            for (SceneEntity * child : entity->GetChildren())
+            {
+                const float HorizontalTreeLineSize = 8.0f; //chosen arbitrarily
+                const ImRect childRect = RenderTree(child);
+                const float midpoint = (childRect.Min.y + childRect.Max.y) / 2.0f;
+                drawList->AddLine(ImVec2(verticalLineStart.x, midpoint), ImVec2(verticalLineStart.x + HorizontalTreeLineSize, midpoint), TreeLineColor);
+                verticalLineEnd.y = midpoint;
+            }
+
+            drawList->AddLine(verticalLineStart, verticalLineEnd, TreeLineColor);
+            ImGui::TreePop();
+        }
+
+        return nodeRect;
+    }
+
     EditorUILayer::EditorUILayer()
     : Layer("UI Layer"),
       m_ClearColor(glm::vec4(0.2f, 0.2f, 0.2f, 1)),
@@ -27,7 +60,10 @@ namespace Shell::Editor {
         m_CurrentSceneBluePrint = CreateRef<SceneBlueprint>();
         m_EntityManager = CreateRef<EntityManager>();
 
-        auto entity = m_EntityManager->CreateEntity(m_CurrentSceneBluePrint);
+        auto entity = m_EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Sprite #1");
+        auto entity2 = m_EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Sprite #2");
+        entity2->SetParent(entity);
+        entity->AddChild(entity2);
         m_EntityManager->AddComponent<SpriteComponent>(entity, Texture2D::Create("./assets/textures/Checkerboard.png"));
     }
 
@@ -180,6 +216,25 @@ namespace Shell::Editor {
         ImGui::End();
         ImGui::PopStyleVar();
 
+        ImGui::Begin("Entities");
+
+        for (SceneEntity * entity: m_CurrentSceneBluePrint->GetEntityTree()) {
+            RenderTree(entity);
+        }
+
+//        if (ImGui::TreeNode("Entities")) {
+//            if (ImGui::TreeNode("Basic trees #1")) {
+//                ImGui::TreePop();
+//            }
+//            if (ImGui::TreeNode("Basic trees #2")) {
+//                ImGui::TreePop();
+//            }
+//            ImGui::TreePop();
+//        }
+
+
+
+        ImGui::End();
 //        UI_Toolbar();
 
         ImGui::End();

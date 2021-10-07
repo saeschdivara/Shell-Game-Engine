@@ -6,7 +6,7 @@
 namespace Shell {
     class EntityManager {
     public:
-        SceneEntity * CreateEntity(Ref<Scene> scene);
+        SceneEntity * CreateEntity(Ref<Scene> scene, const std::string & name);
 
         template <typename... Components>
         auto GetComponentView()

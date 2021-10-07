@@ -8,7 +8,10 @@
 namespace Shell {
     class SceneEntity {
     public:
-        SceneEntity(Ref<Scene> scene, entt::entity entity);
+        SceneEntity(Ref<Scene> scene, const std::string & name, entt::entity entity);
+
+        [[nodiscard]] std::string GetName() const { return m_Name; }
+        void SetName(std::string &name) { m_Name = name; }
 
         void SetParent(SceneEntity * parent) { m_ParentEntity = parent; }
         [[nodiscard]] SceneEntity * GetParent() const { return m_ParentEntity; }
@@ -20,6 +23,7 @@ namespace Shell {
 
     private:
         Ref<Scene> m_Scene;
+        std::string m_Name;
         entt::entity m_Entity;
 
         SceneEntity * m_ParentEntity;
