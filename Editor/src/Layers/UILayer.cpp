@@ -205,10 +205,28 @@ namespace Shell::Editor {
             nodeFlags |= ImGuiTreeNodeFlags_Selected;
         }
 
-        const bool recurse = ImGui::TreeNodeEx(entity->GetName().c_str(), nodeFlags);
-        if (ImGui::IsItemClicked()) {
-            m_SelectedEntity = entity;
+        if (ImGui::BeginPopupContextWindow("entity context"))
+        {
+            if (ImGui::BeginMenu("Menu")) {
+                if (ImGui::MenuItem("Simple key", NULL, false)) {
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndPopup();
         }
+
+        const bool recurse = ImGui::TreeNodeEx(entity->GetName().c_str(), nodeFlags);
+        if (ImGui::IsItemClicked(ImGuiPopupFlags_MouseButtonLeft) || ImGui::IsItemClicked(ImGuiPopupFlags_MouseButtonRight)) {
+
+            if (m_SelectedEntity == entity) {
+                m_SelectedEntity = nullptr;
+            } else {
+                m_SelectedEntity = entity;
+            }
+        }
+
+        ImGui::OpenPopupOnItemClick("entity context", ImGuiPopupFlags_MouseButtonRight);
 
         const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
 
