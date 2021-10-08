@@ -8,39 +8,7 @@
 #include <imgui_internal.h>
 
 namespace Shell::Editor {
-
-    // Helper to display a little (?) mark which shows a tooltip when hovered.
-// In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.md)
-    static ImRect RenderTree(SceneEntity * entity)
-    {
-        const bool recurse = ImGui::TreeNode(entity->GetName().c_str());
-        const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
-
-        if (recurse)
-        {
-            const ImColor TreeLineColor = ImGui::GetColorU32(ImGuiCol_Text);
-            const float SmallOffsetX = 11.0f; //for now, a hardcoded value; should take into account tree indent size
-            ImDrawList* drawList = ImGui::GetWindowDrawList();
-
-            ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
-            verticalLineStart.x += SmallOffsetX; //to nicely line up with the arrow symbol
-            ImVec2 verticalLineEnd = verticalLineStart;
-
-            for (SceneEntity * child : entity->GetChildren())
-            {
-                const float HorizontalTreeLineSize = 8.0f; //chosen arbitrarily
-                const ImRect childRect = RenderTree(child);
-                const float midpoint = (childRect.Min.y + childRect.Max.y) / 2.0f;
-                drawList->AddLine(ImVec2(verticalLineStart.x, midpoint), ImVec2(verticalLineStart.x + HorizontalTreeLineSize, midpoint), TreeLineColor);
-                verticalLineEnd.y = midpoint;
-            }
-
-            drawList->AddLine(verticalLineStart, verticalLineEnd, TreeLineColor);
-            ImGui::TreePop();
-        }
-
-        return nodeRect;
-    }
+    static ImGuiTreeNodeFlags BASE_NODE_FLAGS = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
     EditorUILayer::EditorUILayer()
     : Layer("UI Layer"),
@@ -64,6 +32,8 @@ namespace Shell::Editor {
         auto entity2 = m_EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Sprite #2");
         entity2->SetParent(entity);
         entity->AddChild(entity2);
+        m_CurrentSceneBluePrint->GetEntityTree().pop_back();
+
         m_EntityManager->AddComponent<SpriteComponent>(entity, Texture2D::Create("./assets/textures/Checkerboard.png"));
     }
 
@@ -222,21 +192,49 @@ namespace Shell::Editor {
             RenderTree(entity);
         }
 
-//        if (ImGui::TreeNode("Entities")) {
-//            if (ImGui::TreeNode("Basic trees #1")) {
-//                ImGui::TreePop();
-//            }
-//            if (ImGui::TreeNode("Basic trees #2")) {
-//                ImGui::TreePop();
-//            }
-//            ImGui::TreePop();
-//        }
-
-
-
         ImGui::End();
 //        UI_Toolbar();
 
         ImGui::End();
+    }
+
+    ImRect EditorUILayer::RenderTree(SceneEntity *entity) {
+        ImGuiTreeNodeFlags nodeFlags = BASE_NODE_FLAGS;
+
+        if (m_SelectedEntity == entity) {
+            nodeFlags |= ImGuiTreeNodeFlags_Selected;
+        }
+
+        const bool recurse = ImGui::TreeNodeEx(entity->GetName().c_str(), nodeFlags);
+        if (ImGui::IsItemClicked()) {
+            m_SelectedEntity = entity;
+        }
+
+        const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
+
+        if (recurse)
+        {
+            const ImColor TreeLineColor = ImGui::GetColorU32(ImGuiCol_Text);
+            const float SmallOffsetX = 0.0f; //for now, a hardcoded value; should take into account tree indent size
+            ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+            ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
+            verticalLineStart.x += SmallOffsetX; //to nicely line up with the arrow symbol
+            ImVec2 verticalLineEnd = verticalLineStart;
+
+            for (SceneEntity * child : entity->GetChildren())
+            {
+                const float HorizontalTreeLineSize = 8.0f; //chosen arbitrarily
+                const ImRect childRect = RenderTree(child);
+                const float midpoint = (childRect.Min.y + childRect.Max.y) / 2.0f;
+                drawList->AddLine(ImVec2(verticalLineStart.x, midpoint), ImVec2(verticalLineStart.x + HorizontalTreeLineSize, midpoint), TreeLineColor);
+                verticalLineEnd.y = midpoint;
+            }
+
+            drawList->AddLine(verticalLineStart, verticalLineEnd, TreeLineColor);
+            ImGui::TreePop();
+        }
+
+        return nodeRect;
     }
 }

@@ -7,9 +7,7 @@ namespace Shell {
         auto sceneEntity = new SceneEntity(scene, name, entity);
 
         scene->GetEntities().push_back(sceneEntity);
-        SHELL_CORE_INFO("Entities size: {0}", scene->GetEntities().size());
         scene->GetEntityTree().push_back(sceneEntity);
-        SHELL_CORE_INFO("Entities size: {0}", scene->GetEntityTree().size());
 
         // every scene entity has at least a transform component
         m_Registry.emplace<TransformComponent>(entity);

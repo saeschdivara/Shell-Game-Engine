@@ -13,6 +13,8 @@
 
 #include <glm/glm.hpp>
 
+struct ImRect;
+
 namespace Shell::Editor {
 
     class EditorUILayer : public Layer {
@@ -22,6 +24,9 @@ namespace Shell::Editor {
         void OnAttach() override;
         void OnUpdate(std::chrono::milliseconds deltaTime) override;
         void OnUiRender() override;
+
+    private:
+        ImRect RenderTree(SceneEntity * entity);
 
     private:
         Ref<EntityManager> m_EntityManager;
@@ -34,6 +39,9 @@ namespace Shell::Editor {
         Ref<OrthographicCamera> m_Camera;
 
         glm::vec4 m_ClearColor;
+
+        // ------ Tooling ------
+        SceneEntity * m_SelectedEntity = nullptr;
 
         // ------ UI ------
 
