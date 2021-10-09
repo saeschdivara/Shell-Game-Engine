@@ -82,7 +82,7 @@ set(ENGINE_FILES
     src/Engine/Project/Entities/Components.h
     src/Engine/Project/Entities/SceneEntity.cpp src/Engine/Project/Entities/SceneEntity.h
     src/Engine/Core/Rendering/RenderQueue.cpp src/Engine/Core/Rendering/RenderQueue.h
-)
+    src/Engine/Core/Events/EventPublisher.cpp src/Engine/Core/Events/EventPublisher.h)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_library(shell_game_engine STATIC ${ENGINE_FILES})

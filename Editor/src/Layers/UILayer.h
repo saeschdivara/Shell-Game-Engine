@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Events/EditorEvents.h"
+
 #include <Engine/Core/Layers/Layer.h>
 #include <Engine/Core/Rendering/Buffer.h>
 #include <Engine/Core/Rendering/BufferContainer.h>
@@ -25,8 +27,12 @@ namespace Shell::Editor {
         void OnUpdate(std::chrono::milliseconds deltaTime) override;
         void OnUiRender() override;
 
+        void OnEvent(Event &event) override;
+
     private:
         ImRect RenderTree(SceneEntity * entity);
+
+        bool OnCreateEntityEvent(CreateEntityEvent & event);
 
     private:
         Ref<EntityManager> m_EntityManager;

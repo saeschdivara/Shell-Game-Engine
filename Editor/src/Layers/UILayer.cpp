@@ -1,5 +1,8 @@
 #include "UILayer.h"
 
+#include "Events/EditorEvents.h"
+
+#include <Engine/Core/Events/EventPublisher.h>
 #include <Engine/Core/Rendering/RenderCommand.h>
 #include <Engine/Core/Rendering/Renderer.h>
 #include <Engine/Project/Entities/Components.h>
@@ -27,14 +30,6 @@ namespace Shell::Editor {
 
         m_CurrentSceneBluePrint = CreateRef<SceneBlueprint>();
         m_EntityManager = CreateRef<EntityManager>();
-
-        auto entity = m_EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Sprite #1");
-        auto entity2 = m_EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Sprite #2");
-        entity2->SetParent(entity);
-        entity->AddChild(entity2);
-        m_CurrentSceneBluePrint->GetEntityTree().pop_back();
-
-        m_EntityManager->AddComponent<SpriteComponent>(entity, Texture2D::Create("./assets/textures/Checkerboard.png"));
     }
 
     void EditorUILayer::OnUpdate(std::chrono::milliseconds deltaTime) {
@@ -136,22 +131,12 @@ namespace Shell::Editor {
             ImGui::EndMenuBar();
         }
 
-//        m_SceneHierarchyPanel.OnImGuiRender();
-//        m_ContentBrowserPanel.OnImGuiRender();
-
         ImGui::Begin("Stats");
 
         std::string name = "None";
-//        if (m_HoveredEntity)
-//            name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
+        if (m_SelectedEntity)
+            name = m_SelectedEntity->GetName();
         ImGui::Text("Hovered Entity: %s", name.c_str());
-
-//        auto stats = Renderer2D::GetStats();
-//        ImGui::Text("Renderer2D Stats:");
-//        ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-//        ImGui::Text("Quads: %d", stats.QuadCount);
-//        ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-//        ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
         ImGui::End();
 
@@ -173,29 +158,45 @@ namespace Shell::Editor {
         uint32_t textureID = m_Framebuffer->GetColorAttachment();
         ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
-//        if (ImGui::BeginDragDropTarget())
-//        {
-//            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-//            {
-//                const wchar_t* path = (const wchar_t*)payload->Data;
-//                OpenScene(std::filesystem::path(g_AssetPath) / path);
-//            }
-//            ImGui::EndDragDropTarget();
-//        }
-
         ImGui::End();
         ImGui::PopStyleVar();
 
         ImGui::Begin("Entities");
+
+        if (ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows) && ImGui::IsMouseClicked(ImGuiPopupFlags_MouseButtonRight)) {
+            ImGui::OpenPopup("entity context");
+        }
+
+        if (ImGui::BeginPopupContextWindow("entity context"))
+        {
+            if (ImGui::BeginMenu("Create Entity")) {
+                if (ImGui::MenuItem("Empty", NULL, false)) {
+                    auto eventEntity = m_EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Entity");
+                    CreateEntityEvent event(eventEntity, m_SelectedEntity);
+
+                    EventPublisher::Instance()->Publish(event);
+                    ImGui::CloseCurrentPopup();
+                }
+                else if (ImGui::MenuItem("Sprite", NULL, false)) {
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndPopup();
+        }
 
         for (SceneEntity * entity: m_CurrentSceneBluePrint->GetEntityTree()) {
             RenderTree(entity);
         }
 
         ImGui::End();
-//        UI_Toolbar();
 
         ImGui::End();
+    }
+
+    void EditorUILayer::OnEvent(Event &event) {
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<CreateEntityEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnCreateEntityEvent));
     }
 
     ImRect EditorUILayer::RenderTree(SceneEntity *entity) {
@@ -203,17 +204,6 @@ namespace Shell::Editor {
 
         if (m_SelectedEntity == entity) {
             nodeFlags |= ImGuiTreeNodeFlags_Selected;
-        }
-
-        if (ImGui::BeginPopupContextWindow("entity context"))
-        {
-            if (ImGui::BeginMenu("Menu")) {
-                if (ImGui::MenuItem("Simple key", NULL, false)) {
-                    ImGui::CloseCurrentPopup();
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndPopup();
         }
 
         const bool recurse = ImGui::TreeNodeEx(entity->GetName().c_str(), nodeFlags);
@@ -254,5 +244,21 @@ namespace Shell::Editor {
         }
 
         return nodeRect;
+    }
+
+    bool EditorUILayer::OnCreateEntityEvent(CreateEntityEvent &event) {
+
+        auto entity = event.GetEntity();
+        auto parentEntity = event.GetParentEntity();
+
+        m_CurrentSceneBluePrint->GetEntities().push_back(entity);
+
+        if (parentEntity == nullptr) {
+            m_CurrentSceneBluePrint->GetEntityTree().push_back(entity);
+        } else {
+            parentEntity->AddChild(entity);
+        }
+
+        return false;
     }
 }

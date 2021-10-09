@@ -10,7 +10,9 @@ namespace Shell {
         AppTick, AppUpdate, AppRender,
         KeyPressed, KeyReleased, KeyTyped,
         MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
-        GamepadButtonPressed, GamepadButtonReleased
+        GamepadButtonPressed, GamepadButtonReleased,
+
+        AppCustomEvent
     };
 
     enum EventCategory {
@@ -21,6 +23,7 @@ namespace Shell {
         EventCategoryMouse = BIT(3),
         EventCategoryMouseButton = BIT(4),
         EventCategoryGamepad = BIT(5),
+        EventCategoryCustom = BIT(10),
     };
 
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\

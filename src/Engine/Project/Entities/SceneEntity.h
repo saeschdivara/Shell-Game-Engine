@@ -16,7 +16,10 @@ namespace Shell {
         void SetParent(SceneEntity * parent) { m_ParentEntity = parent; }
         [[nodiscard]] SceneEntity * GetParent() const { return m_ParentEntity; }
 
-        void AddChild(SceneEntity * child) { m_ChildEntities.push_back(child); }
+        void AddChild(SceneEntity * child) {
+            child->SetParent(this);
+            m_ChildEntities.push_back(child);
+        }
         std::vector<SceneEntity *>& GetChildren() { return m_ChildEntities; }
 
         [[nodiscard]] entt::entity GetEnity() const { return m_Entity; }
