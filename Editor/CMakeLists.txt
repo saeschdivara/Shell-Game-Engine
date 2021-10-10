@@ -13,6 +13,7 @@ add_executable(shell_editor
 
 target_link_libraries(shell_editor shell_game_engine)
 target_link_libraries(shell_editor nfd)
+target_link_libraries(shell_editor yaml-cpp)
 
 add_custom_command(
         TARGET shell_editor POST_BUILD
