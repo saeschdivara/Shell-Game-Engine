@@ -1,9 +1,11 @@
 #include "Project.h"
 
+#include <utility>
+
 namespace Shell {
 
-    Project::Project(const std::wstring &name, std::filesystem::path path)
-    : m_Name(name), m_Path(std::move(path)), m_Settings(nullptr)
+    Project::Project(std::wstring name, std::filesystem::path path)
+    : m_Name(std::move(name)), m_Path(std::move(path)), m_Settings(nullptr)
     {}
 
     const std::wstring &Project::GetName() const {
