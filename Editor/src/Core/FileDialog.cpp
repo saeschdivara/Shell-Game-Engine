@@ -8,11 +8,12 @@ namespace Shell::Editor {
 
         NFD::Init();
         nfdchar_t *outPath;
-        NFD::PickFolder(outPath, std::filesystem::current_path().c_str());
+        auto resultCode = NFD::PickFolder(outPath, std::filesystem::current_path().c_str());
 
-        result = std::string(outPath);
-
-        NFD::FreePath(outPath);
+        if (resultCode == nfdresult_t::NFD_OKAY) {
+            result = std::string(outPath);
+            NFD::FreePath(outPath);
+        }
 
         return result;
     }
@@ -22,11 +23,12 @@ namespace Shell::Editor {
 
         NFD::Init();
         nfdchar_t *outPath;
-        NFD::OpenDialog(outPath, nullptr, 0, std::filesystem::current_path().c_str());
+        auto resultCode = NFD::OpenDialog(outPath, nullptr, 0, std::filesystem::current_path().c_str());
 
-        result = std::string(outPath);
-
-        NFD::FreePath(outPath);
+        if (resultCode == nfdresult_t::NFD_OKAY) {
+            result = std::string(outPath);
+            NFD::FreePath(outPath);
+        }
 
         return result;
     }
@@ -36,11 +38,12 @@ namespace Shell::Editor {
 
         NFD::Init();
         nfdchar_t *outPath;
-        NFD::SaveDialog(outPath, nullptr, 0, std::filesystem::current_path().c_str());
+        auto resultCode = NFD::SaveDialog(outPath, nullptr, 0, std::filesystem::current_path().c_str());
 
-        result = std::string(outPath);
-
-        NFD::FreePath(outPath);
+        if (resultCode == nfdresult_t::NFD_OKAY) {
+            result = std::string(outPath);
+            NFD::FreePath(outPath);
+        }
 
         return result;
     }
