@@ -9,6 +9,9 @@ namespace Shell::Editor {
         static std::string PickFolder();
         static std::string ChooseFile();
         static std::string SaveFile();
+
+    private:
+        FileDialog() = default;
     };
 }
 
