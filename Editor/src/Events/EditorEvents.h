@@ -44,7 +44,7 @@ namespace Shell::Editor {
     public:
         SaveProjectEvent(Project * project) : m_Project(project) {}
 
-        [[nodiscard]] Project *getProject() const {
+        [[nodiscard]] Project *GetProject() const {
             return m_Project;
         }
 

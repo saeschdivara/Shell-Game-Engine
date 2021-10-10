@@ -1,7 +1,8 @@
 #include "UILayer.h"
 
-#include "Events/EditorEvents.h"
 #include "Core/FileDialog.h"
+#include "Events/EditorEvents.h"
+#include "Project/ProjectSerializer.h"
 
 #include <Engine/Core/Events/EventPublisher.h>
 #include <Engine/Core/Rendering/RenderCommand.h>
@@ -110,11 +111,8 @@ namespace Shell::Editor {
 
         if (ImGui::BeginMenuBar())
         {
-            if (ImGui::BeginMenu("File"))
+            if (ImGui::BeginMenu("Project"))
             {
-                // Disabling fullscreen would allow the window to be moved to the front of other windows,
-                // which we can't undo at the moment without finer window depth/z control.
-                //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);1
                 if (ImGui::MenuItem("New", "Ctrl+N"))
                 {}
 
@@ -124,7 +122,13 @@ namespace Shell::Editor {
                 if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
                 {
                     auto outPath = FileDialog::PickFolder();
-                    SHELL_INFO("Chosen path: {0}", outPath.generic_string().c_str());
+
+                    if (m_Project == nullptr) {
+                        m_Project = new Project(L"Sample game", outPath);
+                    }
+
+                    SaveProjectEvent event(m_Project);
+                    EventPublisher::Instance()->Publish(event);
                 }
 
                 if (ImGui::MenuItem("Exit")) {}
@@ -201,6 +205,7 @@ namespace Shell::Editor {
     void EditorUILayer::OnEvent(Event &event) {
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<CreateEntityEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnCreateEntityEvent));
+        dispatcher.Dispatch<SaveProjectEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnSaveProjectEvent));
     }
 
     ImRect EditorUILayer::RenderTree(SceneEntity *entity) {
@@ -263,6 +268,19 @@ namespace Shell::Editor {
             parentEntity->AddChild(entity);
         }
 
-        return false;
+        return true;
+    }
+
+    bool EditorUILayer::OnSaveProjectEvent(SaveProjectEvent &event) {
+
+        auto project = event.GetProject();
+        auto projectPath = project->GetPath();
+        if (!std::filesystem::exists(projectPath)) {
+            std::filesystem::create_directories(projectPath);
+        }
+
+        ProjectSerializer::SerializeToFile(project);
+
+        return true;
     }
 }

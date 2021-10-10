@@ -11,3 +11,6 @@
 [submodule "Vendors/FileDialog"]
 	path = Vendors/FileDialog
 	url = https://github.com/btzy/nativefiledialog-extended.git
+[submodule "Vendors/Yaml"]
+	path = Vendors/Yaml
+	url = https://github.com/jbeder/yaml-cpp.git

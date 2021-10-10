@@ -31,6 +31,12 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     include_directories("Vendors/Spdlog/include")
 endif()
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Yaml/)
+
+    include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Yaml/include")
+endif()
+
 include_directories(
         "src"
         "Vendors/ImGui"
@@ -83,7 +89,8 @@ set(ENGINE_FILES
     src/Engine/Project/Entities/Components.h
     src/Engine/Project/Entities/SceneEntity.cpp src/Engine/Project/Entities/SceneEntity.h
     src/Engine/Core/Rendering/RenderQueue.cpp src/Engine/Core/Rendering/RenderQueue.h
-    src/Engine/Core/Events/EventPublisher.cpp src/Engine/Core/Events/EventPublisher.h)
+    src/Engine/Core/Events/EventPublisher.cpp src/Engine/Core/Events/EventPublisher.h
+    src/Engine/Core/EngineVersion.h)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_library(shell_game_engine STATIC ${ENGINE_FILES})

@@ -33,6 +33,7 @@ namespace Shell::Editor {
         ImRect RenderTree(SceneEntity * entity);
 
         bool OnCreateEntityEvent(CreateEntityEvent & event);
+        bool OnSaveProjectEvent(SaveProjectEvent & event);
 
     private:
         Ref<EntityManager> m_EntityManager;
@@ -47,6 +48,7 @@ namespace Shell::Editor {
         glm::vec4 m_ClearColor;
 
         // ------ Tooling ------
+        Project * m_Project = nullptr;
         SceneEntity * m_SelectedEntity = nullptr;
 
         // ------ UI ------
