@@ -23,6 +23,7 @@ conan_basic_setup()  # Prepares the CMakeList.txt for Conan.
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/ImGui/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Glad/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Backward/)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/FileDialog/)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Spdlog/)

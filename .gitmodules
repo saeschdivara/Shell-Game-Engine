@@ -8,3 +8,6 @@
 [submodule "Vendors/Backward"]
 	path = Vendors/Backward
 	url = https://github.com/bombela/backward-cpp.git
+[submodule "Vendors/FileDialog"]
+	path = Vendors/FileDialog
+	url = https://github.com/btzy/nativefiledialog-extended.git

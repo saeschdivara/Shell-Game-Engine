@@ -1,6 +1,7 @@
 #include "UILayer.h"
 
 #include "Events/EditorEvents.h"
+#include "Core/FileDialog.h"
 
 #include <Engine/Core/Events/EventPublisher.h>
 #include <Engine/Core/Rendering/RenderCommand.h>
@@ -121,7 +122,10 @@ namespace Shell::Editor {
                 {}
 
                 if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
-                {}
+                {
+                    auto outPath = FileDialog::PickFolder();
+                    SHELL_INFO("Chosen path: {0}", outPath);
+                }
 
                 if (ImGui::MenuItem("Exit")) {}
 
