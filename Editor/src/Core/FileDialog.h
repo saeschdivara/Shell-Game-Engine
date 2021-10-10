@@ -6,9 +6,9 @@ namespace Shell::Editor {
 
     class FileDialog {
     public:
-        static std::string PickFolder();
-        static std::string ChooseFile();
-        static std::string SaveFile();
+        static std::filesystem::path PickFolder();
+        static std::filesystem::path ChooseFile();
+        static std::filesystem::path SaveFile();
 
     private:
         FileDialog() = default;

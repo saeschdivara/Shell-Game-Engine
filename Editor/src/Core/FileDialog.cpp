@@ -3,45 +3,45 @@
 #include <nfd.hpp>
 
 namespace Shell::Editor {
-    std::string FileDialog::PickFolder() {
-        std::string result;
+    std::filesystem::path FileDialog::PickFolder() {
+        std::filesystem::path result;
 
         NFD::Init();
-        nfdchar_t *outPath;
+        nfdnchar_t *outPath;
         auto resultCode = NFD::PickFolder(outPath, std::filesystem::current_path().c_str());
 
         if (resultCode == nfdresult_t::NFD_OKAY) {
-            result = std::string(outPath);
+            result = std::filesystem::absolute(outPath);
             NFD::FreePath(outPath);
         }
 
         return result;
     }
 
-    std::string FileDialog::ChooseFile() {
-        std::string result;
+    std::filesystem::path FileDialog::ChooseFile() {
+        std::filesystem::path result;
 
         NFD::Init();
-        nfdchar_t *outPath;
+        nfdnchar_t *outPath;
         auto resultCode = NFD::OpenDialog(outPath, nullptr, 0, std::filesystem::current_path().c_str());
 
         if (resultCode == nfdresult_t::NFD_OKAY) {
-            result = std::string(outPath);
+            result = std::filesystem::absolute(outPath);
             NFD::FreePath(outPath);
         }
 
         return result;
     }
 
-    std::string FileDialog::SaveFile() {
-        std::string result;
+    std::filesystem::path FileDialog::SaveFile() {
+        std::filesystem::path result;
 
         NFD::Init();
-        nfdchar_t *outPath;
+        nfdnchar_t *outPath;
         auto resultCode = NFD::SaveDialog(outPath, nullptr, 0, std::filesystem::current_path().c_str());
 
         if (resultCode == nfdresult_t::NFD_OKAY) {
-            result = std::string(outPath);
+            result = std::filesystem::absolute(outPath);
             NFD::FreePath(outPath);
         }
 

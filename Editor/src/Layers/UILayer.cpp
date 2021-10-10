@@ -124,7 +124,7 @@ namespace Shell::Editor {
                 if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
                 {
                     auto outPath = FileDialog::PickFolder();
-                    SHELL_INFO("Chosen path: {0}", outPath);
+                    SHELL_INFO("Chosen path: {0}", outPath.generic_string().c_str());
                 }
 
                 if (ImGui::MenuItem("Exit")) {}
