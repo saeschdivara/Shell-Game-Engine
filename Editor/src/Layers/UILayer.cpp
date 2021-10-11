@@ -123,12 +123,14 @@ namespace Shell::Editor {
                 {
                     auto outPath = FileDialog::PickFolder();
 
-                    if (m_Project == nullptr) {
-                        m_Project = new Project(L"Sample game", outPath);
-                    }
+                    if (!outPath.empty()) {
+                        if (m_Project == nullptr) {
+                            m_Project = new Project(L"Sample game", outPath);
+                        }
 
-                    SaveProjectEvent event(m_Project);
-                    EventPublisher::Instance()->Publish(event);
+                        SaveProjectEvent event(m_Project);
+                        EventPublisher::Instance()->Publish(event);
+                    }
                 }
 
                 if (ImGui::MenuItem("Exit")) {}
