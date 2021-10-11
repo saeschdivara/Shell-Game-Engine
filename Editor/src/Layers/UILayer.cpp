@@ -114,7 +114,18 @@ namespace Shell::Editor {
             if (ImGui::BeginMenu("Project"))
             {
                 if (ImGui::MenuItem("New", "Ctrl+N"))
-                {}
+                {
+                    auto outPath = FileDialog::PickFolder();
+
+                    if (!outPath.empty()) {
+                        if (m_Project == nullptr) {
+                            m_Project = new Project(L"Sample game", outPath);
+                        }
+
+                        SaveProjectEvent event(m_Project);
+                        EventPublisher::Instance()->Publish(event);
+                    }
+                }
 
                 if (ImGui::MenuItem("Open...", "Ctrl+O"))
                 {}
