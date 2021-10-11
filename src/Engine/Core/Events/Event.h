@@ -56,7 +56,8 @@ namespace Shell {
         // F will be deduced by the compiler
         template<typename T, typename F>
         bool Dispatch(const F &func) {
-            if (m_Event.GetEventType() == T::GetStaticType()) {
+            bool isEventSubclass = dynamic_cast<T *>(&m_Event) != nullptr;
+            if (m_Event.GetEventType() == T::GetStaticType() && isEventSubclass) {
                 m_Event.Handled |= func(static_cast<T &>(m_Event));
                 return true;
             }

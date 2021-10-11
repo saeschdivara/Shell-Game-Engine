@@ -6,6 +6,7 @@ spdlog/1.9.2
 miniaudio/0.10.40
 
 entt/3.8.1        # entity component system
+yaml-cpp/0.7.0    # yaml serialisation library
 
 stb/cci.20210713
 

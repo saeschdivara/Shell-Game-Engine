@@ -1,16 +1,24 @@
 #pragma once
 
 #include <Engine/Core/Events/Event.h>
+#include <Engine/Project/Project.h>
 #include <Engine/Project/Entities/SceneEntity.h>
 
 namespace Shell::Editor {
-    class EntityEvent : public Event
+    class EditorEvent : public Event
+    {
+    public:
+        EVENT_CLASS_TYPE(AppCustomEvent)
+        EVENT_CLASS_CATEGORY(EventCategoryCustom)
+
+    protected:
+        EditorEvent() = default;
+    };
+
+    class EntityEvent : public EditorEvent
     {
     public:
         [[nodiscard]] SceneEntity * GetEntity() const { return m_Entity; }
-
-        EVENT_CLASS_TYPE(AppCustomEvent)
-        EVENT_CLASS_CATEGORY(EventCategoryCustom)
 
     protected:
         EntityEvent(SceneEntity * entity) : m_Entity(entity) {}
@@ -29,5 +37,18 @@ namespace Shell::Editor {
 
     private:
         SceneEntity * m_ParentEntity;
+    };
+
+    class SaveProjectEvent : public EditorEvent
+    {
+    public:
+        SaveProjectEvent(Project * project) : m_Project(project) {}
+
+        [[nodiscard]] Project *GetProject() const {
+            return m_Project;
+        }
+
+    private:
+        Project * m_Project;
     };
 }

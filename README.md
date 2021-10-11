@@ -1,5 +1,3 @@
-![Build Status](https://ci.appveyor.com/api/projects/status/github/saeschdivara/Shell-Game-Engine?branch=master&svg=true "Build Status")
-
 ## Goals
 This engines focuses almost only on 2D.
 
