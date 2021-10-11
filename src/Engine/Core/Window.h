@@ -16,6 +16,8 @@ namespace Shell {
 
         virtual void SetupCallbacks(const EventCallbackFn& callback);
 
+        virtual void SetTitle(const std::string & title);
+
         uint32_t GetHeight() const { return m_Data.Height; }
         uint32_t GetWidth() const { return m_Data.Width; }
         void* GetNativeWindow() { return m_Window; }

@@ -115,4 +115,8 @@ namespace Shell {
             data.Callback(event);
         });
     }
+
+    void Window::SetTitle(const std::string &title) {
+        glfwSetWindowTitle(m_Window, title.c_str());
+    }
 }

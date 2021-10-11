@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Engine/Core/shellpch.h>
 #include <Engine/Core/Events/Event.h>
 #include <Engine/Project/Project.h>
 #include <Engine/Project/Entities/SceneEntity.h>
@@ -50,5 +51,18 @@ namespace Shell::Editor {
 
     private:
         Project * m_Project;
+    };
+
+    class LoadProjectEvent : public EditorEvent
+    {
+    public:
+        LoadProjectEvent(std::filesystem::path projectPath) : m_ProjectPath(std::move(projectPath)) {}
+
+        const std::filesystem::path &GetProjectPath() const {
+            return m_ProjectPath;
+        }
+
+    private:
+        std::filesystem::path m_ProjectPath;
     };
 }

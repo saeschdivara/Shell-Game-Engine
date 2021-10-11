@@ -34,6 +34,7 @@ namespace Shell::Editor {
 
         bool OnCreateEntityEvent(CreateEntityEvent & event);
         bool OnSaveProjectEvent(SaveProjectEvent & event);
+        bool OnLoadProjectEvent(LoadProjectEvent & event);
 
     private:
         Ref<EntityManager> m_EntityManager;
