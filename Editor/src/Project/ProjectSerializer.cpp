@@ -11,6 +11,8 @@
 #define SERIALIZE_KEY_SHELL_VERSION "Shell-Version"
 #define SERIALIZE_KEY_SHELL_EDITOR_VERSION "Shell-Editor-Version"
 #define SERIALIZE_KEY_PROJECT_NAME "Project-Name"
+#define SERIALIZE_KEY_SETTINGS "Settings"
+#define SERIALIZE_KEY_SETTINGS_RENDERING "Rendering"
 
 namespace Shell {
 
@@ -18,7 +20,7 @@ namespace Shell {
 
         emitter << YAML::BeginMap;
 
-        emitter << YAML::Key << "Rendering";
+        emitter << YAML::Key << SERIALIZE_KEY_SETTINGS_RENDERING;
         emitter << YAML::Value;
 
         emitter << YAML::Comment("This contains the info what render api is used for a particular operating system");
@@ -50,7 +52,7 @@ namespace Shell {
         out << YAML::Key << SERIALIZE_KEY_PROJECT_NAME;
         out << YAML::Value << converter.to_bytes(project->GetName());
 
-        out << YAML::Key << "Settings";
+        out << YAML::Key << SERIALIZE_KEY_SETTINGS;
         out << YAML::Value << project->GetSettings();
 
         out << YAML::EndMap;
@@ -61,15 +63,56 @@ namespace Shell {
     }
 
     Project *ProjectSerializer::DeserializeFromFile(const std::filesystem::path & projectPath) {
+        SHELL_INFO("Try loading project");
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+
         auto projectFilePath = projectPath / "project.yml";
         YAML::Node config = YAML::LoadFile(projectFilePath.generic_string());
 
-        if (config[SERIALIZE_KEY_SHELL_VERSION]) {
-            auto engineVersion = config[SERIALIZE_KEY_SHELL_VERSION].as<std::string>();
-            SHELL_INFO("Load project");
-            SHELL_INFO("Engine Version: {0}", engineVersion.c_str());
+        if (!config[SERIALIZE_KEY_SHELL_VERSION]) {
+            SHELL_WARN("Could not read {0} from project file", SERIALIZE_KEY_SHELL_VERSION);
+            return nullptr;
         }
 
-        return nullptr;
+        if (!config[SERIALIZE_KEY_SHELL_EDITOR_VERSION]) {
+            SHELL_WARN("Could not read {0} from project file", SERIALIZE_KEY_SHELL_EDITOR_VERSION);
+            return nullptr;
+        }
+
+        if (!config[SERIALIZE_KEY_PROJECT_NAME]) {
+            SHELL_WARN("Could not read {0} from project file", SERIALIZE_KEY_PROJECT_NAME);
+            return nullptr;
+        }
+
+        if (!config[SERIALIZE_KEY_SETTINGS]) {
+            SHELL_WARN("Could not read {0} from project file", SERIALIZE_KEY_SETTINGS);
+            return nullptr;
+        }
+
+        auto engineVersion = config[SERIALIZE_KEY_SHELL_VERSION].as<std::string>();
+        SHELL_INFO("Engine Version: {0}", engineVersion.c_str());
+
+        auto engineEditorVersion = config[SERIALIZE_KEY_SHELL_EDITOR_VERSION].as<std::string>();
+        SHELL_INFO("Engine Editor Version: {0}", engineVersion.c_str());
+
+        auto projectName = config[SERIALIZE_KEY_PROJECT_NAME].as<std::string>();
+        SHELL_INFO("Project Name: {0}", engineVersion.c_str());
+
+        auto * project = new Project(converter.from_bytes(projectName), projectPath);
+
+        auto settingsMap = config[SERIALIZE_KEY_SETTINGS];
+
+        if (settingsMap[SERIALIZE_KEY_SETTINGS_RENDERING]) {
+            auto renderingMap = settingsMap[SERIALIZE_KEY_SETTINGS_RENDERING];
+            for(YAML::const_iterator it = renderingMap.begin(); it != renderingMap.end(); ++it) {
+                auto operatingSystemName = it->first.as<std::string>();
+                auto renderApiName = it->second.as<std::string>();
+
+                SHELL_INFO("{0} = {1}", operatingSystemName, renderApiName);
+                project->GetSettings()->SetRenderingApi(GetOperatingSystem(operatingSystemName), GetRenderApi(renderApiName));
+            }
+        }
+
+        return project;
     }
 }
