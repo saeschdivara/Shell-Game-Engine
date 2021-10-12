@@ -4,6 +4,7 @@
 #include "Events/EditorEvents.h"
 #include "Project/ProjectSerializer.h"
 
+#include <Engine/Core/Application.h>
 #include <Engine/Core/Events/EventPublisher.h>
 #include <Engine/Core/Rendering/RenderCommand.h>
 #include <Engine/Core/Rendering/Renderer.h>
@@ -128,7 +129,14 @@ namespace Shell::Editor {
                 }
 
                 if (ImGui::MenuItem("Open...", "Ctrl+O"))
-                {}
+                {
+                    auto outPath = FileDialog::PickFolder();
+
+                    if (!outPath.empty()) {
+                        LoadProjectEvent event(outPath);
+                        EventPublisher::Instance()->Publish(event);
+                    }
+                }
 
                 if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
                 {
@@ -219,6 +227,7 @@ namespace Shell::Editor {
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<CreateEntityEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnCreateEntityEvent));
         dispatcher.Dispatch<SaveProjectEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnSaveProjectEvent));
+        dispatcher.Dispatch<LoadProjectEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnLoadProjectEvent));
     }
 
     ImRect EditorUILayer::RenderTree(SceneEntity *entity) {
@@ -293,6 +302,21 @@ namespace Shell::Editor {
         }
 
         ProjectSerializer::SerializeToFile(project);
+        Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_Project->GetNameAsSimpleString()));
+
+        return true;
+    }
+
+    bool EditorUILayer::OnLoadProjectEvent(LoadProjectEvent &event) {
+        auto project = ProjectSerializer::DeserializeFromFile(event.GetProjectPath());
+
+        if (project == nullptr) {
+            return false;
+        }
+
+        m_Project = project;
+
+        Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_Project->GetNameAsSimpleString()));
 
         return true;
     }

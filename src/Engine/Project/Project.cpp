@@ -12,6 +12,10 @@ namespace Shell {
         m_Settings->SetRenderingApi(OperatingSystem::MacOS, RenderAPI::OpenGL);
     }
 
+    const std::string Project::GetNameAsSimpleString() const {
+        return std::string(m_Name.begin(), m_Name.end());
+    }
+
     const std::wstring &Project::GetName() const {
         return m_Name;
     }

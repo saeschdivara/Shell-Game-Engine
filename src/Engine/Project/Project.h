@@ -8,6 +8,7 @@ namespace Shell {
     public:
         Project(std::wstring name, std::filesystem::path path);
 
+        [[nodiscard]] const std::string GetNameAsSimpleString() const;
         [[nodiscard]] const std::wstring &GetName() const;
         [[nodiscard]] const std::filesystem::path &GetPath() const;
         [[nodiscard]] ProjectSettings *GetSettings() const;

@@ -26,6 +26,13 @@ namespace Shell {
         }
     }
 
+    inline OperatingSystem GetOperatingSystem(const std::string & name) {
+        if (name == "Windows") { return OperatingSystem::Windows; }
+        else if (name == "Linux") { return OperatingSystem::Linux; }
+        else if (name == "MacOS") { return OperatingSystem::MacOS; }
+        else { return OperatingSystem::Unknown; }
+    }
+
     enum class RenderAPI : uint8_t {
         NoAPI      = 0x0,
         OpenGL     = 0x1,
@@ -52,5 +59,14 @@ namespace Shell {
             default:
                 return "Unknown";
         }
+    }
+
+    inline RenderAPI GetRenderApi(const std::string & name) {
+        if (name == "OpenGL") { return RenderAPI::OpenGL; }
+        else if (name == "Vulkan") { return RenderAPI::Vulkan; }
+        else if (name == "DirectX11") { return RenderAPI::DirectX11; }
+        else if (name == "DirectX12") { return RenderAPI::DirectX12; }
+        else if (name == "Metal") { return RenderAPI::Metal; }
+        else { return RenderAPI::NoAPI; }
     }
 }
