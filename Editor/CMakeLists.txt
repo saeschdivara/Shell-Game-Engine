@@ -7,7 +7,7 @@ include_directories(
 
 add_executable(shell_editor
     src/main.cpp
-    src/Layers/UILayer.cpp src/Layers/UILayer.h
+        src/UI/UILayer.cpp src/UI/UILayer.h
     src/Events/EditorEvents.h
     src/Core/FileDialog.cpp src/Core/FileDialog.h
     src/Project/ProjectSerializer.cpp src/Project/ProjectSerializer.h)
