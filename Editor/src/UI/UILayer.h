@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Events/EditorEvents.h"
+#include "UI/Panel/Panel.h"
 
 #include <Engine/Core/Layers/Layer.h>
 #include <Engine/Core/Rendering/Buffer.h>
@@ -22,6 +23,8 @@ namespace Shell::Editor {
     class EditorUILayer : public Layer {
     public:
         EditorUILayer();
+
+        virtual ~EditorUILayer();
 
         void OnAttach() override;
         void OnUpdate(std::chrono::milliseconds deltaTime) override;
@@ -47,6 +50,8 @@ namespace Shell::Editor {
         Ref<OrthographicCamera> m_Camera;
 
         glm::vec4 m_ClearColor;
+
+        std::vector<Panel *> m_Panels;
 
         // ------ Tooling ------
         Project * m_Project = nullptr;

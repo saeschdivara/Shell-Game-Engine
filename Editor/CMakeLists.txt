@@ -10,7 +10,7 @@ add_executable(shell_editor
         src/UI/UILayer.cpp src/UI/UILayer.h
     src/Events/EditorEvents.h
     src/Core/FileDialog.cpp src/Core/FileDialog.h
-    src/Project/ProjectSerializer.cpp src/Project/ProjectSerializer.h)
+    src/Project/ProjectSerializer.cpp src/Project/ProjectSerializer.h src/UI/Panel/EntityPropsPanel.cpp src/UI/Panel/EntityPropsPanel.h src/UI/Panel/Panel.h)
 
 target_link_libraries(shell_editor shell_game_engine)
 target_link_libraries(shell_editor nfd)

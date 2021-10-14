@@ -1,8 +1,8 @@
 #include "UILayer.h"
 
 #include "Core/FileDialog.h"
-#include "Events/EditorEvents.h"
 #include "Project/ProjectSerializer.h"
+#include "UI/Panel/EntityPropsPanel.h"
 
 #include <Engine/Core/Application.h>
 #include <Engine/Core/Events/EventPublisher.h>
@@ -19,8 +19,17 @@ namespace Shell::Editor {
     EditorUILayer::EditorUILayer()
     : Layer("UI Layer"),
       m_ClearColor(glm::vec4(0.2f, 0.2f, 0.2f, 1)),
-      m_Camera(new Shell::OrthographicCamera(-1.6f, 1.6f, -0.9f, 0.9f))
+      m_Camera(new Shell::OrthographicCamera(-1.6f, 1.6f, -0.9f, 0.9f)),
+      m_Panels({
+          new EntityPropsPanel
+      })
     {}
+
+    EditorUILayer::~EditorUILayer() {
+        for (const auto &panel: m_Panels) {
+            delete panel;
+        }
+    }
 
     void EditorUILayer::OnAttach() {
         FrameBufferSpecification frameBufferSpec;
@@ -160,14 +169,9 @@ namespace Shell::Editor {
             ImGui::EndMenuBar();
         }
 
-        ImGui::Begin("Stats");
-
-        std::string name = "None";
-        if (m_SelectedEntity)
-            name = m_SelectedEntity->GetName();
-        ImGui::Text("Hovered Entity: %s", name.c_str());
-
-        ImGui::End();
+        for (const auto &panel: m_Panels) {
+            panel->Render();
+        }
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
         ImGui::Begin("Viewport");
