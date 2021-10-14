@@ -8,6 +8,7 @@ namespace Shell {
 
     class RenderCommand {
     public:
+        virtual void SetViewport(uint32_t width, uint32_t height) = 0;
         virtual void SetClearColor(glm::vec4 & color) = 0;
         virtual void Clear() = 0;
 

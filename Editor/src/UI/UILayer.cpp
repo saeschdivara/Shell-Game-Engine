@@ -42,6 +42,8 @@ namespace Shell::Editor {
 
         m_CurrentSceneBluePrint = CreateRef<SceneBlueprint>();
         m_EntityManager = CreateRef<EntityManager>();
+
+        Shell::RenderCommand::Create()->SetViewport(frameBufferSpec.Width, frameBufferSpec.Height);
     }
 
     void EditorUILayer::OnUpdate(std::chrono::milliseconds deltaTime) {
