@@ -46,7 +46,7 @@ namespace Shell::Editor {
         m_RenderQueue->Init();
 
         m_CurrentSceneBluePrint = CreateRef<SceneBlueprint>();
-        m_EntityManager = CreateRef<EntityManager>();
+        m_UiState.EntityManager = CreateRef<EntityManager>();
 
         Shell::RenderCommand::Create()->SetViewport(frameBufferSpec.Width, frameBufferSpec.Height);
     }
@@ -61,7 +61,7 @@ namespace Shell::Editor {
 
         m_RenderQueue->StartBatch();
 
-        auto view = m_EntityManager->GetComponentView<TransformComponent, SpriteComponent>();
+        auto view = m_UiState.EntityManager->GetComponentView<TransformComponent, SpriteComponent>();
         for(auto &&[entity, transform, sprite] : view.each()) {
             if (sprite.Texture) {
                 m_RenderQueue->EnqueueTexturedQuad(sprite.Texture, transform.GetTransform());
@@ -211,7 +211,7 @@ namespace Shell::Editor {
         {
             if (ImGui::BeginMenu("Create Entity")) {
                 if (ImGui::MenuItem("Empty", NULL, false)) {
-                    auto eventEntity = m_EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Entity");
+                    auto eventEntity = m_UiState.EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Entity");
                     CreateEntityEvent event(eventEntity, m_UiState.SelectedEntity);
 
                     EventPublisher::Instance()->Publish(event);

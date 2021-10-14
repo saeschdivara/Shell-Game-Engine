@@ -21,6 +21,8 @@ struct ImRect;
 namespace Shell::Editor {
 
     struct UIState {
+        Ref<EntityManager> EntityManager;
+
         Project * Project = nullptr;
         SceneEntity * SelectedEntity = nullptr;
     };
@@ -45,7 +47,6 @@ namespace Shell::Editor {
         bool OnLoadProjectEvent(LoadProjectEvent & event);
 
     private:
-        Ref<EntityManager> m_EntityManager;
         Ref<SceneBlueprint> m_CurrentSceneBluePrint;
 
         // ------ Rendering ------
