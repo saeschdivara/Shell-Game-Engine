@@ -23,7 +23,8 @@ namespace Shell::Editor {
       m_Panels({
           new EntityPropsPanel
       })
-    {}
+    {
+    }
 
     EditorUILayer::~EditorUILayer() {
         for (const auto &panel: m_Panels) {
@@ -32,6 +33,10 @@ namespace Shell::Editor {
     }
 
     void EditorUILayer::OnAttach() {
+        for (const auto &panel: m_Panels) {
+            panel->SetState(&m_UiState);
+        }
+
         FrameBufferSpecification frameBufferSpec;
         frameBufferSpec.Width = 1280;
         frameBufferSpec.Height = 720;
@@ -130,11 +135,11 @@ namespace Shell::Editor {
                     auto outPath = FileDialog::PickFolder();
 
                     if (!outPath.empty()) {
-                        if (m_Project == nullptr) {
-                            m_Project = new Project(L"Sample game", outPath);
+                        if (m_UiState.Project == nullptr) {
+                            m_UiState.Project = new Project(L"Sample game", outPath);
                         }
 
-                        SaveProjectEvent event(m_Project);
+                        SaveProjectEvent event(m_UiState.Project);
                         EventPublisher::Instance()->Publish(event);
                     }
                 }
@@ -154,11 +159,11 @@ namespace Shell::Editor {
                     auto outPath = FileDialog::PickFolder();
 
                     if (!outPath.empty()) {
-                        if (m_Project == nullptr) {
-                            m_Project = new Project(L"Sample game", outPath);
+                        if (m_UiState.Project == nullptr) {
+                            m_UiState.Project = new Project(L"Sample game", outPath);
                         }
 
-                        SaveProjectEvent event(m_Project);
+                        SaveProjectEvent event(m_UiState.Project);
                         EventPublisher::Instance()->Publish(event);
                     }
                 }
@@ -207,7 +212,7 @@ namespace Shell::Editor {
             if (ImGui::BeginMenu("Create Entity")) {
                 if (ImGui::MenuItem("Empty", NULL, false)) {
                     auto eventEntity = m_EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Entity");
-                    CreateEntityEvent event(eventEntity, m_SelectedEntity);
+                    CreateEntityEvent event(eventEntity, m_UiState.SelectedEntity);
 
                     EventPublisher::Instance()->Publish(event);
                     ImGui::CloseCurrentPopup();
@@ -239,17 +244,17 @@ namespace Shell::Editor {
     ImRect EditorUILayer::RenderTree(SceneEntity *entity) {
         ImGuiTreeNodeFlags nodeFlags = BASE_NODE_FLAGS;
 
-        if (m_SelectedEntity == entity) {
+        if (m_UiState.SelectedEntity == entity) {
             nodeFlags |= ImGuiTreeNodeFlags_Selected;
         }
 
         const bool recurse = ImGui::TreeNodeEx(entity->GetName().c_str(), nodeFlags);
         if (ImGui::IsItemClicked(ImGuiPopupFlags_MouseButtonLeft) || ImGui::IsItemClicked(ImGuiPopupFlags_MouseButtonRight)) {
 
-            if (m_SelectedEntity == entity) {
-                m_SelectedEntity = nullptr;
+            if (m_UiState.SelectedEntity == entity) {
+                m_UiState.SelectedEntity = nullptr;
             } else {
-                m_SelectedEntity = entity;
+                m_UiState.SelectedEntity = entity;
             }
         }
 
@@ -308,7 +313,7 @@ namespace Shell::Editor {
         }
 
         ProjectSerializer::SerializeToFile(project);
-        Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_Project->GetNameAsSimpleString()));
+        Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_UiState.Project->GetNameAsSimpleString()));
 
         return true;
     }
@@ -320,9 +325,9 @@ namespace Shell::Editor {
             return false;
         }
 
-        m_Project = project;
+        m_UiState.Project = project;
 
-        Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_Project->GetNameAsSimpleString()));
+        Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_UiState.Project->GetNameAsSimpleString()));
 
         return true;
     }

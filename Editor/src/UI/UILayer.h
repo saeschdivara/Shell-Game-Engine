@@ -20,6 +20,11 @@ struct ImRect;
 
 namespace Shell::Editor {
 
+    struct UIState {
+        Project * Project = nullptr;
+        SceneEntity * SelectedEntity = nullptr;
+    };
+
     class EditorUILayer : public Layer {
     public:
         EditorUILayer();
@@ -54,8 +59,7 @@ namespace Shell::Editor {
         std::vector<Panel *> m_Panels;
 
         // ------ Tooling ------
-        Project * m_Project = nullptr;
-        SceneEntity * m_SelectedEntity = nullptr;
+        UIState m_UiState;
 
         // ------ UI ------
 

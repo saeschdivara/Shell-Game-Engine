@@ -1,4 +1,5 @@
 #include "EntityPropsPanel.h"
+#include "UI/UILayer.h"
 
 #include <imgui.h>
 
@@ -8,8 +9,8 @@ namespace Shell::Editor {
         ImGui::Begin("Stats");
 
         std::string name = "None";
-//        if (m_SelectedEntity)
-//            name = m_SelectedEntity->GetName();
+        if (m_UiState->SelectedEntity)
+            name = m_UiState->SelectedEntity->GetName();
         ImGui::Text("Hovered Entity: %s", name.c_str());
 
         ImGui::End();
