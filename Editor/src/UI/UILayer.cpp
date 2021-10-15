@@ -222,7 +222,7 @@ namespace Shell::Editor {
                 }
                 else if (ImGui::MenuItem("Sprite", NULL, false)) {
                     auto eventEntity = m_UiState.EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Entity");
-                    m_UiState.EntityManager->AddComponent<SpriteComponent>(eventEntity, glm::vec4(0.2f, 0.3f, 0.4f, 1.0f));
+                    m_UiState.EntityManager->AddComponent<SpriteComponent>(eventEntity, glm::vec4(1.0f, 0.f, 0.0f, 1.0f));
 
                     CreateEntityEvent event(eventEntity, m_UiState.SelectedEntity);
 

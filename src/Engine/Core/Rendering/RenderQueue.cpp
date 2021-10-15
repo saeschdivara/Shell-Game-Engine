@@ -13,6 +13,14 @@ namespace Shell {
             -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
     };
 
+    static float coloredSquareVertices [] = {
+            //x      y      z
+            -0.5f, -0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f,
+            0.5f,  0.5f, 0.0f,
+            -0.5f,  0.5f, 0.0f,
+    };
+
     void RenderQueue::Init() {
         /////////////// TEXTURED ///////////////
         m_BufferContainerWithTextures = BufferContainer::Create();
@@ -43,17 +51,18 @@ namespace Shell {
 
         m_BufferContainerWithColors = BufferContainer::Create();
 
-        auto colorVertexBuffer = VertexBuffer::Create(texturedSquareVertices, sizeof(texturedSquareVertices));
+        auto colorVertexBuffer = VertexBuffer::Create(coloredSquareVertices, sizeof(coloredSquareVertices));
 
         BufferLayout layoutWithColor = {
                 { ShaderDataType::Float3, "a_Position" },
-                { ShaderDataType::Float4, "a_Color" },
         };
 
         colorVertexBuffer->SetLayout(layoutWithColor);
         m_BufferContainerWithColors->AddBuffer(colorVertexBuffer);
 
-        m_BufferContainerWithColors->AddBuffer(indexBuffer);
+        uint32_t colorIndicies[] = {0, 1, 2, 2, 3, 0 };
+        auto colorIndexBuffer = IndexBuffer::Create(colorIndicies, sizeof(colorIndicies) / sizeof(uint32_t));
+        m_BufferContainerWithColors->AddBuffer(colorIndexBuffer);
 
         m_FlatColorShader = Shader::CreateFromFiles(
                 "assets/shaders/flat-color/vertex.glsl",
@@ -86,7 +95,7 @@ namespace Shell {
                 Renderer::Instance()->Submit(m_BufferContainerWithTextures, m_TexturedShader, dataPtr->Transform);
             } else {
                 m_FlatColorShader->Bind();
-                m_FlatColorShader->SetUniform("a_Color", dataPtr->Color);
+                m_FlatColorShader->SetUniform("u_Color", dataPtr->Color);
 
                 Renderer::Instance()->Submit(m_BufferContainerWithColors, m_FlatColorShader, dataPtr->Transform);
             }
