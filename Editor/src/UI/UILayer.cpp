@@ -65,6 +65,9 @@ namespace Shell::Editor {
         for(auto &&[entity, transform, sprite] : view.each()) {
             if (sprite.Texture) {
                 m_RenderQueue->EnqueueTexturedQuad(sprite.Texture, transform.GetTransform());
+            } else {
+                // assume that it needs a color
+                m_RenderQueue->EnqueueColoredQuad(sprite.Color, transform.GetTransform());
             }
         }
 
@@ -218,6 +221,12 @@ namespace Shell::Editor {
                     ImGui::CloseCurrentPopup();
                 }
                 else if (ImGui::MenuItem("Sprite", NULL, false)) {
+                    auto eventEntity = m_UiState.EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Entity");
+                    m_UiState.EntityManager->AddComponent<SpriteComponent>(eventEntity, glm::vec4(0.2f, 0.3f, 0.4f, 1.0f));
+
+                    CreateEntityEvent event(eventEntity, m_UiState.SelectedEntity);
+
+                    EventPublisher::Instance()->Publish(event);
                     ImGui::CloseCurrentPopup();
                 }
                 ImGui::EndMenu();
