@@ -7,20 +7,37 @@
 
 namespace Shell::Editor {
 
+    static float transformValues[] = { 0.0, 0.0 };
+    static bool isValuesInitialized = false;
+
     void EntityPropsPanel::Render() {
         ImGui::Begin("Stats");
 
-        std::string name = "None";
         if (m_UiState->SelectedEntity) {
-            name = m_UiState->SelectedEntity->GetName();
-
             if (m_UiState->EntityManager->HasComponent<TransformComponent>(m_UiState->SelectedEntity)) {
-                static float input[3];
-                ImGui::DragFloat3("##value", input, 0.01f);
+                RenderTransformComponent();
             }
+        } else {
+            isValuesInitialized = false;
         }
-        ImGui::Text("Hovered Entity: %s", name.c_str());
 
         ImGui::End();
+    }
+
+    void EntityPropsPanel::RenderTransformComponent() {
+        auto& transform = m_UiState->EntityManager->GetComponent<TransformComponent>(m_UiState->SelectedEntity);
+
+        if (!isValuesInitialized || m_UiState->ChangedEntity) {
+            isValuesInitialized = true;
+            transformValues[0] = transform.Translation.x;
+            transformValues[1] = transform.Translation.y;
+        }
+
+        ImGui::Text("Position");
+        ImGui::SameLine();
+        ImGui::DragFloat2("##value", transformValues, 0.01f);
+
+        transform.Translation.x = transformValues[0];
+        transform.Translation.y = transformValues[1];
     }
 }

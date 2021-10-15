@@ -9,6 +9,7 @@ namespace Shell::Editor {
         void Render() override;
 
     private:
+        void RenderTransformComponent();
     };
 }
 

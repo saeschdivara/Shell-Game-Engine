@@ -24,7 +24,9 @@ namespace Shell::Editor {
         Ref<EntityManager> EntityManager;
 
         Project * Project = nullptr;
+
         SceneEntity * SelectedEntity = nullptr;
+        bool ChangedEntity = false;
     };
 
     class EditorUILayer : public Layer {

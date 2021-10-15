@@ -20,6 +20,12 @@ namespace Shell {
             return m_Registry.any_of<Components...>(entity->GetEnity());
         }
 
+        template <typename... Components>
+        auto& GetComponent(SceneEntity * entity)
+        {
+            return m_Registry.get<Components...>(entity->GetEnity());
+        }
+
         template <typename Component>
         auto& AddComponent(SceneEntity * entity, auto&&... args) {
             return m_Registry.emplace<Component>(entity->GetEnity(), std::forward<decltype(args)>(args)...);

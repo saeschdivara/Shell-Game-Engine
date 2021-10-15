@@ -253,7 +253,16 @@ namespace Shell::Editor {
 
             if (m_UiState.SelectedEntity == entity) {
                 m_UiState.SelectedEntity = nullptr;
+                m_UiState.ChangedEntity = false;
             } else {
+
+                // make sure fields are not overwritten when changing from one selection to the other
+                if (m_UiState.SelectedEntity != nullptr) {
+                    m_UiState.ChangedEntity = true;
+                } else {
+                    m_UiState.ChangedEntity = false;
+                }
+
                 m_UiState.SelectedEntity = entity;
             }
         }
