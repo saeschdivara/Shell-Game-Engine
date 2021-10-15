@@ -8,6 +8,7 @@
 namespace Shell::Editor {
 
     static float transformValues[] = { 0.0, 0.0 };
+    static float scaleValues[] = { 0.0, 0.0 };
     static float colorInput[] = { 0.0, 0.0, 0.0, 1.0 };
 
     static bool isValuesInitialized = false;
@@ -37,17 +38,21 @@ namespace Shell::Editor {
         auto& transform = m_UiState->EntityManager->GetComponent<TransformComponent>(m_UiState->SelectedEntity);
 
         if (!isValuesInitialized || m_UiState->ChangedEntity) {
-            transformValues[0] = transform.Translation.x;
-            transformValues[1] = transform.Translation.y;
+            scaleValues[0] = transform.Scale.x;
+            scaleValues[1] = transform.Scale.y;
         }
 
         ImGui::Text("Position");
         ImGui::SameLine();
-        ImGui::DragFloat2("##value", transformValues, 0.01f);
+        ImGui::DragFloat2("##position", transformValues, 0.01f);
+
+        ImGui::Text("Scale");
+        ImGui::SameLine();
+        ImGui::DragFloat2("##scale", scaleValues, 0.01f);
         ImGui::Separator();
 
-        transform.Translation.x = transformValues[0];
-        transform.Translation.y = transformValues[1];
+        transform.Scale.x = scaleValues[0];
+        transform.Scale.y = scaleValues[1];
     }
 
     void EntityPropsPanel::RenderSpriteComponent() {
