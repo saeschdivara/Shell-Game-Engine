@@ -44,6 +44,7 @@ namespace Shell::Editor {
         ImGui::Text("Position");
         ImGui::SameLine();
         ImGui::DragFloat2("##value", transformValues, 0.01f);
+        ImGui::Separator();
 
         transform.Translation.x = transformValues[0];
         transform.Translation.y = transformValues[1];
@@ -62,6 +63,7 @@ namespace Shell::Editor {
         ImGui::Text("Color");
         ImGui::SameLine();
         ImGui::ColorEdit4("", colorInput, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
+        ImGui::Separator();
 
         sprite.Color.r = colorInput[0];
         sprite.Color.g = colorInput[1];
