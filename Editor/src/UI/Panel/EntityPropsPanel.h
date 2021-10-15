@@ -10,6 +10,7 @@ namespace Shell::Editor {
 
     private:
         void RenderTransformComponent();
+        void RenderSpriteComponent();
     };
 }
 
