@@ -52,6 +52,14 @@ namespace Shell::Editor {
     }
 
     void EditorUILayer::OnUpdate(std::chrono::milliseconds deltaTime) {
+
+        // Check for resizing
+        auto spec = m_Framebuffer->GetSpecification();
+        if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
+            (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y)) {
+            m_Framebuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+        }
+
         m_Framebuffer->Bind();
 
         Shell::RenderCommand::Create()->SetClearColor(m_ClearColor);
