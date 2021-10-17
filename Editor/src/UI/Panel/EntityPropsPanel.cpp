@@ -59,7 +59,7 @@ namespace Shell::Editor {
 
         ImGui::Text("Rotation");
         ImGui::SameLine();
-        ImGui::DragFloat("##scale", &rotationValue, 0.01f);
+        ImGui::DragFloat("##rotation", &rotationValue, 0.01f);
         ImGui::Separator();
 
         transform.Translation.x = transformValues[0];
