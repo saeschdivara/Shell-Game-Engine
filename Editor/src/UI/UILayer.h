@@ -24,6 +24,7 @@ namespace Shell::Editor {
         Ref<EntityManager> EntityManager;
 
         Project * Project = nullptr;
+        Ref<SceneBlueprint> CurrentSceneBluePrint;
 
         SceneEntity * SelectedEntity = nullptr;
         bool ChangedEntity = false;
@@ -42,15 +43,15 @@ namespace Shell::Editor {
         void OnEvent(Event &event) override;
 
     private:
+        void RenderMenu();
         ImRect RenderTree(SceneEntity * entity);
 
         bool OnCreateEntityEvent(CreateEntityEvent & event);
         bool OnSaveProjectEvent(SaveProjectEvent & event);
         bool OnLoadProjectEvent(LoadProjectEvent & event);
+        bool OnSaveSceneEvent(SaveSceneEvent & event);
 
     private:
-        Ref<SceneBlueprint> m_CurrentSceneBluePrint;
-
         // ------ Rendering ------
         Ref<FrameBuffer> m_Framebuffer;
         Ref<RenderQueue> m_RenderQueue;

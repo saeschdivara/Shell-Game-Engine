@@ -45,7 +45,7 @@ namespace Shell::Editor {
         m_RenderQueue = CreateRef<RenderQueue>();
         m_RenderQueue->Init();
 
-        m_CurrentSceneBluePrint = CreateRef<SceneBlueprint>();
+        m_UiState.CurrentSceneBluePrint = CreateRef<SceneBlueprint>();
         m_UiState.EntityManager = CreateRef<EntityManager>();
 
         Shell::RenderCommand::Create()->SetViewport(frameBufferSpec.Width, frameBufferSpec.Height);
@@ -138,6 +138,81 @@ namespace Shell::Editor {
 
         style.WindowMinSize.x = minWinSizeX;
 
+        RenderMenu();
+
+        for (const auto &panel: m_Panels) {
+            panel->Render();
+        }
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+        ImGui::Begin("Viewport");
+        auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+        auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+        auto viewportOffset = ImGui::GetWindowPos();
+        m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+        m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
+        m_ViewportFocused = ImGui::IsWindowFocused();
+        m_ViewportHovered = ImGui::IsWindowHovered();
+//        Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+
+        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+        m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+
+        uint32_t textureID = m_Framebuffer->GetColorAttachment();
+        ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+        ImGui::End();
+        ImGui::PopStyleVar();
+
+        ImGui::Begin("Entities");
+
+        if (ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows) && ImGui::IsMouseClicked(ImGuiPopupFlags_MouseButtonRight)) {
+            ImGui::OpenPopup("entity context");
+        }
+
+        if (ImGui::BeginPopupContextWindow("entity context"))
+        {
+            if (ImGui::BeginMenu("Create Entity")) {
+                if (ImGui::MenuItem("Empty", NULL, false)) {
+                    auto eventEntity = m_UiState.EntityManager->CreateEntity(m_UiState.CurrentSceneBluePrint, "Entity");
+                    CreateEntityEvent event(eventEntity, m_UiState.SelectedEntity);
+
+                    EventPublisher::Instance()->Publish(event);
+                    ImGui::CloseCurrentPopup();
+                }
+                else if (ImGui::MenuItem("Sprite", NULL, false)) {
+                    auto eventEntity = m_UiState.EntityManager->CreateEntity(m_UiState.CurrentSceneBluePrint, "Entity");
+                    m_UiState.EntityManager->AddComponent<SpriteComponent>(eventEntity, glm::vec4(1.0f, 0.f, 0.0f, 1.0f));
+
+                    CreateEntityEvent event(eventEntity, m_UiState.SelectedEntity);
+
+                    EventPublisher::Instance()->Publish(event);
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndPopup();
+        }
+
+        for (SceneEntity * entity: m_UiState.CurrentSceneBluePrint->GetEntityTree()) {
+            RenderTree(entity);
+        }
+
+        ImGui::End();
+
+        ImGui::End();
+    }
+
+    void EditorUILayer::OnEvent(Event &event) {
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<CreateEntityEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnCreateEntityEvent));
+        dispatcher.Dispatch<SaveProjectEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnSaveProjectEvent));
+        dispatcher.Dispatch<LoadProjectEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnLoadProjectEvent));
+        dispatcher.Dispatch<SaveSceneEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnSaveSceneEvent));
+    }
+
+    void EditorUILayer::RenderMenu() {
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("Project"))
@@ -185,78 +260,34 @@ namespace Shell::Editor {
                 ImGui::EndMenu();
             }
 
-            ImGui::EndMenuBar();
-        }
+            if (ImGui::BeginMenu("Scenes"))
+            {
 
-        for (const auto &panel: m_Panels) {
-            panel->Render();
-        }
+                if (ImGui::MenuItem("New"))
+                {
+                    auto outPath = FileDialog::ChooseFile();
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-        ImGui::Begin("Viewport");
-        auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
-        auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
-        auto viewportOffset = ImGui::GetWindowPos();
-        m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-        m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
-
-        m_ViewportFocused = ImGui::IsWindowFocused();
-        m_ViewportHovered = ImGui::IsWindowHovered();
-//        Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
-
-        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-
-        uint32_t textureID = m_Framebuffer->GetColorAttachment();
-        ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-
-        ImGui::End();
-        ImGui::PopStyleVar();
-
-        ImGui::Begin("Entities");
-
-        if (ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows) && ImGui::IsMouseClicked(ImGuiPopupFlags_MouseButtonRight)) {
-            ImGui::OpenPopup("entity context");
-        }
-
-        if (ImGui::BeginPopupContextWindow("entity context"))
-        {
-            if (ImGui::BeginMenu("Create Entity")) {
-                if (ImGui::MenuItem("Empty", NULL, false)) {
-                    auto eventEntity = m_UiState.EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Entity");
-                    CreateEntityEvent event(eventEntity, m_UiState.SelectedEntity);
-
-                    EventPublisher::Instance()->Publish(event);
-                    ImGui::CloseCurrentPopup();
+                    if (!outPath.empty()) {
+                        SaveSceneEvent event(m_UiState.CurrentSceneBluePrint);
+                        EventPublisher::Instance()->Publish(event);
+                    }
                 }
-                else if (ImGui::MenuItem("Sprite", NULL, false)) {
-                    auto eventEntity = m_UiState.EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Entity");
-                    m_UiState.EntityManager->AddComponent<SpriteComponent>(eventEntity, glm::vec4(1.0f, 0.f, 0.0f, 1.0f));
 
-                    CreateEntityEvent event(eventEntity, m_UiState.SelectedEntity);
+                if (ImGui::MenuItem("Save As..."))
+                {
+                    auto outPath = FileDialog::ChooseFile();
 
-                    EventPublisher::Instance()->Publish(event);
-                    ImGui::CloseCurrentPopup();
+                    if (!outPath.empty()) {
+                        SaveSceneEvent event(m_UiState.CurrentSceneBluePrint);
+                        EventPublisher::Instance()->Publish(event);
+                    }
                 }
+
                 ImGui::EndMenu();
             }
-            ImGui::EndPopup();
+
+            ImGui::EndMenuBar();
         }
-
-        for (SceneEntity * entity: m_CurrentSceneBluePrint->GetEntityTree()) {
-            RenderTree(entity);
-        }
-
-        ImGui::End();
-
-        ImGui::End();
-    }
-
-    void EditorUILayer::OnEvent(Event &event) {
-        EventDispatcher dispatcher(event);
-        dispatcher.Dispatch<CreateEntityEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnCreateEntityEvent));
-        dispatcher.Dispatch<SaveProjectEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnSaveProjectEvent));
-        dispatcher.Dispatch<LoadProjectEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnLoadProjectEvent));
     }
 
     ImRect EditorUILayer::RenderTree(SceneEntity *entity) {
@@ -320,10 +351,10 @@ namespace Shell::Editor {
         auto entity = event.GetEntity();
         auto parentEntity = event.GetParentEntity();
 
-        m_CurrentSceneBluePrint->GetEntities().push_back(entity);
+        m_UiState.CurrentSceneBluePrint->GetEntities().push_back(entity);
 
         if (parentEntity == nullptr) {
-            m_CurrentSceneBluePrint->GetEntityTree().push_back(entity);
+            m_UiState.CurrentSceneBluePrint->GetEntityTree().push_back(entity);
         } else {
             parentEntity->AddChild(entity);
         }
@@ -356,6 +387,10 @@ namespace Shell::Editor {
 
         Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_UiState.Project->GetNameAsSimpleString()));
 
+        return true;
+    }
+
+    bool EditorUILayer::OnSaveSceneEvent(SaveSceneEvent &event) {
         return true;
     }
 }
