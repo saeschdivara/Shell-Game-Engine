@@ -38,6 +38,9 @@ namespace Shell::Editor {
         auto& transform = m_UiState->EntityManager->GetComponent<TransformComponent>(m_UiState->SelectedEntity);
 
         if (!isValuesInitialized || m_UiState->ChangedEntity) {
+            transformValues[0] = transform.Translation.x;
+            scaleValues[1] = transform.Scale.y;
+
             scaleValues[0] = transform.Scale.x;
             scaleValues[1] = transform.Scale.y;
         }
@@ -50,6 +53,9 @@ namespace Shell::Editor {
         ImGui::SameLine();
         ImGui::DragFloat2("##scale", scaleValues, 0.01f);
         ImGui::Separator();
+
+        transform.Translation.x = transformValues[0];
+        transform.Translation.y = transformValues[1];
 
         transform.Scale.x = scaleValues[0];
         transform.Scale.y = scaleValues[1];
