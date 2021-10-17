@@ -9,6 +9,7 @@ namespace Shell::Editor {
 
     static float transformValues[] = { 0.0, 0.0 };
     static float scaleValues[] = { 0.0, 0.0 };
+    static float rotationValue = 0.0f;
     static float colorInput[] = { 0.0, 0.0, 0.0, 1.0 };
 
     static bool isValuesInitialized = false;
@@ -43,6 +44,8 @@ namespace Shell::Editor {
 
             scaleValues[0] = transform.Scale.x;
             scaleValues[1] = transform.Scale.y;
+
+            rotationValue = transform.Rotation.z;
         }
 
         ImGui::Text("Position");
@@ -54,11 +57,18 @@ namespace Shell::Editor {
         ImGui::DragFloat2("##scale", scaleValues, 0.01f);
         ImGui::Separator();
 
+        ImGui::Text("Rotation");
+        ImGui::SameLine();
+        ImGui::DragFloat("##scale", &rotationValue, 0.01f);
+        ImGui::Separator();
+
         transform.Translation.x = transformValues[0];
         transform.Translation.y = transformValues[1];
 
         transform.Scale.x = scaleValues[0];
         transform.Scale.y = scaleValues[1];
+
+        transform.Rotation.z = rotationValue;
     }
 
     void EntityPropsPanel::RenderSpriteComponent() {
