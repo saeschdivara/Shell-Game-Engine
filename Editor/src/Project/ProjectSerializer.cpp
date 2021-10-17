@@ -14,7 +14,7 @@
 #define SERIALIZE_KEY_SETTINGS "Settings"
 #define SERIALIZE_KEY_SETTINGS_RENDERING "Rendering"
 
-namespace Shell {
+namespace Shell::Editor {
 
     inline YAML::Emitter& operator<<(YAML::Emitter& emitter, ProjectSettings * settings) {
 
