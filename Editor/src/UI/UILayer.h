@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Events/EditorEvents.h"
+#include "UI/Panel/Panel.h"
 
 #include <Engine/Core/Layers/Layer.h>
 #include <Engine/Core/Rendering/Buffer.h>
@@ -19,9 +20,20 @@ struct ImRect;
 
 namespace Shell::Editor {
 
+    struct UIState {
+        Ref<EntityManager> EntityManager;
+
+        Project * Project = nullptr;
+
+        SceneEntity * SelectedEntity = nullptr;
+        bool ChangedEntity = false;
+    };
+
     class EditorUILayer : public Layer {
     public:
         EditorUILayer();
+
+        virtual ~EditorUILayer();
 
         void OnAttach() override;
         void OnUpdate(std::chrono::milliseconds deltaTime) override;
@@ -37,7 +49,6 @@ namespace Shell::Editor {
         bool OnLoadProjectEvent(LoadProjectEvent & event);
 
     private:
-        Ref<EntityManager> m_EntityManager;
         Ref<SceneBlueprint> m_CurrentSceneBluePrint;
 
         // ------ Rendering ------
@@ -48,9 +59,10 @@ namespace Shell::Editor {
 
         glm::vec4 m_ClearColor;
 
+        std::vector<Panel *> m_Panels;
+
         // ------ Tooling ------
-        Project * m_Project = nullptr;
-        SceneEntity * m_SelectedEntity = nullptr;
+        UIState m_UiState;
 
         // ------ UI ------
 

@@ -1,8 +1,8 @@
 #include "UILayer.h"
 
 #include "Core/FileDialog.h"
-#include "Events/EditorEvents.h"
 #include "Project/ProjectSerializer.h"
+#include "UI/Panel/EntityPropsPanel.h"
 
 #include <Engine/Core/Application.h>
 #include <Engine/Core/Events/EventPublisher.h>
@@ -19,10 +19,24 @@ namespace Shell::Editor {
     EditorUILayer::EditorUILayer()
     : Layer("UI Layer"),
       m_ClearColor(glm::vec4(0.2f, 0.2f, 0.2f, 1)),
-      m_Camera(new Shell::OrthographicCamera(-1.6f, 1.6f, -0.9f, 0.9f))
-    {}
+      m_Camera(new Shell::OrthographicCamera(-1.6f, 1.6f, -0.9f, 0.9f)),
+      m_Panels({
+          new EntityPropsPanel
+      })
+    {
+    }
+
+    EditorUILayer::~EditorUILayer() {
+        for (const auto &panel: m_Panels) {
+            delete panel;
+        }
+    }
 
     void EditorUILayer::OnAttach() {
+        for (const auto &panel: m_Panels) {
+            panel->SetState(&m_UiState);
+        }
+
         FrameBufferSpecification frameBufferSpec;
         frameBufferSpec.Width = 1280;
         frameBufferSpec.Height = 720;
@@ -32,10 +46,20 @@ namespace Shell::Editor {
         m_RenderQueue->Init();
 
         m_CurrentSceneBluePrint = CreateRef<SceneBlueprint>();
-        m_EntityManager = CreateRef<EntityManager>();
+        m_UiState.EntityManager = CreateRef<EntityManager>();
+
+        Shell::RenderCommand::Create()->SetViewport(frameBufferSpec.Width, frameBufferSpec.Height);
     }
 
     void EditorUILayer::OnUpdate(std::chrono::milliseconds deltaTime) {
+
+        // Check for resizing
+        auto spec = m_Framebuffer->GetSpecification();
+        if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
+            (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y)) {
+            m_Framebuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+        }
+
         m_Framebuffer->Bind();
 
         Shell::RenderCommand::Create()->SetClearColor(m_ClearColor);
@@ -45,10 +69,13 @@ namespace Shell::Editor {
 
         m_RenderQueue->StartBatch();
 
-        auto view = m_EntityManager->GetComponentView<TransformComponent, SpriteComponent>();
+        auto view = m_UiState.EntityManager->GetComponentView<TransformComponent, SpriteComponent>();
         for(auto &&[entity, transform, sprite] : view.each()) {
             if (sprite.Texture) {
                 m_RenderQueue->EnqueueTexturedQuad(sprite.Texture, transform.GetTransform());
+            } else {
+                // assume that it needs a color
+                m_RenderQueue->EnqueueColoredQuad(sprite.Color, transform.GetTransform());
             }
         }
 
@@ -65,6 +92,7 @@ namespace Shell::Editor {
         static bool opt_fullscreen_persistant = true;
         bool opt_fullscreen = opt_fullscreen_persistant;
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+//        ImGui::ShowDemoWindow(&dockspaceOpen);
 
         // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
         // because it would be confusing to have two docking targets within each others.
@@ -119,11 +147,11 @@ namespace Shell::Editor {
                     auto outPath = FileDialog::PickFolder();
 
                     if (!outPath.empty()) {
-                        if (m_Project == nullptr) {
-                            m_Project = new Project(L"Sample game", outPath);
+                        if (m_UiState.Project == nullptr) {
+                            m_UiState.Project = new Project(L"Sample game", outPath);
                         }
 
-                        SaveProjectEvent event(m_Project);
+                        SaveProjectEvent event(m_UiState.Project);
                         EventPublisher::Instance()->Publish(event);
                     }
                 }
@@ -143,11 +171,11 @@ namespace Shell::Editor {
                     auto outPath = FileDialog::PickFolder();
 
                     if (!outPath.empty()) {
-                        if (m_Project == nullptr) {
-                            m_Project = new Project(L"Sample game", outPath);
+                        if (m_UiState.Project == nullptr) {
+                            m_UiState.Project = new Project(L"Sample game", outPath);
                         }
 
-                        SaveProjectEvent event(m_Project);
+                        SaveProjectEvent event(m_UiState.Project);
                         EventPublisher::Instance()->Publish(event);
                     }
                 }
@@ -160,14 +188,9 @@ namespace Shell::Editor {
             ImGui::EndMenuBar();
         }
 
-        ImGui::Begin("Stats");
-
-        std::string name = "None";
-        if (m_SelectedEntity)
-            name = m_SelectedEntity->GetName();
-        ImGui::Text("Hovered Entity: %s", name.c_str());
-
-        ImGui::End();
+        for (const auto &panel: m_Panels) {
+            panel->Render();
+        }
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
         ImGui::Begin("Viewport");
@@ -200,13 +223,19 @@ namespace Shell::Editor {
         {
             if (ImGui::BeginMenu("Create Entity")) {
                 if (ImGui::MenuItem("Empty", NULL, false)) {
-                    auto eventEntity = m_EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Entity");
-                    CreateEntityEvent event(eventEntity, m_SelectedEntity);
+                    auto eventEntity = m_UiState.EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Entity");
+                    CreateEntityEvent event(eventEntity, m_UiState.SelectedEntity);
 
                     EventPublisher::Instance()->Publish(event);
                     ImGui::CloseCurrentPopup();
                 }
                 else if (ImGui::MenuItem("Sprite", NULL, false)) {
+                    auto eventEntity = m_UiState.EntityManager->CreateEntity(m_CurrentSceneBluePrint, "Entity");
+                    m_UiState.EntityManager->AddComponent<SpriteComponent>(eventEntity, glm::vec4(1.0f, 0.f, 0.0f, 1.0f));
+
+                    CreateEntityEvent event(eventEntity, m_UiState.SelectedEntity);
+
+                    EventPublisher::Instance()->Publish(event);
                     ImGui::CloseCurrentPopup();
                 }
                 ImGui::EndMenu();
@@ -233,17 +262,26 @@ namespace Shell::Editor {
     ImRect EditorUILayer::RenderTree(SceneEntity *entity) {
         ImGuiTreeNodeFlags nodeFlags = BASE_NODE_FLAGS;
 
-        if (m_SelectedEntity == entity) {
+        if (m_UiState.SelectedEntity == entity) {
             nodeFlags |= ImGuiTreeNodeFlags_Selected;
         }
 
         const bool recurse = ImGui::TreeNodeEx(entity->GetName().c_str(), nodeFlags);
         if (ImGui::IsItemClicked(ImGuiPopupFlags_MouseButtonLeft) || ImGui::IsItemClicked(ImGuiPopupFlags_MouseButtonRight)) {
 
-            if (m_SelectedEntity == entity) {
-                m_SelectedEntity = nullptr;
+            if (m_UiState.SelectedEntity == entity) {
+                m_UiState.SelectedEntity = nullptr;
+                m_UiState.ChangedEntity = false;
             } else {
-                m_SelectedEntity = entity;
+
+                // make sure fields are not overwritten when changing from one selection to the other
+                if (m_UiState.SelectedEntity != nullptr) {
+                    m_UiState.ChangedEntity = true;
+                } else {
+                    m_UiState.ChangedEntity = false;
+                }
+
+                m_UiState.SelectedEntity = entity;
             }
         }
 
@@ -302,7 +340,7 @@ namespace Shell::Editor {
         }
 
         ProjectSerializer::SerializeToFile(project);
-        Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_Project->GetNameAsSimpleString()));
+        Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_UiState.Project->GetNameAsSimpleString()));
 
         return true;
     }
@@ -314,9 +352,9 @@ namespace Shell::Editor {
             return false;
         }
 
-        m_Project = project;
+        m_UiState.Project = project;
 
-        Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_Project->GetNameAsSimpleString()));
+        Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_UiState.Project->GetNameAsSimpleString()));
 
         return true;
     }

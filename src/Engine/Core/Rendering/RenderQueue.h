@@ -36,5 +36,8 @@ namespace Shell {
 
         Ref<BufferContainer> m_BufferContainerWithTextures;
         Ref<Shader> m_TexturedShader;
+
+        Ref<BufferContainer> m_BufferContainerWithColors;
+        Ref<Shader> m_FlatColorShader;
     };
 }

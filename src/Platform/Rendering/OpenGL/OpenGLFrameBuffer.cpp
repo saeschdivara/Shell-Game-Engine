@@ -17,6 +17,13 @@ namespace Shell {
         glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
     }
 
+    void OpenGLFrameBuffer::Resize(uint32_t width, uint32_t height) {
+        m_Specification.Width = width;
+        m_Specification.Height = height;
+
+        Recreate();
+    }
+
     void OpenGLFrameBuffer::Unbind() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
