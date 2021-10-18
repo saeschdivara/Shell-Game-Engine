@@ -70,14 +70,20 @@ namespace Shell::Editor {
     class SaveSceneEvent : public EditorEvent
     {
     public:
-        SaveSceneEvent(Ref<SceneBlueprint> bluePrint) : m_SceneBlueprint(bluePrint) {}
+        SaveSceneEvent(Ref<SceneBlueprint> bluePrint, std::filesystem::path path)
+        : m_SceneBlueprint(bluePrint), m_Path(path) {}
 
         [[nodiscard]] Ref<SceneBlueprint> GetBlueprint() const {
             return m_SceneBlueprint;
         }
 
+        const std::filesystem::path &GetPath() const {
+            return m_Path;
+        }
+
     private:
         Ref<SceneBlueprint> m_SceneBlueprint;
+        std::filesystem::path m_Path;
     };
 
     class LoadSceneEvent : public EditorEvent

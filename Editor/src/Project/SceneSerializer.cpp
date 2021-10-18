@@ -1,10 +1,39 @@
 #include "SceneSerializer.h"
 
+#include <Engine/Project/Entities/SceneEntity.h>
+
 #include <codecvt>
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 
 namespace Shell::Editor {
+
+    inline YAML::Emitter& operator<<(YAML::Emitter& emitter, SceneEntity * entity) {
+
+        emitter << YAML::BeginMap;
+
+        emitter << YAML::Key << "Name";
+        emitter << YAML::Value << entity->GetName();
+
+        emitter << YAML::Key << "ID";
+        emitter << YAML::Value << UuidToString(entity->GetUuid());
+
+        if (entity->HasChildren()) {
+            emitter << YAML::Key << "Children";
+            emitter << YAML::BeginSeq;
+
+            for (const auto &childEntity: entity->GetChildren()) {
+                emitter << childEntity;
+            }
+
+            emitter << YAML::EndSeq;
+        }
+
+        emitter << YAML::EndMap;
+
+        return emitter;
+    }
+
     void SceneSerializer::SerializeToFile(const std::filesystem::path &path, const Ref<SceneBlueprint>& sceneBlueprint) {
 
         YAML::Emitter out;
@@ -13,6 +42,17 @@ namespace Shell::Editor {
 
         out << YAML::Key << "Name";
         out << YAML::Value << sceneBlueprint->GetName();
+
+        out << YAML::Key << "Entities";
+        out << YAML::Value;
+
+        out << YAML::BeginSeq;
+
+        for (const auto &entity: sceneBlueprint->GetEntityTree()) {
+            out << entity;
+        }
+
+        out << YAML::EndSeq;
 
         out << YAML::EndMap;
 

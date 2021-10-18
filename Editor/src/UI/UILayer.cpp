@@ -2,6 +2,7 @@
 
 #include "Core/FileDialog.h"
 #include "Project/ProjectSerializer.h"
+#include "Project/SceneSerializer.h"
 #include "UI/Panel/EntityPropsPanel.h"
 
 #include <Engine/Core/Application.h>
@@ -265,20 +266,20 @@ namespace Shell::Editor {
 
                 if (ImGui::MenuItem("New"))
                 {
-                    auto outPath = FileDialog::ChooseFile();
+                    auto outPath = FileDialog::SaveFile();
 
                     if (!outPath.empty()) {
-                        SaveSceneEvent event(m_UiState.CurrentSceneBluePrint);
+                        SaveSceneEvent event(m_UiState.CurrentSceneBluePrint, outPath);
                         EventPublisher::Instance()->Publish(event);
                     }
                 }
 
                 if (ImGui::MenuItem("Save As..."))
                 {
-                    auto outPath = FileDialog::ChooseFile();
+                    auto outPath = FileDialog::SaveFile();
 
                     if (!outPath.empty()) {
-                        SaveSceneEvent event(m_UiState.CurrentSceneBluePrint);
+                        SaveSceneEvent event(m_UiState.CurrentSceneBluePrint, outPath);
                         EventPublisher::Instance()->Publish(event);
                     }
                 }
@@ -391,6 +392,8 @@ namespace Shell::Editor {
     }
 
     bool EditorUILayer::OnSaveSceneEvent(SaveSceneEvent &event) {
+        SceneSerializer::SerializeToFile(event.GetPath(), event.GetBlueprint());
+
         return true;
     }
 }
