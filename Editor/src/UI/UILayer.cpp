@@ -45,7 +45,7 @@ namespace Shell::Editor {
         m_RenderQueue = CreateRef<RenderQueue>();
         m_RenderQueue->Init();
 
-        m_UiState.CurrentSceneBluePrint = CreateRef<SceneBlueprint>();
+        m_UiState.CurrentSceneBluePrint = CreateRef<SceneBlueprint>("Initial-Scene");
         m_UiState.EntityManager = CreateRef<EntityManager>();
 
         Shell::RenderCommand::Create()->SetViewport(frameBufferSpec.Width, frameBufferSpec.Height);
