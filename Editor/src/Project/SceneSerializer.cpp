@@ -43,6 +43,9 @@ namespace Shell::Editor {
         out << YAML::Key << "Name";
         out << YAML::Value << sceneBlueprint->GetName();
 
+        out << YAML::Key << "ID";
+        out << YAML::Value << UuidToString(sceneBlueprint->GetUuid());
+
         out << YAML::Key << "Entities";
         out << YAML::Value;
 

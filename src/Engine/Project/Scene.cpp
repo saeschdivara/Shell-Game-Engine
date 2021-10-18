@@ -6,7 +6,7 @@
 
 namespace Shell {
 
-    Scene::Scene(std::string name) : m_Name(std::move(name)) {
+    Scene::Scene(std::string name, Uuid uuid) : m_Name(std::move(name)), m_UUID(uuid) {
     }
 
     std::string &Scene::GetName() {
@@ -19,5 +19,9 @@ namespace Shell {
 
     std::vector<SceneEntity *> &Scene::GetEntityTree() {
         return m_EntityTree;
+    }
+
+    const Uuid &Scene::GetUuid() const {
+        return m_UUID;
     }
 }

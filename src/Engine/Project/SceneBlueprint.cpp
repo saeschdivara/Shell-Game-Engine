@@ -2,6 +2,6 @@
 
 namespace Shell {
 
-    SceneBlueprint::SceneBlueprint(const std::string &name) : Scene(name) {}
+    SceneBlueprint::SceneBlueprint(const std::string &name) : Scene(name, Uuid::Create()) {}
 
 }
