@@ -2,7 +2,7 @@
 
 #include <Engine/Project/Project.h>
 
-namespace Shell {
+namespace Shell::Editor {
 
     class ProjectSerializer {
     public:

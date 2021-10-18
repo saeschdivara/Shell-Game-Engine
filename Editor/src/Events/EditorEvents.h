@@ -3,6 +3,7 @@
 #include <Engine/Core/shellpch.h>
 #include <Engine/Core/Events/Event.h>
 #include <Engine/Project/Project.h>
+#include <Engine/Project/SceneBlueprint.h>
 #include <Engine/Project/Entities/SceneEntity.h>
 
 namespace Shell::Editor {
@@ -64,5 +65,37 @@ namespace Shell::Editor {
 
     private:
         std::filesystem::path m_ProjectPath;
+    };
+
+    class SaveSceneEvent : public EditorEvent
+    {
+    public:
+        SaveSceneEvent(Ref<SceneBlueprint> bluePrint, std::filesystem::path path)
+        : m_SceneBlueprint(bluePrint), m_Path(path) {}
+
+        [[nodiscard]] Ref<SceneBlueprint> GetBlueprint() const {
+            return m_SceneBlueprint;
+        }
+
+        const std::filesystem::path &GetPath() const {
+            return m_Path;
+        }
+
+    private:
+        Ref<SceneBlueprint> m_SceneBlueprint;
+        std::filesystem::path m_Path;
+    };
+
+    class LoadSceneEvent : public EditorEvent
+    {
+    public:
+        LoadSceneEvent(std::filesystem::path scenePath) : m_ScenePath(std::move(scenePath)) {}
+
+        const std::filesystem::path &GetScenePath() const {
+            return m_ScenePath;
+        }
+
+    private:
+        std::filesystem::path m_ScenePath;
     };
 }
