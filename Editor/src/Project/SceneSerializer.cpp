@@ -8,12 +8,27 @@
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 
-#define KEY_NAME        "Name"
-#define KEY_ID          "ID"
-#define KEY_ENTITIES    "Entities"
-#define KEY_COMPONENTS  "Components"
+#define KEY_NAME            "Name"
+#define KEY_ID              "ID"
+#define KEY_ENTITIES        "Entities"
+#define KEY_COMPONENTS      "Components"
+#define KEY_CMP_TRANSFORM   "Transform"
+#define KEY_TRANSLATION     "Translation"
+#define KEY_ROTATION        "Rotation"
+#define KEY_SCALE           "Scale"
+
 
 namespace Shell::Editor {
+
+    inline glm::vec3 ParseVec3(const std::string & input) {
+        auto findFirstBar = input.find('|');
+        auto findSecondBar = input.find('|', findFirstBar+1);
+        return glm::vec3{
+                std::stof(input.substr(0, findFirstBar)),
+                std::stof(input.substr(findFirstBar+1, findSecondBar)),
+                std::stof(input.substr(findSecondBar+1))
+        };
+    }
 
     inline YAML::Emitter& operator<<(YAML::Emitter& emitter, glm::vec3 & vec3) {
         emitter << std::to_string(vec3.x) + "|" + std::to_string(vec3.y) + "|" + std::to_string(vec3.z);
@@ -42,15 +57,15 @@ namespace Shell::Editor {
 
         if (EntityManager::Instance()->HasComponent<TransformComponent>(entity)) {
             auto transformCmp = EntityManager::Instance()->GetComponent<TransformComponent>(entity);
-            emitter << YAML::Key << "Transform";
+            emitter << YAML::Key << KEY_CMP_TRANSFORM;
             emitter << YAML::Value;
 
             emitter << YAML::BeginMap;
-            emitter << YAML::Key << "Translation";
+            emitter << YAML::Key << KEY_TRANSLATION;
             emitter << YAML::Value << transformCmp.Translation;
-            emitter << YAML::Key << "Rotation";
+            emitter << YAML::Key << KEY_ROTATION;
             emitter << YAML::Value << transformCmp.Rotation;
-            emitter << YAML::Key << "Scale";
+            emitter << YAML::Key << KEY_SCALE;
             emitter << YAML::Value << transformCmp.Scale;
             emitter << YAML::EndMap;
         }
@@ -166,7 +181,16 @@ namespace Shell::Editor {
             auto componentsNode = entity[KEY_COMPONENTS];
             if (componentsNode) {
                 for(YAML::const_iterator componentIterator = componentsNode.begin(); componentIterator != componentsNode.end(); ++componentIterator) {
-                    //
+                    auto componentKey = componentIterator->first.as<std::string>();
+
+                    if (componentKey == KEY_CMP_TRANSFORM) {
+                        auto transformCmpNode = componentsNode[KEY_CMP_TRANSFORM].as<YAML::Node>();
+                        auto translation = ParseVec3(transformCmpNode[KEY_TRANSLATION].as<std::string>());
+                        auto rotation = ParseVec3(transformCmpNode[KEY_ROTATION].as<std::string>());
+                        auto scale = ParseVec3(transformCmpNode[KEY_SCALE].as<std::string>());
+
+                        EntityManager::Instance()->AddComponent<TransformComponent>(sceneEntity, translation, rotation, scale);
+                    }
                 }
             }
         }
