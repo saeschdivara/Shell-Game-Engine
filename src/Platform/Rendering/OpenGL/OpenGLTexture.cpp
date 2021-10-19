@@ -53,6 +53,10 @@ namespace Shell {
         return m_Width;
     }
 
+    std::string OpenGLTexture2D::GetPath() const {
+        return m_Path;
+    }
+
     void OpenGLTexture2D::Bind() const {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_RendererID);

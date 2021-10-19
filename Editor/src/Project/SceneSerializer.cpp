@@ -1,5 +1,6 @@
 #include "SceneSerializer.h"
 
+#include <Engine/Project/Entities/Components.h>
 #include <Engine/Project/Entities/EntityManager.h>
 #include <Engine/Project/Entities/SceneEntity.h>
 
@@ -10,8 +11,19 @@
 #define KEY_NAME        "Name"
 #define KEY_ID          "ID"
 #define KEY_ENTITIES    "Entities"
+#define KEY_COMPONENTS  "Components"
 
 namespace Shell::Editor {
+
+    inline YAML::Emitter& operator<<(YAML::Emitter& emitter, glm::vec3 & vec3) {
+        emitter << std::to_string(vec3.x) + "|" + std::to_string(vec3.y) + "|" + std::to_string(vec3.z);
+        return emitter;
+    }
+
+    inline YAML::Emitter& operator<<(YAML::Emitter& emitter, glm::vec4 & vec4) {
+        emitter << std::to_string(vec4.r) + "|" + std::to_string(vec4.g) + "|" + std::to_string(vec4.b) + "|" + std::to_string(vec4.a);
+        return emitter;
+    }
 
     inline YAML::Emitter& operator<<(YAML::Emitter& emitter, SceneEntity * entity) {
 
@@ -22,6 +34,47 @@ namespace Shell::Editor {
 
         emitter << YAML::Key << KEY_ID;
         emitter << YAML::Value << UuidToString(entity->GetUuid());
+
+        emitter << YAML::Key << KEY_COMPONENTS;
+        emitter << YAML::Value;
+
+        emitter << YAML::BeginMap;
+
+        if (EntityManager::Instance()->HasComponent<TransformComponent>(entity)) {
+            auto transformCmp = EntityManager::Instance()->GetComponent<TransformComponent>(entity);
+            emitter << YAML::Key << "Transform";
+            emitter << YAML::Value;
+
+            emitter << YAML::BeginMap;
+            emitter << YAML::Key << "Translation";
+            emitter << YAML::Value << transformCmp.Translation;
+            emitter << YAML::Key << "Rotation";
+            emitter << YAML::Value << transformCmp.Rotation;
+            emitter << YAML::Key << "Scale";
+            emitter << YAML::Value << transformCmp.Scale;
+            emitter << YAML::EndMap;
+        }
+
+        if (EntityManager::Instance()->HasComponent<SpriteComponent>(entity)) {
+            auto spriteCmp = EntityManager::Instance()->GetComponent<SpriteComponent>(entity);
+            emitter << YAML::Key << "Sprite";
+            emitter << YAML::Value;
+
+            emitter << YAML::BeginMap;
+
+            // store either color or texture
+            if (spriteCmp.Texture) {
+                emitter << YAML::Key << "Texture2D";
+                emitter << YAML::Value << spriteCmp.Texture->GetPath();
+            } else {
+                emitter << YAML::Key << "Color";
+                emitter << YAML::Value << spriteCmp.Color;
+            }
+
+            emitter << YAML::EndMap;
+        }
+
+        emitter << YAML::EndMap;
 
         if (entity->HasChildren()) {
             emitter << YAML::Key << "Children";
@@ -109,6 +162,13 @@ namespace Shell::Editor {
             auto entityID = Uuid::Create(entity[KEY_ID].as<std::string>());
             SceneEntity * sceneEntity = EntityManager::Instance()->CreateEntity(bluePrint, entityName, entityID);
             bluePrint->AddEntity(sceneEntity);
+
+            auto componentsNode = entity[KEY_COMPONENTS];
+            if (componentsNode) {
+                for(YAML::const_iterator componentIterator = componentsNode.begin(); componentIterator != componentsNode.end(); ++componentIterator) {
+                    //
+                }
+            }
         }
 
         return bluePrint;
