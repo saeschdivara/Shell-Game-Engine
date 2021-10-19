@@ -83,7 +83,7 @@ namespace Shell {
                id[15]
             } };
 
-         return uuid{ std::begin(bytes), std::end(bytes) };
+         return Uuid{ std::begin(bytes), std::end(bytes) };
 
 #elif SHELL_PLATFORM_MACOS
          auto newId = CFUUIDCreate(NULL);
@@ -109,9 +109,33 @@ namespace Shell {
                bytes.byte14,
                bytes.byte15
             } };
-         return uuid{ std::begin(arrbytes), std::end(arrbytes) };
+         return Uuid{ std::begin(arrbytes), std::end(arrbytes) };
 #else
          return Uuid{};
 #endif
+    }
+
+    Uuid Uuid::Create(const std::string & id) {
+        std::array<uint8_t, 16> bytes =
+                { {
+                          id[0],
+                          id[1],
+                          id[2],
+                          id[3],
+                          id[4],
+                          id[5],
+                          id[6],
+                          id[7],
+                          id[8],
+                          id[9],
+                          id[10],
+                          id[11],
+                          id[12],
+                          id[13],
+                          id[14],
+                          id[15]
+                  } };
+
+        return Uuid{ std::begin(bytes), std::end(bytes) };
     }
 }

@@ -13,6 +13,10 @@ namespace Shell {
         return m_Name;
     }
 
+    const Uuid &Scene::GetUuid() const {
+        return m_UUID;
+    }
+
     std::vector<SceneEntity *> &Scene::GetEntities()  {
         return m_Entities;
     }
@@ -21,7 +25,8 @@ namespace Shell {
         return m_EntityTree;
     }
 
-    const Uuid &Scene::GetUuid() const {
-        return m_UUID;
+    void Scene::AddEntity(SceneEntity * entity) {
+        m_Entities.push_back(entity);
+        m_EntityTree.push_back(entity);
     }
 }

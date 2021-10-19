@@ -9,6 +9,7 @@ namespace Shell {
         using value_type = uint8_t;
 
         static Uuid Create();
+        static Uuid Create(const std::string & id);
 
         Uuid(value_type(&arr)[16]) noexcept
         {

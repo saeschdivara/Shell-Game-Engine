@@ -18,10 +18,10 @@ namespace Shell::Editor {
         ImGui::Begin("Stats");
 
         if (m_UiState->SelectedEntity) {
-            if (m_UiState->EntityManager->HasComponent<TransformComponent>(m_UiState->SelectedEntity)) {
+            if (EntityManager::Instance()->HasComponent<TransformComponent>(m_UiState->SelectedEntity)) {
                 RenderTransformComponent();
             }
-            if (m_UiState->EntityManager->HasComponent<SpriteComponent>(m_UiState->SelectedEntity)) {
+            if (EntityManager::Instance()->HasComponent<SpriteComponent>(m_UiState->SelectedEntity)) {
                 RenderSpriteComponent();
             }
 
@@ -36,7 +36,7 @@ namespace Shell::Editor {
     }
 
     void EntityPropsPanel::RenderTransformComponent() {
-        auto& transform = m_UiState->EntityManager->GetComponent<TransformComponent>(m_UiState->SelectedEntity);
+        auto& transform = EntityManager::Instance()->GetComponent<TransformComponent>(m_UiState->SelectedEntity);
 
         if (!isValuesInitialized || m_UiState->ChangedEntity) {
             transformValues[0] = transform.Translation.x;
@@ -72,7 +72,7 @@ namespace Shell::Editor {
     }
 
     void EntityPropsPanel::RenderSpriteComponent() {
-        auto& sprite = m_UiState->EntityManager->GetComponent<SpriteComponent>(m_UiState->SelectedEntity);
+        auto& sprite = EntityManager::Instance()->GetComponent<SpriteComponent>(m_UiState->SelectedEntity);
 
         if (!isValuesInitialized || m_UiState->ChangedEntity) {
             colorInput[0] = sprite.Color.r;

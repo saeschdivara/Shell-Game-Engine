@@ -10,6 +10,7 @@ namespace Shell {
     class SceneEntity {
     public:
         SceneEntity(Ref<Scene> scene, const std::string & name, entt::entity entity);
+        SceneEntity(Ref<Scene> scene, const std::string & name, const Uuid & id, entt::entity entity);
 
         [[nodiscard]] std::string GetName() const { return m_Name; }
         void SetName(std::string &name) { m_Name = name; }

@@ -21,8 +21,6 @@ struct ImRect;
 namespace Shell::Editor {
 
     struct UIState {
-        Ref<EntityManager> EntityManager;
-
         Project * Project = nullptr;
         Ref<SceneBlueprint> CurrentSceneBluePrint;
 
@@ -50,6 +48,7 @@ namespace Shell::Editor {
         bool OnSaveProjectEvent(SaveProjectEvent & event);
         bool OnLoadProjectEvent(LoadProjectEvent & event);
         bool OnSaveSceneEvent(SaveSceneEvent & event);
+        bool OnLoadSceneEvent(LoadSceneEvent & event);
 
     private:
         // ------ Rendering ------
