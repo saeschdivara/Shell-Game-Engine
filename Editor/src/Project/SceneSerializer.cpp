@@ -16,6 +16,9 @@
 #define KEY_TRANSLATION     "Translation"
 #define KEY_ROTATION        "Rotation"
 #define KEY_SCALE           "Scale"
+#define KEY_CMP_SPRITE      "Sprite"
+#define KEY_TEXTURE2D       "Texture2D"
+#define KEY_COLOR           "Color"
 
 
 namespace Shell::Editor {
@@ -27,6 +30,18 @@ namespace Shell::Editor {
                 std::stof(input.substr(0, findFirstBar)),
                 std::stof(input.substr(findFirstBar+1, findSecondBar)),
                 std::stof(input.substr(findSecondBar+1))
+        };
+    }
+
+    inline glm::vec4 ParseVec4(const std::string & input) {
+        auto findFirstBar = input.find('|');
+        auto findSecondBar = input.find('|', findFirstBar+1);
+        auto findThirdBar = input.find('|', findSecondBar+1);
+        return glm::vec4{
+                std::stof(input.substr(0, findFirstBar)),
+                std::stof(input.substr(findFirstBar+1, findSecondBar)),
+                std::stof(input.substr(findSecondBar+1, findThirdBar)),
+                std::stof(input.substr(findThirdBar+1))
         };
     }
 
@@ -72,17 +87,17 @@ namespace Shell::Editor {
 
         if (EntityManager::Instance()->HasComponent<SpriteComponent>(entity)) {
             auto spriteCmp = EntityManager::Instance()->GetComponent<SpriteComponent>(entity);
-            emitter << YAML::Key << "Sprite";
+            emitter << YAML::Key << KEY_CMP_SPRITE;
             emitter << YAML::Value;
 
             emitter << YAML::BeginMap;
 
             // store either color or texture
             if (spriteCmp.Texture) {
-                emitter << YAML::Key << "Texture2D";
+                emitter << YAML::Key << KEY_TEXTURE2D;
                 emitter << YAML::Value << spriteCmp.Texture->GetPath();
             } else {
-                emitter << YAML::Key << "Color";
+                emitter << YAML::Key << KEY_COLOR;
                 emitter << YAML::Value << spriteCmp.Color;
             }
 
@@ -190,6 +205,19 @@ namespace Shell::Editor {
                         auto scale = ParseVec3(transformCmpNode[KEY_SCALE].as<std::string>());
 
                         EntityManager::Instance()->AddComponent<TransformComponent>(sceneEntity, translation, rotation, scale);
+                    }
+                    else if (componentKey == KEY_CMP_SPRITE) {
+                        auto spriteCmpNode = componentsNode[KEY_CMP_SPRITE].as<YAML::Node>();
+
+                        if (spriteCmpNode[KEY_TEXTURE2D]) {
+                            auto texturePath = spriteCmpNode[KEY_TEXTURE2D].as<std::string>();
+                            auto texture = Texture2D::Create(texturePath);
+
+                            EntityManager::Instance()->AddComponent<SpriteComponent>(sceneEntity, texture);
+                        } else {
+                            auto color = ParseVec4(spriteCmpNode[KEY_COLOR].as<std::string>());
+                            EntityManager::Instance()->AddComponent<SpriteComponent>(sceneEntity, color);
+                        }
                     }
                 }
             }
