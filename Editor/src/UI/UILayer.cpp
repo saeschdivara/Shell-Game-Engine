@@ -47,7 +47,6 @@ namespace Shell::Editor {
         m_RenderQueue->Init();
 
         m_UiState.CurrentSceneBluePrint = CreateRef<SceneBlueprint>("Initial-Scene");
-        m_UiState.EntityManager = CreateRef<EntityManager>();
 
         Shell::RenderCommand::Create()->SetViewport(frameBufferSpec.Width, frameBufferSpec.Height);
     }
@@ -70,7 +69,7 @@ namespace Shell::Editor {
 
         m_RenderQueue->StartBatch();
 
-        auto view = m_UiState.EntityManager->GetComponentView<TransformComponent, SpriteComponent>();
+        auto view = EntityManager::Instance()->GetComponentView<TransformComponent, SpriteComponent>();
         for(auto &&[entity, transform, sprite] : view.each()) {
             if (sprite.Texture) {
                 m_RenderQueue->EnqueueTexturedQuad(sprite.Texture, transform.GetTransform());
@@ -176,15 +175,15 @@ namespace Shell::Editor {
         {
             if (ImGui::BeginMenu("Create Entity")) {
                 if (ImGui::MenuItem("Empty", NULL, false)) {
-                    auto eventEntity = m_UiState.EntityManager->CreateEntity(m_UiState.CurrentSceneBluePrint, "Entity");
+                    auto eventEntity = EntityManager::Instance()->CreateEntity(m_UiState.CurrentSceneBluePrint, "Entity");
                     CreateEntityEvent event(eventEntity, m_UiState.SelectedEntity);
 
                     EventPublisher::Instance()->Publish(event);
                     ImGui::CloseCurrentPopup();
                 }
                 else if (ImGui::MenuItem("Sprite", NULL, false)) {
-                    auto eventEntity = m_UiState.EntityManager->CreateEntity(m_UiState.CurrentSceneBluePrint, "Entity");
-                    m_UiState.EntityManager->AddComponent<SpriteComponent>(eventEntity, glm::vec4(1.0f, 0.f, 0.0f, 1.0f));
+                    auto eventEntity = EntityManager::Instance()->CreateEntity(m_UiState.CurrentSceneBluePrint, "Entity");
+                    EntityManager::Instance()->AddComponent<SpriteComponent>(eventEntity, glm::vec4(1.0f, 0.f, 0.0f, 1.0f));
 
                     CreateEntityEvent event(eventEntity, m_UiState.SelectedEntity);
 
@@ -211,6 +210,7 @@ namespace Shell::Editor {
         dispatcher.Dispatch<SaveProjectEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnSaveProjectEvent));
         dispatcher.Dispatch<LoadProjectEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnLoadProjectEvent));
         dispatcher.Dispatch<SaveSceneEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnSaveSceneEvent));
+        dispatcher.Dispatch<LoadSceneEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnLoadSceneEvent));
     }
 
     void EditorUILayer::RenderMenu() {
@@ -270,6 +270,16 @@ namespace Shell::Editor {
 
                     if (!outPath.empty()) {
                         SaveSceneEvent event(m_UiState.CurrentSceneBluePrint, outPath);
+                        EventPublisher::Instance()->Publish(event);
+                    }
+                }
+
+                if (ImGui::MenuItem("Open"))
+                {
+                    auto outPath = FileDialog::ChooseFile();
+
+                    if (!outPath.empty()) {
+                        LoadSceneEvent event(outPath);
                         EventPublisher::Instance()->Publish(event);
                     }
                 }
@@ -393,6 +403,12 @@ namespace Shell::Editor {
 
     bool EditorUILayer::OnSaveSceneEvent(SaveSceneEvent &event) {
         SceneSerializer::SerializeToFile(event.GetPath(), event.GetBlueprint());
+
+        return true;
+    }
+
+    bool EditorUILayer::OnLoadSceneEvent(LoadSceneEvent & event) {
+        m_UiState.CurrentSceneBluePrint = SceneSerializer::DeserializeFromFile(event.GetScenePath());
 
         return true;
     }

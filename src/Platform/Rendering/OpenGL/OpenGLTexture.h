@@ -11,6 +11,7 @@ namespace Shell {
 
         [[nodiscard]] uint32_t GetWidth() const override;
         [[nodiscard]] uint32_t GetHeight() const override;
+        [[nodiscard]] std::string GetPath() const override;
 
         void Bind() const override;
 

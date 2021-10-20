@@ -9,6 +9,7 @@ namespace Shell {
         virtual ~Texture() {}
         [[nodiscard]] virtual uint32_t GetWidth() const = 0;
         [[nodiscard]] virtual uint32_t GetHeight() const = 0;
+        [[nodiscard]] virtual std::string GetPath() const = 0;
 
         virtual void Bind() const = 0;
     };

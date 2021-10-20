@@ -2,6 +2,8 @@
 
 #include "Engine/Core/shellpch.h"
 
+#include <array>
+
 namespace Shell {
 
     class Uuid {
@@ -9,6 +11,7 @@ namespace Shell {
         using value_type = uint8_t;
 
         static Uuid Create();
+        static Uuid Create(const std::string & id);
 
         Uuid(value_type(&arr)[16]) noexcept
         {
@@ -35,7 +38,7 @@ namespace Shell {
         }
 
     private:
-        std::array<value_type, 16> m_Data{ { 0 } };
+        std::array<value_type, 16> m_Data;
 
         template <class Elem, class Traits>
         friend std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &s, Uuid const & id);

@@ -1,8 +1,8 @@
 #include "Uuid.h"
 
-#ifdef SHELL_PLATFORM_WINDOWS
-
 #define UUID_SYSTEM_GENERATOR
+
+#ifdef SHELL_PLATFORM_WINDOWS
 
     #ifdef UUID_SYSTEM_GENERATOR
         #include <objbase.h>
@@ -83,7 +83,7 @@ namespace Shell {
                id[15]
             } };
 
-         return uuid{ std::begin(bytes), std::end(bytes) };
+         return Uuid{ std::begin(bytes), std::end(bytes) };
 
 #elif SHELL_PLATFORM_MACOS
          auto newId = CFUUIDCreate(NULL);
@@ -109,9 +109,33 @@ namespace Shell {
                bytes.byte14,
                bytes.byte15
             } };
-         return uuid{ std::begin(arrbytes), std::end(arrbytes) };
+         return Uuid{ std::begin(arrbytes), std::end(arrbytes) };
 #else
          return Uuid{};
 #endif
+    }
+
+    Uuid Uuid::Create(const std::string & id) {
+        std::array<uint8_t, 16> bytes =
+                { {
+                          (unsigned char) id[0],
+                          (unsigned char) id[1],
+                          (unsigned char) id[2],
+                          (unsigned char) id[3],
+                          (unsigned char) id[4],
+                          (unsigned char) id[5],
+                          (unsigned char) id[6],
+                          (unsigned char) id[7],
+                          (unsigned char) id[8],
+                          (unsigned char) id[9],
+                          (unsigned char) id[10],
+                          (unsigned char) id[11],
+                          (unsigned char) id[12],
+                          (unsigned char) id[13],
+                          (unsigned char) id[14],
+                          (unsigned char) id[15]
+                  } };
+
+        return Uuid{ std::begin(bytes), std::end(bytes) };
     }
 }

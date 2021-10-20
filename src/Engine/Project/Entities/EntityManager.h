@@ -6,7 +6,10 @@
 namespace Shell {
     class EntityManager {
     public:
+        static Ref<EntityManager> Instance();
+
         SceneEntity * CreateEntity(Ref<Scene> scene, const std::string & name);
+        SceneEntity * CreateEmptyEntity(Ref<Scene> scene, const std::string & name, const Uuid & id);
 
         template <typename... Components>
         auto GetComponentView()
@@ -32,6 +35,8 @@ namespace Shell {
         }
 
     private:
+        static Ref<EntityManager> m_Instance;
+
         entt::registry m_Registry;
     };
 }

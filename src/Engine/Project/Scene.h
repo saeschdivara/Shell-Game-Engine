@@ -17,6 +17,8 @@ namespace Shell {
         std::vector<SceneEntity *>& GetEntities();
         std::vector<SceneEntity *>& GetEntityTree();
 
+        void AddEntity(SceneEntity * entity);
+
     private:
         std::string m_Name;
         Uuid m_UUID;
