@@ -58,6 +58,8 @@ namespace Shell::Editor {
         if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
             (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y)) {
             m_Framebuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+
+            m_Camera->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
         }
 
         m_Framebuffer->Bind();

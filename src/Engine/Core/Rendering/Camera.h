@@ -8,6 +8,8 @@ namespace Shell {
     public:
         OrthographicCamera(float left, float right, float bottom, float top);
 
+        void SetViewportSize(uint32_t width, uint32_t height);
+
         [[nodiscard]] const glm::vec3& GetPosition() const { return m_Position; }
         void SetPosition(glm::vec3 pos) { m_Position = pos; RecalculateViewMatrix(); }
 
@@ -28,6 +30,8 @@ namespace Shell {
 
         glm::vec3 m_Position;
         float m_Rotation = 0.0f;
+        float m_OrthographicSize = 10.0f;
+        float m_AspectRatio = 0.0f;
     };
 
 }
