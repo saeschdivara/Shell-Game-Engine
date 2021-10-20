@@ -1,8 +1,8 @@
 #include "Uuid.h"
 
-#ifdef SHELL_PLATFORM_WINDOWS
-
 #define UUID_SYSTEM_GENERATOR
+
+#ifdef SHELL_PLATFORM_WINDOWS
 
     #ifdef UUID_SYSTEM_GENERATOR
         #include <objbase.h>
@@ -118,22 +118,22 @@ namespace Shell {
     Uuid Uuid::Create(const std::string & id) {
         std::array<uint8_t, 16> bytes =
                 { {
-                          id[0],
-                          id[1],
-                          id[2],
-                          id[3],
-                          id[4],
-                          id[5],
-                          id[6],
-                          id[7],
-                          id[8],
-                          id[9],
-                          id[10],
-                          id[11],
-                          id[12],
-                          id[13],
-                          id[14],
-                          id[15]
+                          (unsigned char) id[0],
+                          (unsigned char) id[1],
+                          (unsigned char) id[2],
+                          (unsigned char) id[3],
+                          (unsigned char) id[4],
+                          (unsigned char) id[5],
+                          (unsigned char) id[6],
+                          (unsigned char) id[7],
+                          (unsigned char) id[8],
+                          (unsigned char) id[9],
+                          (unsigned char) id[10],
+                          (unsigned char) id[11],
+                          (unsigned char) id[12],
+                          (unsigned char) id[13],
+                          (unsigned char) id[14],
+                          (unsigned char) id[15]
                   } };
 
         return Uuid{ std::begin(bytes), std::end(bytes) };
