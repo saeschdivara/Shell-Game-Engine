@@ -9,7 +9,7 @@ namespace Shell {
         static Ref<EntityManager> Instance();
 
         SceneEntity * CreateEntity(Ref<Scene> scene, const std::string & name);
-        SceneEntity * CreateEntity(Ref<Scene> scene, const std::string & name, const Uuid & id);
+        SceneEntity * CreateEmptyEntity(Ref<Scene> scene, const std::string & name, const Uuid & id);
 
         template <typename... Components>
         auto GetComponentView()

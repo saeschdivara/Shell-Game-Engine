@@ -175,7 +175,7 @@ namespace Shell::Editor {
 
             auto entityName = entity[KEY_NAME].as<std::string>();
             auto entityID = Uuid::Create(entity[KEY_ID].as<std::string>());
-            SceneEntity * sceneEntity = EntityManager::Instance()->CreateEntity(bluePrint, entityName, entityID);
+            SceneEntity * sceneEntity = EntityManager::Instance()->CreateEmptyEntity(bluePrint, entityName, entityID);
             bluePrint->AddEntity(sceneEntity);
 
             auto componentsNode = entity[KEY_COMPONENTS];

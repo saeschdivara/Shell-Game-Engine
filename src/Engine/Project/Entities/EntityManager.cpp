@@ -24,13 +24,8 @@ namespace Shell {
         return sceneEntity;
     }
 
-    SceneEntity *EntityManager::CreateEntity(Ref<Scene> scene, const std::string &name, const Uuid & id) {
+    SceneEntity *EntityManager::CreateEmptyEntity(Ref<Scene> scene, const std::string &name, const Uuid & id) {
         auto entity = m_Registry.create();
-        auto sceneEntity = new SceneEntity(std::move(scene), name, id, entity);
-
-        // every scene entity has at least a transform component
-        m_Registry.emplace<TransformComponent>(entity);
-
-        return sceneEntity;
+        return new SceneEntity(std::move(scene), name, id, entity);
     }
 }
