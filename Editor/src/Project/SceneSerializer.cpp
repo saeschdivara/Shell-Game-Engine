@@ -19,6 +19,9 @@
 #define KEY_CMP_SPRITE      "Sprite"
 #define KEY_TEXTURE2D       "Texture2D"
 #define KEY_COLOR           "Color"
+#define KEY_CMP_SCRIPT      "Scripting"
+#define KEY_PATH            "Path"
+#define KEY_CLASS_NAME      "Class-Name"
 
 
 namespace Shell::Editor {
@@ -100,6 +103,22 @@ namespace Shell::Editor {
                 emitter << YAML::Key << KEY_COLOR;
                 emitter << YAML::Value << spriteCmp.Color;
             }
+
+            emitter << YAML::EndMap;
+        }
+
+        if (EntityManager::Instance()->HasComponent<ScriptingComponent>(entity)) {
+            auto scriptingCmp = EntityManager::Instance()->GetComponent<ScriptingComponent>(entity);
+            emitter << YAML::Key << KEY_CMP_SCRIPT;
+            emitter << YAML::Value;
+
+            emitter << YAML::BeginMap;
+
+            emitter << YAML::Key << KEY_PATH;
+            emitter << YAML::Value << scriptingCmp.Path;
+
+            emitter << YAML::Key << KEY_CLASS_NAME;
+            emitter << YAML::Value << scriptingCmp.ClassName;
 
             emitter << YAML::EndMap;
         }
@@ -218,6 +237,13 @@ namespace Shell::Editor {
                             auto color = ParseVec4(spriteCmpNode[KEY_COLOR].as<std::string>());
                             EntityManager::Instance()->AddComponent<SpriteComponent>(sceneEntity, color);
                         }
+                    }
+                    else if (componentKey == KEY_CMP_SCRIPT) {
+                        auto scriptingCmpNode = componentsNode[KEY_CMP_SCRIPT].as<YAML::Node>();
+                        auto scriptPath = scriptingCmpNode[KEY_PATH].as<std::string>();
+                        auto scriptClassName = scriptingCmpNode[KEY_CLASS_NAME].as<std::string>();
+
+                        EntityManager::Instance()->AddComponent<ScriptingComponent>(sceneEntity, scriptPath, scriptClassName);
                     }
                 }
             }
