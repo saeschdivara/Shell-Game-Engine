@@ -36,14 +36,14 @@ namespace Shell::Editor {
                 RenderScriptingComponent();
             }
 
-                if (ImGui::BeginPopupContextWindow("component context"))
-                {
-                    if (ImGui::MenuItem("Scripting", NULL, false)) {
-                        EntityManager::Instance()->AddComponent<ScriptingComponent>(m_UiState->SelectedEntity);
-                    }
-
-                    ImGui::EndPopup();
+            if (ImGui::BeginPopupContextWindow("component context"))
+            {
+                if (ImGui::MenuItem("Scripting", NULL, false)) {
+                    EntityManager::Instance()->AddComponent<ScriptingComponent>(m_UiState->SelectedEntity);
                 }
+
+                ImGui::EndPopup();
+            }
 
             if (ImGui::Button("Add")) {
                 ImGui::OpenPopup("component context");
