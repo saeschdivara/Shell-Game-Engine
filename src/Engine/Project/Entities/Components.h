@@ -53,4 +53,12 @@ namespace Shell {
         SpriteComponent(const glm::vec4& color) : Color(color) {}
         SpriteComponent(Ref<Texture2D> texture) : Texture(texture) {}
     };
+
+    struct ScriptingComponent {
+        std::string Path;
+        std::string ClassName;
+
+        ScriptingComponent() = default;
+        ScriptingComponent(const std::string & path, const std::string & className): Path(path), ClassName(className) {}
+    };
 }

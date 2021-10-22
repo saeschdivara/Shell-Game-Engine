@@ -12,7 +12,15 @@ namespace Shell::Editor {
     static float rotationValue = 0.0f;
     static float colorInput[] = { 0.0, 0.0, 0.0, 1.0 };
 
+    static char* scriptFilePath = new char[2048];
+    static char* scriptClassName = new char[2048];
+
     static bool isValuesInitialized = false;
+
+    EntityPropsPanel::EntityPropsPanel() {
+        std::memset(scriptFilePath, 0, 2048);
+        std::memset(scriptClassName, 0, 2048);
+    }
 
     void EntityPropsPanel::Render() {
         ImGui::Begin("Stats");
@@ -23,6 +31,22 @@ namespace Shell::Editor {
             }
             if (EntityManager::Instance()->HasComponent<SpriteComponent>(m_UiState->SelectedEntity)) {
                 RenderSpriteComponent();
+            }
+            if (EntityManager::Instance()->HasComponent<ScriptingComponent>(m_UiState->SelectedEntity)) {
+                RenderScriptingComponent();
+            }
+
+                if (ImGui::BeginPopupContextWindow("component context"))
+                {
+                    if (ImGui::MenuItem("Scripting", NULL, false)) {
+                        EntityManager::Instance()->AddComponent<ScriptingComponent>(m_UiState->SelectedEntity);
+                    }
+
+                    ImGui::EndPopup();
+                }
+
+            if (ImGui::Button("Add")) {
+                ImGui::OpenPopup("component context");
             }
 
             if (!isValuesInitialized || m_UiState->ChangedEntity) {
@@ -55,7 +79,6 @@ namespace Shell::Editor {
         ImGui::Text("Scale");
         ImGui::SameLine();
         ImGui::DragFloat2("##scale", scaleValues, 0.01f);
-        ImGui::Separator();
 
         ImGui::Text("Rotation");
         ImGui::SameLine();
@@ -90,5 +113,21 @@ namespace Shell::Editor {
         sprite.Color.g = colorInput[1];
         sprite.Color.b = colorInput[2];
         sprite.Color.a = colorInput[3];
+    }
+
+    void EntityPropsPanel::RenderScriptingComponent() {
+        auto& scripting = EntityManager::Instance()->GetComponent<ScriptingComponent>(m_UiState->SelectedEntity);
+
+        if (!isValuesInitialized || m_UiState->ChangedEntity) {
+            scriptFilePath = scripting.Path.data();
+            scriptClassName = scripting.ClassName.data();
+        }
+
+        ImGui::InputText("Script Path", scriptFilePath, 2047);
+        ImGui::InputText("Class Name", scriptClassName, 2047);
+        ImGui::Separator();
+
+        scripting.Path = scriptFilePath;
+        scripting.ClassName = scriptClassName;
     }
 }
