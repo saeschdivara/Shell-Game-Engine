@@ -91,7 +91,8 @@ set(ENGINE_FILES
     src/Engine/Core/Rendering/RenderQueue.cpp src/Engine/Core/Rendering/RenderQueue.h
     src/Engine/Core/Events/EventPublisher.cpp src/Engine/Core/Events/EventPublisher.h
     src/Engine/Core/EngineVersion.h
-    src/Engine/Utils/Uuid.cpp src/Engine/Utils/Uuid.h)
+    src/Engine/Utils/Uuid.cpp src/Engine/Utils/Uuid.h
+    src/Engine/Runtime/RuntimeManager.cpp src/Engine/Runtime/RuntimeManager.h)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_library(shell_game_engine STATIC ${ENGINE_FILES})

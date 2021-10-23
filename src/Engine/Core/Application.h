@@ -11,6 +11,8 @@
 #include "Engine/Core/Rendering/Buffer.h"
 #include "Engine/Core/Rendering/BufferContainer.h"
 
+#include "Engine/Runtime/RuntimeManager.h"
+
 #include <chrono>
 
 namespace Shell {
@@ -34,6 +36,7 @@ namespace Shell {
 
     protected:
         Scope<Window> m_Window = nullptr;
+        Ref<Runtime::RuntimeManager> m_Runtime;
         LayerStack m_LayerStack;
         UiLayer * m_UiLayer;
 
