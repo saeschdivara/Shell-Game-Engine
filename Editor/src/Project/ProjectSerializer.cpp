@@ -8,11 +8,12 @@
 
 #define SHELL_ENGINE_EDITOR_VERSION "0.0.1"
 
-#define SERIALIZE_KEY_SHELL_VERSION "Shell-Version"
-#define SERIALIZE_KEY_SHELL_EDITOR_VERSION "Shell-Editor-Version"
-#define SERIALIZE_KEY_PROJECT_NAME "Project-Name"
-#define SERIALIZE_KEY_SETTINGS "Settings"
-#define SERIALIZE_KEY_SETTINGS_RENDERING "Rendering"
+#define SERIALIZE_KEY_SHELL_VERSION             "Shell-Version"
+#define SERIALIZE_KEY_SHELL_EDITOR_VERSION      "Shell-Editor-Version"
+#define SERIALIZE_KEY_PROJECT_NAME              "Project-Name"
+#define SERIALIZE_KEY_SETTINGS                  "Settings"
+#define SERIALIZE_KEY_SETTINGS_RENDERING        "Rendering"
+#define SERIALIZE_KEY_SETTINGS_LIB_PATH         "Library-Path"
 
 namespace Shell::Editor {
 
@@ -30,6 +31,9 @@ namespace Shell::Editor {
             emitter << YAML::Value << GetRenderApiName(api);
         }
         emitter << YAML::EndMap;
+
+        emitter << YAML::Key << SERIALIZE_KEY_SETTINGS_LIB_PATH;
+        emitter << YAML::Value << settings->GetAppLibraryPath();
 
         emitter << YAML::EndMap;
 
@@ -111,6 +115,9 @@ namespace Shell::Editor {
                 SHELL_INFO("{0} = {1}", operatingSystemName, renderApiName);
                 project->GetSettings()->SetRenderingApi(GetOperatingSystem(operatingSystemName), GetRenderApi(renderApiName));
             }
+
+            std::string libraryPath = settingsMap[SERIALIZE_KEY_SETTINGS_LIB_PATH].as<std::string>();
+            project->GetSettings()->SetAppLibraryPath(libraryPath);
         }
 
         return project;

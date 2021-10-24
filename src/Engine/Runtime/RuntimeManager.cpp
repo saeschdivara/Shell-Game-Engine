@@ -11,6 +11,7 @@ namespace Shell::Runtime {
     struct RuntimeData {
         MonoDomain * Jit;
         MonoImage * EngineLibraryImage;
+        MonoImage * AppLibraryImage;
     };
 
     Ref<RuntimeManager> RuntimeManager::m_Instance = nullptr;
@@ -45,7 +46,18 @@ namespace Shell::Runtime {
         MonoAssembly * assembly = mono_domain_assembly_open(m_Data->Jit, ENGINE_LIB_PATH);
 
         if (!assembly) {
-            SHELL_CORE_ERROR("Could not open assembly {0}", ENGINE_LIB_PATH);
+            SHELL_CORE_ERROR("Could not open engine library {0}", ENGINE_LIB_PATH);
+            return;
+        }
+
+        m_Data->EngineLibraryImage = mono_assembly_get_image(assembly);
+    }
+
+    void RuntimeManager::LoadAppLibrary(const std::string & appLibraryPath) {
+        MonoAssembly * assembly = mono_domain_assembly_open(m_Data->Jit, appLibraryPath.c_str());
+
+        if (!assembly) {
+            SHELL_CORE_ERROR("Could not open app library {0}", appLibraryPath.c_str());
             return;
         }
 

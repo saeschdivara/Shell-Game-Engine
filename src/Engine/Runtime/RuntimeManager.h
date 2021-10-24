@@ -16,6 +16,7 @@ namespace Shell::Runtime {
 
         void Init();
         void LoadEngineLibrary();
+        void LoadAppLibrary(const std::string & appLibraryPath);
 
     private:
         static Ref<RuntimeManager> m_Instance;

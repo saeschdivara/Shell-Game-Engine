@@ -10,6 +10,7 @@
 #include <Engine/Core/Rendering/RenderCommand.h>
 #include <Engine/Core/Rendering/Renderer.h>
 #include <Engine/Project/Entities/Components.h>
+#include <Engine/Runtime/RuntimeManager.h>
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -399,6 +400,7 @@ namespace Shell::Editor {
         m_UiState.Project = project;
 
         Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_UiState.Project->GetNameAsSimpleString()));
+        Runtime::RuntimeManager::Instance()->LoadAppLibrary(project->GetSettings()->GetAppLibraryPath());
 
         return true;
     }
