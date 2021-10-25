@@ -4,7 +4,7 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/mono-config.h>
 
-#define ENGINE_LIB_PATH "../engine/Engine.dll"
+#define ENGINE_LIB_PATH "../engine/Shell-Engine.dll"
 
 namespace Shell::Runtime {
 

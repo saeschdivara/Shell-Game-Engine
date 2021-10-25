@@ -11,6 +11,7 @@
 #include <Engine/Core/Rendering/Renderer.h>
 #include <Engine/Project/Entities/Components.h>
 #include <Engine/Runtime/RuntimeManager.h>
+#include <Engine/Scripting/VisualStudioProjectManager.h>
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -383,6 +384,9 @@ namespace Shell::Editor {
         if (!std::filesystem::exists(projectPath)) {
             std::filesystem::create_directories(projectPath);
         }
+
+        auto vsManager = new Scripting::VisualStudioProjectManager;
+        vsManager->CreateProject(projectPath, project->GetNameAsSimpleString());
 
         ProjectSerializer::SerializeToFile(project);
         Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_UiState.Project->GetNameAsSimpleString()));

@@ -92,7 +92,9 @@ set(ENGINE_FILES
     src/Engine/Core/Events/EventPublisher.cpp src/Engine/Core/Events/EventPublisher.h
     src/Engine/Core/EngineVersion.h
     src/Engine/Utils/Uuid.cpp src/Engine/Utils/Uuid.h
-    src/Engine/Runtime/RuntimeManager.cpp src/Engine/Runtime/RuntimeManager.h)
+    src/Engine/Runtime/RuntimeManager.cpp src/Engine/Runtime/RuntimeManager.h
+    src/Engine/Scripting/VisualStudioProjectManager.cpp src/Engine/Scripting/VisualStudioProjectManager.h
+    src/Engine/Utils/Xml.cpp src/Engine/Utils/Xml.h)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_library(shell_game_engine STATIC ${ENGINE_FILES})
