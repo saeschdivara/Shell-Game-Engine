@@ -15,11 +15,23 @@ namespace Shell::Xml {
         std::string Name;
         std::vector<Attribute *> Attributes;
         std::vector<Node *> Children;
+
+        Node(std::string name) : Name(std::move(name)) {}
     };
 
     struct Tree {
         Node * Root;
     };
+
+    inline Node& operator<<(Node & node, Attribute & attribute) {
+        node.Attributes.push_back(&attribute);
+        return node;
+    }
+
+    inline Node& operator<<(Node & node1, Node & node2) {
+        node1.Children.push_back(&node2);
+        return node1;
+    }
 
     class Generator {
     public:

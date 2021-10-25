@@ -11,7 +11,10 @@ namespace Shell::Scripting {
         auto solutionFilePath = projectPath / (projectName + ".sln");
         auto vsProjectFilePath = projectPath / (projectName + ".csproject");
 
+        Xml::Node root("root");
+
         Xml::Tree tree{};
+        tree.Root = &root;
 
         Xml::Generator generator;
 
