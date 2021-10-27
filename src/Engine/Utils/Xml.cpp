@@ -2,7 +2,7 @@
 
 namespace Shell::Xml {
     std::string Generator::GenerateXmlString(Tree *tree) {
-        return GenerateXmlString(tree->Root);
+        return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + GenerateXmlString(tree->Root);
     }
 
     std::string Generator::GenerateXmlString(std::vector<Node *> nodes) {
@@ -15,7 +15,13 @@ namespace Shell::Xml {
 
     std::string Generator::GenerateXmlString(Node *node) {
         std::string output = std::string("<") + node->Name + " " + GenerateXmlString(node->Attributes) + std::string(">");
-        output += GenerateXmlString(node->Children);
+
+        if (!node->Content.empty()) {
+            output += node->Content;
+        } else {
+            output += GenerateXmlString(node->Children);
+        }
+
         output += std::string("</") + node->Name + std::string(">");
 
         return output;

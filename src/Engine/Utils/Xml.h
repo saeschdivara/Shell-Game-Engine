@@ -15,21 +15,33 @@ namespace Shell::Xml {
         std::string Name;
         std::vector<Attribute *> Attributes;
         std::vector<Node *> Children;
+        std::string Content;
 
         Node(std::string name) : Name(std::move(name)) {}
+        Node(std::string name, Attribute * attribute) : Name(std::move(name)) { Attributes.push_back(attribute); }
+        Node(std::string name, std::string content) : Name(std::move(name)), Content(std::move(content)) {}
+        Node(std::string name, Attribute * attribute, std::string content) :
+            Name(std::move(name)), Content(std::move(content)) {
+            Attributes.push_back(attribute);
+        }
     };
 
     struct Tree {
         Node * Root;
     };
 
-    inline Node& operator<<(Node & node, Attribute & attribute) {
-        node.Attributes.push_back(&attribute);
+    inline Node& operator<<(Node & node, Attribute * attribute) {
+        node.Attributes.push_back(attribute);
         return node;
     }
 
     inline Node& operator<<(Node & node1, Node & node2) {
         node1.Children.push_back(&node2);
+        return node1;
+    }
+
+    inline Node& operator<<(Node & node1, Node * node2) {
+        node1.Children.push_back(node2);
         return node1;
     }
 
