@@ -388,6 +388,8 @@ namespace Shell::Editor {
         auto vsManager = new Scripting::VisualStudioProjectManager;
         vsManager->CreateProject(projectPath, project->GetNameAsSimpleString());
 
+        project->GetSettings()->SetAppLibraryPath("bin/Debug/Custom-App.dll");
+
         ProjectSerializer::SerializeToFile(project);
         Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_UiState.Project->GetNameAsSimpleString()));
 
@@ -404,7 +406,8 @@ namespace Shell::Editor {
         m_UiState.Project = project;
 
         Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_UiState.Project->GetNameAsSimpleString()));
-        Runtime::RuntimeManager::Instance()->LoadAppLibrary(project->GetSettings()->GetAppLibraryPath());
+        auto appPath = project->GetPath() / project->GetSettings()->GetAppLibraryPath();
+        Runtime::RuntimeManager::Instance()->LoadAppLibrary(appPath.string());
 
         return true;
     }
