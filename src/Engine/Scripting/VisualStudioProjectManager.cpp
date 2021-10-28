@@ -10,13 +10,16 @@ namespace Shell::Scripting {
                                                    const std::string &projectName) {
 
         auto solutionFilePath = projectPath / (projectName + ".sln");
-        auto vsProjectFilePath = projectPath / (projectName + ".csproject");
+        auto vsProjectFilePath = projectPath / (projectName + ".csproj");
 
         if (exists(solutionFilePath)) {
             return;
         }
 
+        auto solutionUuid = Uuid::Create();
         auto projectUuid = Uuid::Create();
+
+        auto projectUuidString = UuidToString(projectUuid);
 
         Xml::Node root("Project");
         root << new Xml::Attribute("ToolsVersion", "4.0")
@@ -30,7 +33,7 @@ namespace Shell::Scripting {
         Xml::Node propertyGroupNode("PropertyGroup");
         propertyGroupNode << new Xml::Node("Configuration", new Xml::Attribute("Condition", " '$(Configuration)' == '' "), "Debug")
                           << new Xml::Node("Platform", new Xml::Attribute("Condition", " '$(Platform)' == '' "), "AnyCPU")
-                          << new Xml::Node("ProjectGuid", "{" + UuidToString(projectUuid) + "}")
+                          << new Xml::Node("ProjectGuid", "{" + projectUuidString + "}")
                           << new Xml::Node("OutputType", "Library")
                           << new Xml::Node("AppDesignerFolder", "Properties")
                           << new Xml::Node("RootNamespace", "App")
@@ -79,6 +82,23 @@ namespace Shell::Scripting {
         Xml::Generator generator;
 
         auto xmlOutput = generator.GenerateXmlString(&tree);
+
+        std::ofstream solutionFile(solutionFilePath);
+        solutionFile << "\nMicrosoft Visual Studio Solution File, Format Version 12.00\n"
+                     << "Project(\"{" << UuidToString(solutionUuid) << "}\") = \"" << projectName << "\", \"" << projectName << ".csproj\", \"{" << projectUuidString << "}\"\n"
+                     << "EndProject\n"
+                     << "Global\n"
+                     << "\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\n"
+                     << "\t\tDebug|Any CPU = Debug|Any CPU\n"
+                     << "\t\tRelease|Any CPU = Release|Any CPU\n"
+                     << "\tEndGlobalSection\n"
+                     << "\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\n"
+                     << "\t\t{" << projectUuidString << "}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\n"
+                     << "\t\t{" << projectUuidString << "}.Debug|Any CPU.Build.0 = Debug|Any CPU\n"
+                     << "\t\t{" << projectUuidString << "}.Release|Any CPU.ActiveCfg = Release|Any CPU\n"
+                     << "\t\t{" << projectUuidString << "}.Release|Any CPU.ActiveCfg = Release|Any CPU\n"
+                     << "\tEndGlobalSection\n"
+                     << "EndGlobal";
 
         std::ofstream projectFile(vsProjectFilePath);
         projectFile << xmlOutput;
