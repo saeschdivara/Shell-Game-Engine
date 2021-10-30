@@ -66,6 +66,8 @@ namespace Shell::Editor {
 
         m_Framebuffer->Bind();
 
+        Shell::Runtime::RuntimeManager::Instance()->RunLifecycleMethod(m_UiState.CurrentSceneBluePrint, "OnUpdate");
+
         Shell::RenderCommand::Create()->SetClearColor(m_ClearColor);
         Shell::RenderCommand::Create()->Clear();
 
