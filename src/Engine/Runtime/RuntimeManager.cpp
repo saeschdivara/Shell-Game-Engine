@@ -78,22 +78,25 @@ namespace Shell::Runtime {
         m_Data->AppLibraryImage = mono_assembly_get_image(assembly);
     }
 
-    void RuntimeManager::InstantiateScene(Ref <SceneBlueprint> scene) {
-        InstantiateEntities(scene->GetEntityTree());
+    void RuntimeManager::InstantiateScene(Ref<SceneBlueprint> scene) {
+        RunLifecycleMethod(scene, "OnCreate");
     }
 
-    void RuntimeManager::InstantiateEntities(std::vector<SceneEntity *> &entities) {
+    void RuntimeManager::RunLifecycleMethod(Ref<SceneBlueprint> scene, const char *methodName) {
+        RunLifecycleMethod(scene->GetEntityTree(), methodName);
+    }
+
+    void RuntimeManager::RunLifecycleMethod(std::vector<SceneEntity *> &entities, const char *methodName) {
         for (const auto &entity: entities) {
-            InstantiateEntity(entity);
+            RunLifecycleMethod(entity, methodName);
 
             if (entity->HasChildren()) {
-                InstantiateEntities(entity->GetChildren());
+                RunLifecycleMethod(entity->GetChildren(), methodName);
             }
         }
     }
 
-    void RuntimeManager::InstantiateEntity(SceneEntity *entity) {
-
+    void RuntimeManager::RunLifecycleMethod(SceneEntity *entity, const char *methodName) {
         if (!EntityManager::Instance()->HasComponent<ScriptingComponent>(entity)) {
             return;
         }
@@ -108,7 +111,7 @@ namespace Shell::Runtime {
             // call its default constructor
             mono_runtime_object_init(scriptComponent.RuntimeObj);
 
-            auto method = GetMethodInClassHierarchy(cls, "OnCreate", 0);
+            auto method = GetMethodInClassHierarchy(cls, methodName, 0);
             SHELL_CORE_ASSERT(method);
 
             auto virtualOnCreateMethod = mono_object_get_virtual_method(scriptComponent.RuntimeObj, method);

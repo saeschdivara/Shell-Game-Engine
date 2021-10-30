@@ -24,10 +24,11 @@ namespace Shell::Runtime {
         void LoadAppLibrary(const std::string & appLibraryPath);
 
         void InstantiateScene(Ref<SceneBlueprint> scene);
+        void RunLifecycleMethod(Ref<SceneBlueprint> scene, const char * methodName);
 
     private:
-        void InstantiateEntities(std::vector<SceneEntity *> & entities);
-        void InstantiateEntity(SceneEntity * entity);
+        void RunLifecycleMethod(std::vector<SceneEntity *> & entities, const char * methodName);
+        void RunLifecycleMethod(SceneEntity * entity, const char * methodName);
 
     private:
         static Ref<RuntimeManager> m_Instance;
