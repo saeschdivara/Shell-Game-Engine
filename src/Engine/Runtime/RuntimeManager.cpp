@@ -3,13 +3,11 @@
 #include "Engine/Project/Entities/Components.h"
 #include "Engine/Project/Entities/EntityManager.h"
 #include "Engine/Project/Entities/SceneEntity.h"
+#include "Engine/Runtime/Mono/helpers.h"
 
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
-#include <mono/metadata/class.h>
-#include <mono/metadata/object.h>
 #include <mono/metadata/mono-config.h>
-#include <mono/metadata/debug-helpers.h>
 
 #define ENGINE_LIB_PATH "../engine/Shell-Engine.dll"
 
@@ -91,22 +89,6 @@ namespace Shell::Runtime {
             if (entity->HasChildren()) {
                 InstantiateEntities(entity->GetChildren());
             }
-        }
-    }
-
-    MonoMethod * GetMethodInClassHierarchy(MonoClass * cls, const char * methodName, int paramsCount) {
-        auto method = mono_class_get_method_from_name(cls, methodName, paramsCount);
-
-        if (!method) {
-            auto parentClass = mono_class_get_parent(cls);
-
-            if (parentClass) {
-                return GetMethodInClassHierarchy(parentClass, methodName, paramsCount);
-            } else {
-                return nullptr;
-            }
-        } else {
-            return method;
         }
     }
 
