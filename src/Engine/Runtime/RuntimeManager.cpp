@@ -6,7 +6,10 @@
 
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
+#include <mono/metadata/class.h>
+#include <mono/metadata/object.h>
 #include <mono/metadata/mono-config.h>
+#include <mono/metadata/debug-helpers.h>
 
 #define ENGINE_LIB_PATH "../engine/Shell-Engine.dll"
 
@@ -78,20 +81,36 @@ namespace Shell::Runtime {
     }
 
     void RuntimeManager::InstantiateScene(Ref <SceneBlueprint> scene) {
-        InstantitateEntities(scene->GetEntityTree());
+        InstantiateEntities(scene->GetEntityTree());
     }
 
-    void RuntimeManager::InstantitateEntities(std::vector<SceneEntity *> &entities) {
+    void RuntimeManager::InstantiateEntities(std::vector<SceneEntity *> &entities) {
         for (const auto &entity: entities) {
-            InstantitateEntity(entity);
+            InstantiateEntity(entity);
 
             if (entity->HasChildren()) {
-                InstantitateEntities(entity->GetChildren());
+                InstantiateEntities(entity->GetChildren());
             }
         }
     }
 
-    void RuntimeManager::InstantitateEntity(SceneEntity *entity) {
+    MonoMethod * GetMethodInClassHierarchy(MonoClass * cls, const char * methodName, int paramsCount) {
+        auto method = mono_class_get_method_from_name(cls, methodName, paramsCount);
+
+        if (!method) {
+            auto parentClass = mono_class_get_parent(cls);
+
+            if (parentClass) {
+                return GetMethodInClassHierarchy(parentClass, methodName, paramsCount);
+            } else {
+                return nullptr;
+            }
+        } else {
+            return method;
+        }
+    }
+
+    void RuntimeManager::InstantiateEntity(SceneEntity *entity) {
 
         if (!EntityManager::Instance()->HasComponent<ScriptingComponent>(entity)) {
             return;
@@ -107,8 +126,12 @@ namespace Shell::Runtime {
             // call its default constructor
             mono_runtime_object_init(scriptComponent.RuntimeObj);
 
-            MonoMethod * onCreateMethod = mono_class_get_method_from_name(cls, "OnCreate", 0);
-            mono_runtime_invoke(onCreateMethod, scriptComponent.RuntimeObj, nullptr, nullptr);
+            auto method = GetMethodInClassHierarchy(cls, "OnCreate", 0);
+            SHELL_CORE_ASSERT(method);
+
+            auto virtualOnCreateMethod = mono_object_get_virtual_method(scriptComponent.RuntimeObj, method);
+
+            mono_runtime_invoke(virtualOnCreateMethod, scriptComponent.RuntimeObj, nullptr, nullptr);
         }
     }
 }

@@ -26,8 +26,8 @@ namespace Shell::Runtime {
         void InstantiateScene(Ref<SceneBlueprint> scene);
 
     private:
-        void InstantitateEntities(std::vector<SceneEntity *> & entities);
-        void InstantitateEntity(SceneEntity * entity);
+        void InstantiateEntities(std::vector<SceneEntity *> & entities);
+        void InstantiateEntity(SceneEntity * entity);
 
     private:
         static Ref<RuntimeManager> m_Instance;
