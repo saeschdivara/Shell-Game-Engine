@@ -101,15 +101,18 @@ namespace Shell::Runtime {
             return;
         }
 
-        auto scriptComponent = EntityManager::Instance()->GetComponent<ScriptingComponent>(entity);
+        auto& scriptComponent = EntityManager::Instance()->GetComponent<ScriptingComponent>(entity);
 
         MonoClass * cls = mono_class_from_name(m_Data->AppLibraryImage, scriptComponent.Path.c_str(), scriptComponent.ClassName.c_str());
 
         if ( mono_class_is_subclass_of(cls, m_Data->EngineData.BehaviourClass, false) ) {
-            scriptComponent.RuntimeObj = mono_object_new(m_Data->Jit, cls);
 
-            // call its default constructor
-            mono_runtime_object_init(scriptComponent.RuntimeObj);
+            if (!scriptComponent.RuntimeObj) {
+                scriptComponent.RuntimeObj = mono_object_new(m_Data->Jit, cls);
+
+                // call its default constructor
+                mono_runtime_object_init(scriptComponent.RuntimeObj);
+            }
 
             auto method = GetMethodInClassHierarchy(cls, methodName, 0);
             SHELL_CORE_ASSERT(method);

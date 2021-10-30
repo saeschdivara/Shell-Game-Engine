@@ -61,7 +61,7 @@ namespace Shell {
         std::string ClassName;
 
         // runtime data
-        MonoObject * RuntimeObj;
+        MonoObject * RuntimeObj = nullptr;
 
         ScriptingComponent() = default;
         ScriptingComponent(std::string path, std::string className): Path(std::move(path)), ClassName(std::move(className)) {}
