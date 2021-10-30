@@ -1,5 +1,9 @@
 #include "RuntimeManager.h"
 
+#include "Engine/Project/Entities/Components.h"
+#include "Engine/Project/Entities/EntityManager.h"
+#include "Engine/Project/Entities/SceneEntity.h"
+
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/mono-config.h>
@@ -8,10 +12,16 @@
 
 namespace Shell::Runtime {
 
+    struct EngineData {
+        MonoClass * BehaviourClass;
+    };
+
     struct RuntimeData {
         MonoDomain * Jit;
         MonoImage * EngineLibraryImage;
         MonoImage * AppLibraryImage;
+
+        EngineData EngineData;
     };
 
     Ref<RuntimeManager> RuntimeManager::m_Instance = nullptr;
@@ -51,6 +61,9 @@ namespace Shell::Runtime {
         }
 
         m_Data->EngineLibraryImage = mono_assembly_get_image(assembly);
+
+        // load extra data from loaded library
+        m_Data->EngineData.BehaviourClass = mono_class_from_name(m_Data->EngineLibraryImage, "Shell.Core.Behaviours", "ShellBehaviour");
     }
 
     void RuntimeManager::LoadAppLibrary(const std::string & appLibraryPath) {
@@ -61,6 +74,41 @@ namespace Shell::Runtime {
             return;
         }
 
-        m_Data->EngineLibraryImage = mono_assembly_get_image(assembly);
+        m_Data->AppLibraryImage = mono_assembly_get_image(assembly);
+    }
+
+    void RuntimeManager::InstantiateScene(Ref <SceneBlueprint> scene) {
+        InstantitateEntities(scene->GetEntityTree());
+    }
+
+    void RuntimeManager::InstantitateEntities(std::vector<SceneEntity *> &entities) {
+        for (const auto &entity: entities) {
+            InstantitateEntity(entity);
+
+            if (entity->HasChildren()) {
+                InstantitateEntities(entity->GetChildren());
+            }
+        }
+    }
+
+    void RuntimeManager::InstantitateEntity(SceneEntity *entity) {
+
+        if (!EntityManager::Instance()->HasComponent<ScriptingComponent>(entity)) {
+            return;
+        }
+
+        auto scriptComponent = EntityManager::Instance()->GetComponent<ScriptingComponent>(entity);
+
+        MonoClass * cls = mono_class_from_name(m_Data->AppLibraryImage, scriptComponent.Path.c_str(), scriptComponent.ClassName.c_str());
+
+        if ( mono_class_is_subclass_of(cls, m_Data->EngineData.BehaviourClass, false) ) {
+            scriptComponent.RuntimeObj = mono_object_new(m_Data->Jit, cls);
+
+            // call its default constructor
+            mono_runtime_object_init(scriptComponent.RuntimeObj);
+
+            MonoMethod * onCreateMethod = mono_class_get_method_from_name(cls, "OnCreate", 0);
+            mono_runtime_invoke(onCreateMethod, scriptComponent.RuntimeObj, nullptr, nullptr);
+        }
     }
 }

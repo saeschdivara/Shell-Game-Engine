@@ -420,6 +420,7 @@ namespace Shell::Editor {
 
     bool EditorUILayer::OnLoadSceneEvent(LoadSceneEvent & event) {
         m_UiState.CurrentSceneBluePrint = SceneSerializer::DeserializeFromFile(event.GetScenePath());
+        Runtime::RuntimeManager::Instance()->InstantiateScene(m_UiState.CurrentSceneBluePrint);
 
         return true;
     }
