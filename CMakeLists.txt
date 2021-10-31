@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CONAN_DISABLE_CHECK_COMPILER 1)
 
 add_compile_options("$<$<CONFIG:DEBUG>:-DSHELL_APP_DEBUG>") # define debug symbol when using debug build
+add_compile_options("$<$<CONFIG:DEBUG>:-DSHELL_PROFILING>") # define debug symbol when using debug build
 
 # add defines for each platform
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")

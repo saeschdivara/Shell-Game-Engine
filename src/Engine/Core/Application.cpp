@@ -1,6 +1,10 @@
 #include "Engine/Core/Application.h"
 #include "Engine/Core/Rendering/RenderCommand.h"
 
+#ifdef SHELL_PROFILING
+    #include <optick.h>
+#endif
+
 namespace Shell {
     Application* Application::m_Instance = nullptr;
 
@@ -9,6 +13,10 @@ namespace Shell {
     }
 
     Application::~Application() {
+#ifdef SHELL_PROFILING
+        OPTICK_STOP_CAPTURE();
+        OPTICK_SAVE_CAPTURE("./profiling");
+#endif
     }
 
     Application *Application::Instance() {
@@ -16,6 +24,11 @@ namespace Shell {
     }
 
     void Application::Init() {
+
+#ifdef SHELL_PROFILING
+        OPTICK_START_CAPTURE();
+#endif
+
         Logger::Init();
 
         m_Window = CreateScope<Window>();
