@@ -4,6 +4,7 @@
 #include <Engine/Project/Entities/Components.h>
 
 #include <imgui.h>
+#include <misc/cpp/imgui_stdlib.h>
 
 namespace Shell::Editor {
 
@@ -12,14 +13,12 @@ namespace Shell::Editor {
     static float rotationValue = 0.0f;
     static float colorInput[] = { 0.0, 0.0, 0.0, 1.0 };
 
-    static char* scriptFilePath = new char[2048];
-    static char* scriptClassName = new char[2048];
+    static std::string scriptFilePath;
+    static std::string scriptClassName;
 
     static bool isValuesInitialized = false;
 
     EntityPropsPanel::EntityPropsPanel() {
-        std::memset(scriptFilePath, 0, 2048);
-        std::memset(scriptClassName, 0, 2048);
     }
 
     void EntityPropsPanel::Render() {
@@ -119,12 +118,12 @@ namespace Shell::Editor {
         auto& scripting = EntityManager::Instance()->GetComponent<ScriptingComponent>(m_UiState->SelectedEntity);
 
         if (!isValuesInitialized || m_UiState->ChangedEntity) {
-            scriptFilePath = scripting.Path.data();
-            scriptClassName = scripting.ClassName.data();
+            scriptFilePath = scripting.Path;
+            scriptClassName = scripting.ClassName;
         }
 
-        ImGui::InputText("Script Path", scriptFilePath, 2047);
-        ImGui::InputText("Class Name", scriptClassName, 2047);
+        ImGui::InputText("Script Path", &scriptFilePath);
+        ImGui::InputText("Class Name", &scriptClassName);
         ImGui::Separator();
 
         scripting.Path = scriptFilePath;

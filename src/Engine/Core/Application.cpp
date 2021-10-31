@@ -25,6 +25,10 @@ namespace Shell {
 
         m_UiLayer = new UiLayer;
         PushOverlay(m_UiLayer);
+
+        m_Runtime = Runtime::RuntimeManager::Instance();
+        m_Runtime->Init();
+        m_Runtime->LoadEngineLibrary();
     }
 
     void Application::Run() {

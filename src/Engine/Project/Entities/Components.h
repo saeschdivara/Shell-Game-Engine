@@ -8,6 +8,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
+#include <mono/metadata/object-forward.h>
+
 namespace Shell {
 
     struct TagComponent
@@ -58,7 +60,10 @@ namespace Shell {
         std::string Path;
         std::string ClassName;
 
+        // runtime data
+        MonoObject * RuntimeObj = nullptr;
+
         ScriptingComponent() = default;
-        ScriptingComponent(const std::string & path, const std::string & className): Path(path), ClassName(className) {}
+        ScriptingComponent(std::string path, std::string className): Path(std::move(path)), ClassName(std::move(className)) {}
     };
 }

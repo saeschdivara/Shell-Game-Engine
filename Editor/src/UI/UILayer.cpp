@@ -10,6 +10,8 @@
 #include <Engine/Core/Rendering/RenderCommand.h>
 #include <Engine/Core/Rendering/Renderer.h>
 #include <Engine/Project/Entities/Components.h>
+#include <Engine/Runtime/RuntimeManager.h>
+#include <Engine/Scripting/VisualStudioProjectManager.h>
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -63,6 +65,8 @@ namespace Shell::Editor {
         }
 
         m_Framebuffer->Bind();
+
+        Shell::Runtime::RuntimeManager::Instance()->RunLifecycleMethod(m_UiState.CurrentSceneBluePrint, "OnUpdate");
 
         Shell::RenderCommand::Create()->SetClearColor(m_ClearColor);
         Shell::RenderCommand::Create()->Clear();
@@ -383,6 +387,11 @@ namespace Shell::Editor {
             std::filesystem::create_directories(projectPath);
         }
 
+        auto vsManager = new Scripting::VisualStudioProjectManager;
+        vsManager->CreateProject(projectPath, project->GetNameAsSimpleString());
+
+        project->GetSettings()->SetAppLibraryPath("bin/Debug/Custom-App.dll");
+
         ProjectSerializer::SerializeToFile(project);
         Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_UiState.Project->GetNameAsSimpleString()));
 
@@ -398,7 +407,11 @@ namespace Shell::Editor {
 
         m_UiState.Project = project;
 
+        std::filesystem::current_path(project->GetPath());
+
         Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_UiState.Project->GetNameAsSimpleString()));
+        auto appPath = project->GetPath() / project->GetSettings()->GetAppLibraryPath();
+        Runtime::RuntimeManager::Instance()->LoadAppLibrary(appPath.string());
 
         return true;
     }
@@ -410,7 +423,13 @@ namespace Shell::Editor {
     }
 
     bool EditorUILayer::OnLoadSceneEvent(LoadSceneEvent & event) {
+
+        if (m_UiState.CurrentSceneBluePrint) {
+            Runtime::RuntimeManager::Instance()->RunLifecycleMethod(m_UiState.CurrentSceneBluePrint, "OnDestroy");
+        }
+
         m_UiState.CurrentSceneBluePrint = SceneSerializer::DeserializeFromFile(event.GetScenePath());
+        Runtime::RuntimeManager::Instance()->InstantiateScene(m_UiState.CurrentSceneBluePrint);
 
         return true;
     }
