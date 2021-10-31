@@ -407,6 +407,8 @@ namespace Shell::Editor {
 
         m_UiState.Project = project;
 
+        std::filesystem::current_path(project->GetPath());
+
         Application::Instance()->GetWindow()->SetTitle(fmt::format("Project - {0}", m_UiState.Project->GetNameAsSimpleString()));
         auto appPath = project->GetPath() / project->GetSettings()->GetAppLibraryPath();
         Runtime::RuntimeManager::Instance()->LoadAppLibrary(appPath.string());
