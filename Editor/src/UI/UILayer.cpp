@@ -423,6 +423,11 @@ namespace Shell::Editor {
     }
 
     bool EditorUILayer::OnLoadSceneEvent(LoadSceneEvent & event) {
+
+        if (m_UiState.CurrentSceneBluePrint) {
+            Runtime::RuntimeManager::Instance()->RunLifecycleMethod(m_UiState.CurrentSceneBluePrint, "OnDestroy");
+        }
+
         m_UiState.CurrentSceneBluePrint = SceneSerializer::DeserializeFromFile(event.GetScenePath());
         Runtime::RuntimeManager::Instance()->InstantiateScene(m_UiState.CurrentSceneBluePrint);
 
