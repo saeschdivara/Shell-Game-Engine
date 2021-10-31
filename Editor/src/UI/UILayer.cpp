@@ -16,6 +16,8 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include <optick.h>
+
 namespace Shell::Editor {
     static ImGuiTreeNodeFlags BASE_NODE_FLAGS = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
@@ -54,6 +56,7 @@ namespace Shell::Editor {
     }
 
     void EditorUILayer::OnUpdate(std::chrono::milliseconds deltaTime) {
+        OPTICK_FRAME("MainThread");
 
         // Check for resizing
         auto spec = m_Framebuffer->GetSpecification();

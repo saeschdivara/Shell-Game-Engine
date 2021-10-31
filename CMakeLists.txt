@@ -24,6 +24,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/ImGui/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Glad/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Backward/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/FileDialog/)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Optick/)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Spdlog/)
@@ -42,6 +43,7 @@ include_directories(
         "Vendors/ImGui"
         "Vendors/Glad/include"
         "Vendors/Backward"
+        "Vendors/Optick/src"
 )
 
 set(ENGINE_FILES
@@ -110,6 +112,7 @@ target_precompile_headers(
 target_link_libraries(shell_game_engine ${CONAN_LIBS})  # Specifies what libraries to link, using Conan.
 target_link_libraries(shell_game_engine imgui)
 target_link_libraries(shell_game_engine glad)
+target_link_libraries(shell_game_engine OptickCore)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_link_libraries(shell_game_engine spdlog)
