@@ -1,5 +1,6 @@
 #include "RuntimeManager.h"
 
+#include "Engine/Core/Profiling.h"
 #include "Engine/Project/Entities/Components.h"
 #include "Engine/Project/Entities/EntityManager.h"
 #include "Engine/Project/Entities/SceneEntity.h"
@@ -47,6 +48,8 @@ namespace Shell::Runtime {
     }
 
     void RuntimeManager::Init() {
+        OPTICK_EVENT();
+
         m_Data->Jit = mono_jit_init_version("app", "v4.0.30319");
 
         // needed to find mono libraries e.g. to print out to console
@@ -54,6 +57,8 @@ namespace Shell::Runtime {
     }
 
     void RuntimeManager::LoadEngineLibrary() {
+        OPTICK_EVENT();
+
         MonoAssembly * assembly = mono_domain_assembly_open(m_Data->Jit, ENGINE_LIB_PATH);
 
         if (!assembly) {
@@ -68,6 +73,8 @@ namespace Shell::Runtime {
     }
 
     void RuntimeManager::LoadAppLibrary(const std::string & appLibraryPath) {
+        OPTICK_EVENT();
+
         MonoAssembly * assembly = mono_domain_assembly_open(m_Data->Jit, appLibraryPath.c_str());
 
         if (!assembly) {
@@ -79,10 +86,12 @@ namespace Shell::Runtime {
     }
 
     void RuntimeManager::InstantiateScene(Ref<SceneBlueprint> scene) {
+        OPTICK_EVENT();
         RunLifecycleMethod(scene, "OnCreate");
     }
 
     void RuntimeManager::RunLifecycleMethod(Ref<SceneBlueprint> scene, const char *methodName) {
+        OPTICK_EVENT();
         RunLifecycleMethod(scene->GetEntityTree(), methodName);
     }
 
@@ -97,6 +106,7 @@ namespace Shell::Runtime {
     }
 
     void RuntimeManager::RunLifecycleMethod(SceneEntity *entity, const char *methodName) {
+        OPTICK_EVENT();
         if (!EntityManager::Instance()->HasComponent<ScriptingComponent>(entity)) {
             return;
         }

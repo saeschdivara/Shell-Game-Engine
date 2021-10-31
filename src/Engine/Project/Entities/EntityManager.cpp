@@ -1,7 +1,9 @@
 #include "EntityManager.h"
 
-#include <utility>
+#include "Engine/Core/Profiling.h"
 #include "Engine/Project/Entities/Components.h"
+
+#include <utility>
 
 namespace Shell {
     Ref<EntityManager> EntityManager::m_Instance = nullptr;
@@ -15,6 +17,8 @@ namespace Shell {
     }
 
     SceneEntity *EntityManager::CreateEntity(Ref<Scene> scene, const std::string & name) {
+        OPTICK_EVENT();
+
         auto entity = m_Registry.create();
         auto sceneEntity = new SceneEntity(std::move(scene), name, entity);
 
@@ -25,6 +29,8 @@ namespace Shell {
     }
 
     SceneEntity *EntityManager::CreateEmptyEntity(Ref<Scene> scene, const std::string &name, const Uuid & id) {
+        OPTICK_EVENT();
+
         auto entity = m_Registry.create();
         return new SceneEntity(std::move(scene), name, id, entity);
     }

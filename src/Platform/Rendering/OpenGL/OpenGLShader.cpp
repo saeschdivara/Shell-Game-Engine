@@ -1,4 +1,6 @@
 #include "OpenGLShader.h"
+
+#include "Engine/Core/Profiling.h"
 #include "Engine/Core/shellpch.h"
 
 #include <glad/glad.h>
@@ -7,6 +9,8 @@
 namespace Shell {
 
     OpenGLShader::OpenGLShader(const std::string &vertexSrc, const std::string &fragmentSrc) {
+        OPTICK_EVENT();
+
         // Create an empty vertex shader handle
         GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
@@ -111,48 +115,68 @@ namespace Shell {
     }
 
     OpenGLShader::~OpenGLShader() {
+        OPTICK_EVENT();
+
         glDeleteProgram(m_RendererID);
     }
 
     void OpenGLShader::Bind() {
+        OPTICK_EVENT();
+
         glUseProgram(m_RendererID);
     }
 
     void OpenGLShader::Unbind() {
+        OPTICK_EVENT();
+
         glUseProgram(0);
     }
 
     void OpenGLShader::SetUniform(const std::string &uniformName, const glm::mat3 &matrix) const {
+        OPTICK_EVENT();
+
         auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
         glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
     }
 
     void OpenGLShader::SetUniform(const std::string &uniformName, const glm::mat4 &matrix) const {
+        OPTICK_EVENT();
+
         auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
         glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
     }
 
     void OpenGLShader::SetUniform(const std::string &uniformName, int intValue) const {
+        OPTICK_EVENT();
+
         auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
         glUniform1i(location, intValue);
     }
 
     void OpenGLShader::SetUniform(const std::string &uniformName, float floatValue) const {
+        OPTICK_EVENT();
+
         auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
         glUniform1f(location, floatValue);
     }
 
     void OpenGLShader::SetUniform(const std::string &uniformName, const glm::vec2 &vec2) const {
+        OPTICK_EVENT();
+
         auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
         glUniform2fv(location, 1, glm::value_ptr(vec2));
     }
 
     void OpenGLShader::SetUniform(const std::string &uniformName, const glm::vec3 &vec3) const {
+        OPTICK_EVENT();
+
         auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
         glUniform3fv(location, 1, glm::value_ptr(vec3));
     }
 
     void OpenGLShader::SetUniform(const std::string &uniformName, const glm::vec4 &vec4) const {
+        OPTICK_EVENT();
+
         auto location = glGetUniformLocation(m_RendererID, uniformName.c_str());
         glUniform4fv(location, 1, glm::value_ptr(vec4));
     }

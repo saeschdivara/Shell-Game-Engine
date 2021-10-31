@@ -1,5 +1,7 @@
 #include "OpenGLBuffer.h"
 
+#include "Engine/Core/Profiling.h"
+
 #include <glad/glad.h>
 
 namespace Shell {
@@ -9,6 +11,8 @@ namespace Shell {
     ///////////////////////////
 
     OpenGLVertexBuffer::OpenGLVertexBuffer(float *vertices, uint32_t size) : m_Layout() {
+        OPTICK_EVENT();
+
         glGenBuffers(1, &m_RendererID);
         glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 
@@ -16,14 +20,20 @@ namespace Shell {
     }
 
     OpenGLVertexBuffer::~OpenGLVertexBuffer() {
+        OPTICK_EVENT();
+
         glDeleteBuffers(1, &m_RendererID);
     }
 
     void OpenGLVertexBuffer::Bind() {
+        OPTICK_EVENT();
+
         glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
     }
 
     void OpenGLVertexBuffer::Unbind() {
+        OPTICK_EVENT();
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
@@ -32,6 +42,8 @@ namespace Shell {
     ///////////////////////////
 
     OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t *vertices, uint32_t count) : m_VerticesCount(count) {
+        OPTICK_EVENT();
+
         glGenBuffers(1, &m_RendererID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
 
@@ -39,14 +51,20 @@ namespace Shell {
     }
 
     OpenGLIndexBuffer::~OpenGLIndexBuffer() {
+        OPTICK_EVENT();
+
         glDeleteBuffers(1, &m_RendererID);
     }
 
     void OpenGLIndexBuffer::Bind() {
+        OPTICK_EVENT();
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
     }
 
     void OpenGLIndexBuffer::Unbind() {
+        OPTICK_EVENT();
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 }
