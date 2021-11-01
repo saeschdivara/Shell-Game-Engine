@@ -1,6 +1,7 @@
 [requires]
 glfw/3.3.4        # cross-platform window / opengl library
 glm/0.9.9.8       # cross-platform math library
+box2d/2.4.1       # 2d physics engine
 miniaudio/0.10.40
 
 entt/3.8.1        # entity component system
