@@ -1,5 +1,7 @@
 #include "OpenGLContext.h"
 
+#include "Engine/Core/Profiling.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -9,6 +11,8 @@ namespace Shell {
     }
 
     void OpenGLContext::Init() {
+        OPTICK_EVENT();
+
         /* Make the window's context current */
         glfwMakeContextCurrent(m_WindowHandle);
         gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
@@ -19,6 +23,8 @@ namespace Shell {
     }
 
     void OpenGLContext::SwapBuffers() {
+        OPTICK_EVENT();
+
         /* Swap front and back buffers */
         glfwSwapBuffers(m_WindowHandle);
     }

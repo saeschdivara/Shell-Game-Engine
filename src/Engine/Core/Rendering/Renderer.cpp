@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "Engine/Core/Profiling.h"
 #include "Engine/Core/Rendering/RenderCommand.h"
 
 namespace Shell {
@@ -22,6 +23,8 @@ namespace Shell {
     }
 
     void Renderer::Submit(const Ref<BufferContainer> &bufferContainer, const Ref<Shader>& shader, const glm::mat4 & transform) {
+        OPTICK_EVENT();
+
         shader->Bind();
         shader->SetUniform("u_ViewProjection", m_Camera->GetViewProjectionMatrix());
         shader->SetUniform("u_ModelTransform", transform);
@@ -31,6 +34,8 @@ namespace Shell {
     }
 
     Scope<Renderer> Renderer::Create() {
+        OPTICK_EVENT();
+
         auto instance = CreateScope<Renderer>();
 
         instance->m_API = RenderAPI::OpenGL;

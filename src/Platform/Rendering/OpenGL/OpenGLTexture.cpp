@@ -1,5 +1,7 @@
 #include "OpenGLTexture.h"
 
+#include "Engine/Core/Profiling.h"
+
 #include <glad/glad.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -10,6 +12,8 @@ namespace Shell {
     OpenGLTexture2D::OpenGLTexture2D(const std::string & path)
     : m_Path(path)
     {
+        OPTICK_EVENT();
+
         int width, height, channels;
         stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
@@ -42,6 +46,8 @@ namespace Shell {
     }
 
     OpenGLTexture2D::~OpenGLTexture2D() {
+        OPTICK_EVENT();
+
         glDeleteTextures(1, &m_RendererID);
     }
 
@@ -58,6 +64,8 @@ namespace Shell {
     }
 
     void OpenGLTexture2D::Bind() const {
+        OPTICK_EVENT();
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_RendererID);
     }

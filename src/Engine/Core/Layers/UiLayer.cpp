@@ -1,6 +1,7 @@
 #include "UiLayer.h"
 
 #include "Engine/Core/Application.h"
+#include "Engine/Core/Profiling.h"
 #include "Engine/UI/imgui_impl_glfw.h"
 #include "Engine/UI/imgui_impl_opengl3.h"
 
@@ -12,6 +13,8 @@ namespace Shell {
     }
 
     void UiLayer::OnAttach() {
+        OPTICK_EVENT();
+
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -33,6 +36,8 @@ namespace Shell {
     }
 
     void UiLayer::OnDetach() {
+        OPTICK_EVENT();
+
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
@@ -42,6 +47,8 @@ namespace Shell {
     }
 
     void UiLayer::Begin() {
+        OPTICK_EVENT();
+
         // feed inputs to dear imgui, start new frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -49,6 +56,8 @@ namespace Shell {
     }
 
     void UiLayer::End() {
+        OPTICK_EVENT();
+
         ImGuiIO &io = ImGui::GetIO();
         auto app = Application::Instance();
         io.DisplaySize = ImVec2((float) app->GetWindow()->GetWidth(), (float) app->GetWindow()->GetHeight());

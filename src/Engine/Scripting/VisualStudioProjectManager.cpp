@@ -1,5 +1,6 @@
 #include "VisualStudioProjectManager.h"
 
+#include "Engine/Core/Profiling.h"
 #include "Engine/Utils/Uuid.h"
 #include "Engine/Utils/Xml.h"
 
@@ -8,6 +9,7 @@
 namespace Shell::Scripting {
     void VisualStudioProjectManager::CreateProject(const std::filesystem::path &projectPath,
                                                    const std::string &projectName) {
+        OPTICK_EVENT();
 
         auto solutionFilePath = projectPath / (projectName + ".sln");
         auto vsProjectFilePath = projectPath / (projectName + ".csproj");

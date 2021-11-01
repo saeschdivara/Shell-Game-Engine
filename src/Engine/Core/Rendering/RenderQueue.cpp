@@ -1,8 +1,9 @@
 #include "RenderQueue.h"
 
-#include <utility>
-
+#include "Engine/Core/Profiling.h"
 #include "Engine/Core/Rendering/Renderer.h"
+
+#include <utility>
 
 namespace Shell {
     static float texturedSquareVertices [] = {
@@ -22,6 +23,8 @@ namespace Shell {
     };
 
     void RenderQueue::Init() {
+        OPTICK_EVENT();
+
         /////////////// TEXTURED ///////////////
         m_BufferContainerWithTextures = BufferContainer::Create();
 
@@ -73,22 +76,30 @@ namespace Shell {
     }
 
     void RenderQueue::EnqueueTexturedQuad(Ref <Texture2D> texture, glm::mat4 transform) {
+        OPTICK_EVENT();
+
         m_Data.CurrentEntry->Texture = std::move(texture);
         m_Data.CurrentEntry->Transform = transform;
         m_Data.CurrentEntry++;
     }
 
     void RenderQueue::EnqueueColoredQuad(glm::vec4 &color, glm::mat4 transform) {
+        OPTICK_EVENT();
+
         m_Data.CurrentEntry->Color = color;
         m_Data.CurrentEntry->Transform = transform;
         m_Data.CurrentEntry++;
     }
 
     void RenderQueue::StartBatch() {
+        OPTICK_EVENT();
+
         m_Data.CurrentEntry = m_Data.Entries;
     }
 
     void RenderQueue::Flush() {
+        OPTICK_EVENT();
+
         for (auto dataPtr = m_Data.Entries; dataPtr < m_Data.CurrentEntry; dataPtr++) {
             if (dataPtr->Texture) {
                 dataPtr->Texture->Bind();

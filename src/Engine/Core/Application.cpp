@@ -1,6 +1,8 @@
 #include "Engine/Core/Application.h"
 #include "Engine/Core/Rendering/RenderCommand.h"
 
+#include "Engine/Core/Profiling.h"
+
 namespace Shell {
     Application* Application::m_Instance = nullptr;
 
@@ -9,6 +11,8 @@ namespace Shell {
     }
 
     Application::~Application() {
+        OPTICK_STOP_CAPTURE();
+        OPTICK_SAVE_CAPTURE("./profiling");
     }
 
     Application *Application::Instance() {
@@ -16,6 +20,9 @@ namespace Shell {
     }
 
     void Application::Init() {
+        OPTICK_START_CAPTURE();
+        OPTICK_EVENT();
+
         Logger::Init();
 
         m_Window = CreateScope<Window>();
@@ -34,6 +41,8 @@ namespace Shell {
     void Application::Run() {
 
         while (m_IsRunning) {
+            OPTICK_FRAME("MainThread");
+
             auto currentTime = std::chrono::high_resolution_clock::now();
             auto timeStep = currentTime - m_LastFrameTime;
             m_LastFrameTime = currentTime;
@@ -53,6 +62,7 @@ namespace Shell {
     }
 
     void Application::OnEvent(Event &event) {
+        OPTICK_EVENT();
 
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<WindowCloseEvent>(SHELL_BIND_EVENT_FN(Application::OnWindowClose));
@@ -67,19 +77,23 @@ namespace Shell {
     }
 
     void Application::PushLayer(Layer *layer) {
+        OPTICK_EVENT();
         m_LayerStack.PushLayer(layer);
     }
 
     void Application::PushOverlay(Layer *overlay) {
+        OPTICK_EVENT();
         m_LayerStack.PushOverlay(overlay);
     }
 
     bool Application::OnWindowClose(WindowCloseEvent &e) {
+        OPTICK_EVENT();
         m_IsRunning = false;
         return true;
     }
 
     bool Application::OnWindowResize(WindowResizeEvent &e) {
+        OPTICK_EVENT();
         RenderCommand::Create()->SetViewport(e.GetWidth(), e.GetHeight());
         return true;
     }

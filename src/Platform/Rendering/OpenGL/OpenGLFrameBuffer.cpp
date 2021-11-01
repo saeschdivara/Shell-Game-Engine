@@ -1,5 +1,7 @@
 #include "OpenGLFrameBuffer.h"
 
+#include "Engine/Core/Profiling.h"
+
 #include <glad/glad.h>
 
 namespace Shell {
@@ -10,14 +12,20 @@ namespace Shell {
     }
 
     OpenGLFrameBuffer::~OpenGLFrameBuffer() {
+        OPTICK_EVENT();
+
         glDeleteFramebuffers(1, &m_RendererID);
     }
 
     void OpenGLFrameBuffer::Bind() {
+        OPTICK_EVENT();
+
         glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
     }
 
     void OpenGLFrameBuffer::Resize(uint32_t width, uint32_t height) {
+        OPTICK_EVENT();
+
         m_Specification.Width = width;
         m_Specification.Height = height;
 
@@ -25,10 +33,14 @@ namespace Shell {
     }
 
     void OpenGLFrameBuffer::Unbind() {
+        OPTICK_EVENT();
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     void OpenGLFrameBuffer::Recreate() {
+        OPTICK_EVENT();
+
         glGenFramebuffers(1, &m_RendererID);
         Bind();
 

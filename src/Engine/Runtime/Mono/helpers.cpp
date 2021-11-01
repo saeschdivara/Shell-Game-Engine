@@ -1,8 +1,11 @@
 #include "Engine/Runtime/Mono/helpers.h"
+#include "Engine/Core/Profiling.h"
 
 #include <mono/metadata/class.h>
 
 MonoMethod * GetMethodInClassHierarchy(MonoClass * cls, const char * methodName, int paramsCount) {
+    OPTICK_EVENT();
+
     auto method = mono_class_get_method_from_name(cls, methodName, paramsCount);
 
     if (!method) {

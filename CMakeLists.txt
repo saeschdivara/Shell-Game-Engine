@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CONAN_DISABLE_CHECK_COMPILER 1)
 
 add_compile_options("$<$<CONFIG:DEBUG>:-DSHELL_APP_DEBUG>") # define debug symbol when using debug build
+add_compile_options("$<$<CONFIG:DEBUG>:-DSHELL_PROFILING>") # define debug symbol when using debug build
 
 # add defines for each platform
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
@@ -24,6 +25,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/ImGui/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Glad/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Backward/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/FileDialog/)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Optick/)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Spdlog/)
@@ -42,6 +44,7 @@ include_directories(
         "Vendors/ImGui"
         "Vendors/Glad/include"
         "Vendors/Backward"
+        "Vendors/Optick/src"
 )
 
 set(ENGINE_FILES
@@ -94,7 +97,7 @@ set(ENGINE_FILES
     src/Engine/Utils/Uuid.cpp src/Engine/Utils/Uuid.h
     src/Engine/Runtime/RuntimeManager.cpp src/Engine/Runtime/RuntimeManager.h
     src/Engine/Scripting/VisualStudioProjectManager.cpp src/Engine/Scripting/VisualStudioProjectManager.h
-    src/Engine/Utils/Xml.cpp src/Engine/Utils/Xml.h src/Engine/Runtime/Mono/helpers.h src/Engine/Runtime/Mono/helpers.cpp)
+    src/Engine/Utils/Xml.cpp src/Engine/Utils/Xml.h src/Engine/Runtime/Mono/helpers.h src/Engine/Runtime/Mono/helpers.cpp src/Engine/Core/Profiling.h)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_library(shell_game_engine STATIC ${ENGINE_FILES})
@@ -110,6 +113,7 @@ target_precompile_headers(
 target_link_libraries(shell_game_engine ${CONAN_LIBS})  # Specifies what libraries to link, using Conan.
 target_link_libraries(shell_game_engine imgui)
 target_link_libraries(shell_game_engine glad)
+target_link_libraries(shell_game_engine OptickCore)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_link_libraries(shell_game_engine spdlog)
