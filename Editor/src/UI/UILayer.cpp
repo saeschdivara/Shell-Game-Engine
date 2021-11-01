@@ -56,7 +56,7 @@ namespace Shell::Editor {
     }
 
     void EditorUILayer::OnUpdate(std::chrono::milliseconds deltaTime) {
-        OPTICK_FRAME("MainThread");
+        OPTICK_EVENT();
 
         // Check for resizing
         auto spec = m_Framebuffer->GetSpecification();
@@ -96,6 +96,8 @@ namespace Shell::Editor {
     }
 
     void EditorUILayer::OnUiRender() {
+        OPTICK_EVENT();
+
         // Note: Switch this to true to enable dockspace
         static bool dockspaceOpen = true;
         static bool opt_fullscreen_persistant = true;
@@ -214,6 +216,8 @@ namespace Shell::Editor {
     }
 
     void EditorUILayer::OnEvent(Event &event) {
+        OPTICK_EVENT();
+
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<CreateEntityEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnCreateEntityEvent));
         dispatcher.Dispatch<SaveProjectEvent>(SHELL_BIND_EVENT_FN(EditorUILayer::OnSaveProjectEvent));
@@ -223,6 +227,8 @@ namespace Shell::Editor {
     }
 
     void EditorUILayer::RenderMenu() {
+        OPTICK_EVENT();
+
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("Project"))
@@ -311,6 +317,8 @@ namespace Shell::Editor {
     }
 
     ImRect EditorUILayer::RenderTree(SceneEntity *entity) {
+        OPTICK_EVENT();
+
         ImGuiTreeNodeFlags nodeFlags = BASE_NODE_FLAGS;
 
         if (m_UiState.SelectedEntity == entity) {
@@ -367,6 +375,7 @@ namespace Shell::Editor {
     }
 
     bool EditorUILayer::OnCreateEntityEvent(CreateEntityEvent &event) {
+        OPTICK_EVENT();
 
         auto entity = event.GetEntity();
         auto parentEntity = event.GetParentEntity();
@@ -383,6 +392,7 @@ namespace Shell::Editor {
     }
 
     bool EditorUILayer::OnSaveProjectEvent(SaveProjectEvent &event) {
+        OPTICK_EVENT();
 
         auto project = event.GetProject();
         auto projectPath = project->GetPath();
@@ -402,6 +412,8 @@ namespace Shell::Editor {
     }
 
     bool EditorUILayer::OnLoadProjectEvent(LoadProjectEvent &event) {
+        OPTICK_EVENT();
+
         auto project = ProjectSerializer::DeserializeFromFile(event.GetProjectPath());
 
         if (project == nullptr) {
@@ -420,12 +432,15 @@ namespace Shell::Editor {
     }
 
     bool EditorUILayer::OnSaveSceneEvent(SaveSceneEvent &event) {
+        OPTICK_EVENT();
+
         SceneSerializer::SerializeToFile(event.GetPath(), event.GetBlueprint());
 
         return true;
     }
 
     bool EditorUILayer::OnLoadSceneEvent(LoadSceneEvent & event) {
+        OPTICK_EVENT();
 
         if (m_UiState.CurrentSceneBluePrint) {
             Runtime::RuntimeManager::Instance()->RunLifecycleMethod(m_UiState.CurrentSceneBluePrint, "OnDestroy");

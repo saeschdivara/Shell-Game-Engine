@@ -41,7 +41,7 @@ namespace Shell {
     void Application::Run() {
 
         while (m_IsRunning) {
-            OPTICK_EVENT();
+            OPTICK_FRAME("MainThread");
 
             auto currentTime = std::chrono::high_resolution_clock::now();
             auto timeStep = currentTime - m_LastFrameTime;

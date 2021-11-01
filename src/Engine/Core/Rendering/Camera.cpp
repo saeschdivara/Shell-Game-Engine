@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+#include "Engine/Core/Profiling.h"
+
 #include <glm/ext.hpp>
 
 namespace Shell {
@@ -12,6 +14,7 @@ namespace Shell {
     }
 
     void OrthographicCamera::SetViewportSize(uint32_t width, uint32_t height) {
+        OPTICK_EVENT();
 
         SHELL_CORE_ASSERT(width > 0 && height > 0);
         m_AspectRatio = (float)width / (float)height;
@@ -19,6 +22,8 @@ namespace Shell {
     }
 
     void OrthographicCamera::RecalculateViewMatrix() {
+        OPTICK_EVENT();
+
         glm::mat4 transform = glm::translate(glm::mat4(1), m_Position) *
                               glm::rotate(glm::mat4(1), glm::radians(m_Rotation), glm::vec3(0, 0, 1));
 
