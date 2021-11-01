@@ -2,6 +2,7 @@
 #include "Engine/Core/Rendering/RenderCommand.h"
 
 #include "Engine/Core/Profiling.h"
+#include "Engine/Physics/PhysicsEngineManager.h"
 
 namespace Shell {
     Application* Application::m_Instance = nullptr;
@@ -36,6 +37,8 @@ namespace Shell {
         m_Runtime = Runtime::RuntimeManager::Instance();
         m_Runtime->Init();
         m_Runtime->LoadEngineLibrary();
+
+        Physics::PhysicsEngineManager::Instance()->Init();
     }
 
     void Application::Run() {
