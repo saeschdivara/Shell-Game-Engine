@@ -30,6 +30,7 @@ namespace Shell {
         bool HasChildren() { return !m_ChildEntities.empty(); }
 
         [[nodiscard]] entt::entity GetEnity() const { return m_Entity; }
+        [[nodiscard]] long GetEnityID() const { return (long) m_Entity; }
 
     private:
         Ref<Scene> m_Scene;

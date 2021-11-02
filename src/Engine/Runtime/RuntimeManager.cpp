@@ -4,6 +4,7 @@
 #include "Engine/Project/Entities/EntityManager.h"
 #include "Engine/Project/Entities/SceneEntity.h"
 #include "Engine/Runtime/Mono/helpers.h"
+#include "Engine/Runtime/Mono/debug-helpers.h"
 
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
@@ -15,6 +16,7 @@ namespace Shell::Runtime {
 
     struct EngineData {
         MonoClass * BehaviourClass;
+        MonoClass * GameObjectClass;
     };
 
     struct RuntimeData {
@@ -64,7 +66,8 @@ namespace Shell::Runtime {
         m_Data->EngineLibraryImage = mono_assembly_get_image(assembly);
 
         // load extra data from loaded library
-        m_Data->EngineData.BehaviourClass = mono_class_from_name(m_Data->EngineLibraryImage, "Shell.Core.Behaviours", "ShellBehaviour");
+        m_Data->EngineData.BehaviourClass  = mono_class_from_name(m_Data->EngineLibraryImage, "Shell.Core.Behaviours", "ShellBehaviour");
+        m_Data->EngineData.GameObjectClass = mono_class_from_name(m_Data->EngineLibraryImage, "Shell.Core", "GameObject");
     }
 
     void RuntimeManager::LoadAppLibrary(const std::string & appLibraryPath) {
@@ -112,6 +115,24 @@ namespace Shell::Runtime {
 
                 // call its default constructor
                 mono_runtime_object_init(scriptComponent.RuntimeObj);
+
+#ifdef SHELL_CORE_DEBUG
+                Runtime::Mono::PrintEverythingFromClass(cls);
+#endif
+
+                // construct gameObject
+                MonoClassField  * gameObjectField = mono_class_get_field_from_name(m_Data->EngineData.BehaviourClass, "gameObject");
+
+                MonoObject * gameObject = mono_object_new(m_Data->Jit, m_Data->EngineData.GameObjectClass);
+                MonoMethod * gameObjectConstructor = mono_class_get_method_from_name(m_Data->EngineData.GameObjectClass, ".ctor", 1);
+
+                void * constructorArguments[1];
+                long id = entity->GetEnityID();
+                constructorArguments[0] = static_cast<void *>(&id);
+
+                mono_runtime_invoke(gameObjectConstructor, gameObject, constructorArguments, nullptr);
+
+                mono_field_set_value(scriptComponent.RuntimeObj, gameObjectField, gameObject);
             }
 
             auto method = GetMethodInClassHierarchy(cls, methodName, 0);
