@@ -29,8 +29,8 @@ namespace Shell {
         std::vector<SceneEntity *>& GetChildren() { return m_ChildEntities; }
         bool HasChildren() { return !m_ChildEntities.empty(); }
 
-        [[nodiscard]] entt::entity GetEnity() const { return m_Entity; }
-        [[nodiscard]] long GetEnityID() const { return (long) m_Entity; }
+        [[nodiscard]] entt::entity GetEntity() const { return m_Entity; }
+        [[nodiscard]] long GetEntityID() const { return (long) m_Entity; }
 
     private:
         Ref<Scene> m_Scene;

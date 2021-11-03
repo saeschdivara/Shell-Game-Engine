@@ -127,7 +127,7 @@ namespace Shell::Runtime {
                 MonoMethod * gameObjectConstructor = mono_class_get_method_from_name(m_Data->EngineData.GameObjectClass, ".ctor", 1);
 
                 void * constructorArguments[1];
-                long id = entity->GetEnityID();
+                long id = entity->GetEntityID();
                 constructorArguments[0] = static_cast<void *>(&id);
 
                 mono_runtime_invoke(gameObjectConstructor, gameObject, constructorArguments, nullptr);

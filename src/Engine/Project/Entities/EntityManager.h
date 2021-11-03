@@ -20,18 +20,18 @@ namespace Shell {
         template <typename... Components>
         bool HasComponent(SceneEntity * entity)
         {
-            return m_Registry.any_of<Components...>(entity->GetEnity());
+            return m_Registry.any_of<Components...>(entity->GetEntity());
         }
 
         template <typename... Components>
         auto& GetComponent(SceneEntity * entity)
         {
-            return m_Registry.get<Components...>(entity->GetEnity());
+            return m_Registry.get<Components...>(entity->GetEntity());
         }
 
         template <typename Component>
         auto& AddComponent(SceneEntity * entity, auto&&... args) {
-            return m_Registry.emplace<Component>(entity->GetEnity(), std::forward<decltype(args)>(args)...);
+            return m_Registry.emplace<Component>(entity->GetEntity(), std::forward<decltype(args)>(args)...);
         }
 
     private:
