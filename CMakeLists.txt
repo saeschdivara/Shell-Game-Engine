@@ -21,6 +21,7 @@ endif()
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)  # Includes the contents of the conanbuildinfo.cmake file.
 conan_basic_setup()  # Prepares the CMakeList.txt for Conan.
 
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Box2D/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/ImGui/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Glad/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendors/Backward/)
@@ -45,6 +46,7 @@ include_directories(
         "Vendors/Glad/include"
         "Vendors/Backward"
         "Vendors/Optick/src"
+        "Vendors/Box2D/include"
 )
 
 set(ENGINE_FILES
@@ -117,6 +119,7 @@ target_link_libraries(shell_game_engine ${CONAN_LIBS})  # Specifies what librari
 target_link_libraries(shell_game_engine imgui)
 target_link_libraries(shell_game_engine glad)
 target_link_libraries(shell_game_engine OptickCore)
+target_link_libraries(shell_game_engine box2d)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_link_libraries(shell_game_engine spdlog)

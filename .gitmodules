@@ -17,3 +17,6 @@
 [submodule "Vendors/Optick"]
 	path = Vendors/Optick
 	url = https://github.com/saeschdivara/optick.git
+[submodule "Vendors/Box2D"]
+	path = Vendors/Box2D
+	url = https://github.com/saeschdivara/box2d.git
