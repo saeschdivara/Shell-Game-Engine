@@ -1,5 +1,5 @@
 #include "Engine/Core/Window.h"
-#include "Engine/Core/Logger.h"
+#include "Engine/Core/Profiling.h"
 #include "Engine/Core/Events/ApplicationEvent.h"
 #include "Engine/Core/Events/KeyEvent.h"
 #include "Engine/Core/Events/MouseEvent.h"
@@ -10,6 +10,8 @@
 
 namespace Shell {
     void Window::Init() {
+        OPTICK_EVENT();
+
         /* Initialize the library */
         if (!glfwInit()) {
             SHELL_CORE_ERROR("GLFW could not be initialised");
@@ -40,6 +42,7 @@ namespace Shell {
     }
 
     void Window::OnUpdate() {
+        OPTICK_EVENT();
 
         /* Poll for and process events */
         glfwPollEvents();
@@ -48,6 +51,8 @@ namespace Shell {
     }
 
     void Window::SetupCallbacks(const Window::EventCallbackFn &callback) {
+        OPTICK_EVENT();
+
         m_Data.Callback = callback;
 
         glfwSetWindowUserPointer(m_Window, &m_Data);
@@ -117,6 +122,8 @@ namespace Shell {
     }
 
     void Window::SetTitle(const std::string &title) {
+        OPTICK_EVENT();
+
         glfwSetWindowTitle(m_Window, title.c_str());
     }
 }
