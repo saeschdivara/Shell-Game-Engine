@@ -66,4 +66,26 @@ namespace Shell {
         ScriptingComponent() = default;
         ScriptingComponent(std::string path, std::string className): Path(std::move(path)), ClassName(std::move(className)) {}
     };
+
+    enum class RigidBodyType {
+        DYNAMIC,
+        KINEMATIC,
+        STATIC
+    };
+
+    struct RigidBody2DComponent {
+        RigidBodyType BodyType;
+        float Mass;
+
+        RigidBody2DComponent() = default;
+        RigidBody2DComponent(RigidBodyType bodyType, float mass) : BodyType(bodyType), Mass(mass) {}
+    };
+
+    struct BoxCollider {
+        float X;
+        float Y;
+
+        BoxCollider() = default;
+        BoxCollider(float x, float y) : X(x), Y(y) {}
+    };
 }

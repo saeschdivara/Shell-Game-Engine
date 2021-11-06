@@ -2,6 +2,8 @@
 
 #include "Engine/Core/shellpch.h"
 
+#include <glm/glm.hpp>
+
 namespace Shell::Physics {
 
     struct Data;
@@ -14,6 +16,8 @@ namespace Shell::Physics {
         ~PhysicsEngineManager();
 
         void Init();
+
+        void CreateRigidBody(const glm::vec2 & position, const glm::vec2 & boxShape);
 
     private:
         static Ref<PhysicsEngineManager> m_Instance;

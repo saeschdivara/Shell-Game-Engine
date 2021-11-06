@@ -33,4 +33,18 @@ namespace Shell::Physics {
         b2Vec2 gravity(0.0f, -10.0f);
         m_Data->World = new b2World(gravity);
     }
+
+    void PhysicsEngineManager::CreateRigidBody(const glm::vec2 &position, const glm::vec2 &boxShape) {
+        OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Physics);
+
+        b2BodyDef bodyDefinition;
+        bodyDefinition.position.Set(position.x, position.y);
+
+        b2Body* body = m_Data->World->CreateBody(&bodyDefinition);
+
+        b2PolygonShape bodyShape;
+        bodyShape.SetAsBox(boxShape.x, boxShape.y);
+
+        body->CreateFixture(&bodyShape, 0.0f);
+    }
 }

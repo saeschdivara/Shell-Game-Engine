@@ -13,6 +13,7 @@ namespace Shell::Editor {
         void RenderTransformComponent();
         void RenderSpriteComponent();
         void RenderScriptingComponent();
+        void RenderRigidBody2DComponent();
     };
 }
 

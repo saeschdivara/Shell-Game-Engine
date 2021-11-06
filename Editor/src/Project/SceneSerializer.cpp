@@ -22,6 +22,9 @@
 #define KEY_CMP_SCRIPT      "Scripting"
 #define KEY_PATH            "Path"
 #define KEY_CLASS_NAME      "Class-Name"
+#define KEY_CMP_RIGID_BODY  "Rigid-Body"
+#define KEY_MASS            "Mass"
+#define KEY_RIGID_TYPE      "Rigid-Type"
 
 
 namespace Shell::Editor {
@@ -119,6 +122,22 @@ namespace Shell::Editor {
 
             emitter << YAML::Key << KEY_CLASS_NAME;
             emitter << YAML::Value << scriptingCmp.ClassName;
+
+            emitter << YAML::EndMap;
+        }
+
+        if (EntityManager::Instance()->HasComponent<RigidBody2DComponent>(entity)) {
+            auto rigidBody = EntityManager::Instance()->GetComponent<RigidBody2DComponent>(entity);
+            emitter << YAML::Key << KEY_CMP_RIGID_BODY;
+            emitter << YAML::Value;
+
+            emitter << YAML::BeginMap;
+
+            emitter << YAML::Key << KEY_RIGID_TYPE;
+            emitter << YAML::Value << static_cast<int>(rigidBody.BodyType);
+
+            emitter << YAML::Key << KEY_MASS;
+            emitter << YAML::Value << rigidBody.Mass;
 
             emitter << YAML::EndMap;
         }
@@ -244,6 +263,17 @@ namespace Shell::Editor {
                         auto scriptClassName = scriptingCmpNode[KEY_CLASS_NAME].as<std::string>();
 
                         EntityManager::Instance()->AddComponent<ScriptingComponent>(sceneEntity, scriptPath, scriptClassName);
+                    }
+                    else if (componentKey == KEY_CMP_RIGID_BODY) {
+                        auto rigidBodyCmpNode = componentsNode[KEY_CMP_RIGID_BODY].as<YAML::Node>();
+                        auto rigidBodyType = rigidBodyCmpNode[KEY_RIGID_TYPE].as<int>();
+                        auto mass = rigidBodyCmpNode[KEY_MASS].as<float>();
+
+                        EntityManager::Instance()->AddComponent<RigidBody2DComponent>(
+                            sceneEntity,
+                            static_cast<RigidBodyType>(rigidBodyType),
+                            mass
+                        );
                     }
                 }
             }
