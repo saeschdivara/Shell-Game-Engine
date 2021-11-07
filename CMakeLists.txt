@@ -99,7 +99,10 @@ set(ENGINE_FILES
     src/Engine/Scripting/VisualStudioProjectManager.cpp src/Engine/Scripting/VisualStudioProjectManager.h
     src/Engine/Utils/Xml.cpp src/Engine/Utils/Xml.h
     src/Engine/Runtime/Mono/helpers.h src/Engine/Runtime/Mono/helpers.cpp
-    src/Engine/Runtime/Mono/debug-helpers.h src/Engine/Runtime/Mono/debug-helpers.cpp)
+    src/Engine/Runtime/Mono/debug-helpers.h src/Engine/Runtime/Mono/debug-helpers.cpp
+    src/Engine/Runtime/Mono/MonoRuntime.cpp src/Engine/Runtime/Mono/MonoRuntime.h
+    src/Engine/Runtime/Mono/RuntimeData.h
+    src/Engine/Runtime/Mono/p_runtime_exports.cpp src/Engine/Runtime/Mono/p_runtime_exports.h)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_library(shell_game_engine STATIC ${ENGINE_FILES})

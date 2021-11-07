@@ -4,29 +4,15 @@
 #include "Engine/Project/Entities/Components.h"
 #include "Engine/Project/Entities/EntityManager.h"
 #include "Engine/Project/Entities/SceneEntity.h"
+#include "Engine/Runtime/Mono/MonoRuntime.h"
+#include "Engine/Runtime/Mono/RuntimeData.h"
 #include "Engine/Runtime/Mono/helpers.h"
 #include "Engine/Runtime/Mono/debug-helpers.h"
-
-#include <mono/jit/jit.h>
-#include <mono/metadata/assembly.h>
-#include <mono/metadata/mono-config.h>
+#include "Engine/Runtime/Mono/p_runtime_exports.h"
 
 #define ENGINE_LIB_PATH "../engine/Shell-Engine.dll"
 
 namespace Shell::Runtime {
-
-    struct EngineData {
-        MonoClass * BehaviourClass;
-        MonoClass * GameObjectClass;
-    };
-
-    struct RuntimeData {
-        MonoDomain * Jit;
-        MonoImage * EngineLibraryImage;
-        MonoImage * AppLibraryImage;
-
-        EngineData EngineData;
-    };
 
     Ref<RuntimeManager> RuntimeManager::m_Instance = nullptr;
 
@@ -56,6 +42,8 @@ namespace Shell::Runtime {
 
         // needed to find mono libraries e.g. to print out to console
         mono_config_parse(NULL);
+
+        Mono::RegisterInternalCallbacks();
     }
 
     void RuntimeManager::LoadEngineLibrary() {
@@ -99,6 +87,7 @@ namespace Shell::Runtime {
     }
 
     void RuntimeManager::RunLifecycleMethod(std::vector<SceneEntity *> &entities, const char *methodName) {
+        OPTICK_EVENT();
         for (const auto &entity: entities) {
             RunLifecycleMethod(entity, methodName);
 
@@ -127,7 +116,7 @@ namespace Shell::Runtime {
                 mono_runtime_object_init(scriptComponent.RuntimeObj);
 
 #ifdef SHELL_CORE_DEBUG
-                Runtime::Mono::PrintEverythingFromClass(cls);
+                Mono::PrintEverythingFromClass(cls);
 #endif
 
                 // construct gameObject
@@ -152,5 +141,9 @@ namespace Shell::Runtime {
 
             mono_runtime_invoke(virtualOnCreateMethod, scriptComponent.RuntimeObj, nullptr, nullptr);
         }
+    }
+
+    Runtime *RuntimeManager::GetRuntime() {
+        return new Mono::MonoRuntime(m_Data);
     }
 }

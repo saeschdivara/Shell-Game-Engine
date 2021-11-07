@@ -9,6 +9,12 @@ namespace Shell {
 
 namespace Shell::Runtime {
 
+    class Runtime {
+    public:
+        Runtime() {}
+        virtual ~Runtime() {}
+    };
+
     struct RuntimeData;
 
     class RuntimeManager {
@@ -25,6 +31,8 @@ namespace Shell::Runtime {
 
         void InstantiateScene(Ref<SceneBlueprint> scene);
         void RunLifecycleMethod(Ref<SceneBlueprint> scene, const char * methodName);
+
+        Runtime * GetRuntime();
 
     private:
         void RunLifecycleMethod(std::vector<SceneEntity *> & entities, const char * methodName);
