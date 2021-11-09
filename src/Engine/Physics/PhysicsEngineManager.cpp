@@ -1,6 +1,8 @@
 #include "PhysicsEngineManager.h"
 
 #include "Engine/Core/Profiling.h"
+#include "Engine/Project/SceneBlueprint.h"
+#include "Engine/Project/Entities/EntityManager.h"
 
 #include <box2d/box2d.h>
 
@@ -34,10 +36,18 @@ namespace Shell::Physics {
         m_Data->World = new b2World(gravity);
     }
 
-    void PhysicsEngineManager::CreateRigidBody(const glm::vec2 &position, const glm::vec2 &boxShape) {
+    void PhysicsEngineManager::InitScene(Ref<SceneBlueprint> scene) {
+        auto view = EntityManager::Instance()->GetComponentView<TransformComponent, RigidBody2DComponent>();
+        for (auto &&[entity, transform, rigidBody]: view.each()) {
+            CreateRigidBody(transform.Translation, transform.Scale, rigidBody);
+        }
+    }
+
+    void PhysicsEngineManager::CreateRigidBody(const glm::vec2 &position, const glm::vec2 &boxShape, RigidBody2DComponent body2DComponent) {
         OPTICK_CATEGORY(OPTICK_FUNC, Optick::Category::Physics);
 
         b2BodyDef bodyDefinition;
+        bodyDefinition.type = static_cast<b2BodyType>(body2DComponent.BodyType);
         bodyDefinition.position.Set(position.x, position.y);
 
         b2Body* body = m_Data->World->CreateBody(&bodyDefinition);
@@ -45,6 +55,6 @@ namespace Shell::Physics {
         b2PolygonShape bodyShape;
         bodyShape.SetAsBox(boxShape.x, boxShape.y);
 
-        body->CreateFixture(&bodyShape, 0.0f);
+        body->CreateFixture(&bodyShape, body2DComponent.Mass);
     }
 }

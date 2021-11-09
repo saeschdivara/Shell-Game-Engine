@@ -1,8 +1,13 @@
 #pragma once
 
 #include "Engine/Core/shellpch.h"
+#include "Engine/Project/Entities/Components.h"
 
 #include <glm/glm.hpp>
+
+namespace Shell {
+    class SceneBlueprint;
+}
 
 namespace Shell::Physics {
 
@@ -16,8 +21,9 @@ namespace Shell::Physics {
         ~PhysicsEngineManager();
 
         void Init();
+        void InitScene(Ref<SceneBlueprint> scene);
 
-        void CreateRigidBody(const glm::vec2 & position, const glm::vec2 & boxShape);
+        void CreateRigidBody(const glm::vec2 & position, const glm::vec2 & boxShape, RigidBody2DComponent body2DComponent);
 
     private:
         static Ref<PhysicsEngineManager> m_Instance;

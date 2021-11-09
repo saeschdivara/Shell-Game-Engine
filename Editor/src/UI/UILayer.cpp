@@ -10,6 +10,7 @@
 #include <Engine/Core/Rendering/RenderCommand.h>
 #include <Engine/Core/Rendering/Renderer.h>
 #include <Engine/Project/Entities/Components.h>
+#include <Engine/Physics/PhysicsEngineManager.h>
 #include <Engine/Runtime/RuntimeManager.h>
 #include <Engine/Scripting/VisualStudioProjectManager.h>
 
@@ -448,6 +449,8 @@ namespace Shell::Editor {
 
         m_UiState.CurrentSceneBluePrint = SceneSerializer::DeserializeFromFile(event.GetScenePath());
         Runtime::RuntimeManager::Instance()->InstantiateScene(m_UiState.CurrentSceneBluePrint);
+
+        Physics::PhysicsEngineManager::Instance()->InitScene(m_UiState.CurrentSceneBluePrint);
 
         return true;
     }

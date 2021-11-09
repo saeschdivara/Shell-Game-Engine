@@ -68,9 +68,9 @@ namespace Shell {
     };
 
     enum class RigidBodyType {
-        DYNAMIC,
+        STATIC = 0,
         KINEMATIC,
-        STATIC
+        DYNAMIC,
     };
 
     struct RigidBody2DComponent {
