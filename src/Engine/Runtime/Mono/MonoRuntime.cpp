@@ -59,6 +59,11 @@ namespace Shell::Runtime::Mono {
         return mono_property_get_value(property, obj, nullptr, nullptr);
     }
 
+    template<typename T>
+    T MonoRuntime::GetSimpleObjectProperty(MonoObject *obj, const char *propertyName) {
+        return *(T *) GetObjectProperty(obj, propertyName);
+    }
+
     void MonoRuntime::SetObjectProperty(MonoObject *obj, const char *propertyName, MonoObject *value) {
         MonoClass * cls = mono_object_get_class(obj);
         MonoProperty * property = mono_class_get_property_from_name(cls, propertyName);

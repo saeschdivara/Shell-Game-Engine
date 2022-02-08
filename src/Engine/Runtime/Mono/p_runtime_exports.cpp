@@ -52,9 +52,33 @@ extern "C"
 
         return obj;
     }
+
+    void ObjectManager_SetComponentValue(MonoObject * obj, MonoObject * component, MonoString * propertyNameObj, MonoObject * value) {
+        auto * runtime = ShellGetRuntime();
+
+        entt::entity entity = ShellGetEntityFromGameObject(obj);
+        auto entityManager = Shell::EntityManager::Instance();
+
+        MonoClass * componentCls = mono_object_get_class(component);
+        const char * clsName = mono_class_get_name(componentCls);
+
+        char* propertyName = mono_string_to_utf8(propertyNameObj);
+
+        if (std::strcmp(clsName, "TransformComponent") == 0 && entityManager->HasComponent<Shell::TransformComponent>(entity)) {
+            auto & cmp = entityManager->GetComponent<Shell::TransformComponent>(entity);
+
+            if (std::strcmp(propertyName, "Translation") == 0) {
+//                auto x = runtime->GetSimpleObjectProperty<float>(value, "X");
+//                auto y = runtime->GetSimpleObjectProperty<float>(value, "Y");
+//
+//                cmp.Translation = glm::vec3(x, y, 0);
+            }
+        }
+    }
 }
 
 void Shell::Runtime::Mono::RegisterInternalCallbacks() {
     mono_add_internal_call("Shell.Core.GameObject::InternalGetComponent", (const void*) GameObject_GetComponent);
+    mono_add_internal_call("Shell.Core.ObjectManager::SetComponentValue", (const void*) ObjectManager_SetComponentValue);
 }
 

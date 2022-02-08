@@ -16,6 +16,8 @@ namespace Shell::Runtime::Mono {
         void SetObjectField(MonoObject * obj, const char * fieldName, MonoObject * value);
 
         MonoObject * GetObjectProperty(MonoObject * obj, const char * propertyName);
+        template<typename T>
+        T GetSimpleObjectProperty(MonoObject * obj, const char * propertyName);
         void SetObjectProperty(MonoObject * obj, const char * propertyName, MonoObject * value);
 
     private:
